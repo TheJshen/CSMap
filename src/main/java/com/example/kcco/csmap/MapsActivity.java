@@ -1,11 +1,14 @@
 package com.example.kcco.csmap;
 
+import java.util.ArrayList;
+
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,33 +17,35 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-//import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 
-//import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements
-            GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,
-            LocationListener {
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+public class MapsActivity extends FragmentActivity {//implements
+            //GoogleApiClient.ConnectionCallbacks,
+            //GoogleApiClient.OnConnectionFailedListener,
+            //LocationListener {
 
+    public GoogleMap mMap; // Might be null if Google Play services APK is not available.
+
+    // Used for testing the route lines
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
     private static final LatLng GEISEL = new LatLng(32.881132, -117.237639);
-    private static CameraPosition cameraPosition;
-    private Polyline testLine;
+    private ArrayList<LatLng> route = new ArrayList<>();
+    private Route newRoute;
 
-    private GoogleApiClient mGoogleApiClient;
+    // Used to set camera position
+    private static CameraPosition cameraPosition;
+
+    /*private GoogleApiClient mGoogleApiClient;
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest mLocationRequest;
+    private LocationRequest mLocationRequest;*/
+
+    private static RouteTracker GPS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +54,12 @@ public class MapsActivity extends FragmentActivity implements
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         // Create the test line from Center to Geisel
-        testLine = mMap.addPolyline(new PolylineOptions()
-                .add(UCSD, GEISEL)
-                .width(5)
-                .color(Color.RED));
+        route.add(UCSD);
+        route.add(GEISEL);
+        newRoute = new Route(route);
+        mMap.addPolyline(newRoute.getRoute());
 
+        /*
         // Create new GoogleApiClient to use LocationServices API
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -66,6 +72,9 @@ public class MapsActivity extends FragmentActivity implements
                 .setPriority( LocationRequest.PRIORITY_HIGH_ACCURACY )
                 .setInterval( 10 * 10000 ) // 10 seconds, in milliseconds
                 .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
+                */
+
+        GPS = new RouteTracker(this);
     }
 
     // When app resumes from pause
@@ -73,17 +82,19 @@ public class MapsActivity extends FragmentActivity implements
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded(); // for map
-        mGoogleApiClient.connect(); // for GPS
+        //mGoogleApiClient.connect(); // for GPS
+        RouteTracker.onResume();
     }
 
     // When the app gets paused
     @Override
     protected void onPause() {
         super.onPause();
-        if( mGoogleApiClient.isConnected()) {
+        /*if( mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this );
             mGoogleApiClient.disconnect();
-        }
+        }*/
+        GPS.onPause();
     }
 
     /**
@@ -134,6 +145,7 @@ public class MapsActivity extends FragmentActivity implements
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    /*
     // for GPS location
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -185,4 +197,5 @@ public class MapsActivity extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         handleNewLocation( location );
     }
+    */
 }
