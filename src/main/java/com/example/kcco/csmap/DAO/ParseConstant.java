@@ -65,14 +65,15 @@ public class ParseConstant {
     //These are column (key) names for Parse Classroom Objects
     public static final String CLASS = "Classroom";
     public static final String CLASS_NAME = "name";
-    public static final String CLASS_PLACEID = "placeId";
+    public static final String CLASS_PLACE_ID = "placeId";
 
     //These are column (key) names for Parse Events Objects
     public static final String EVENTS = "Event";
     public static final String EVENTS_NAME = "name";
     public static final String EVENTS_START_TIME = "startTime";
     public static final String EVENTS_END_TIME = "endTime";
-    public static final String EVENTS_LOCAION = "location";
+    public static final String EVENTS_LOCATION = "location";
+    public static final String EVENTS_EVENT_ID = "eventId";
 
     //These are column (key) names for Parse User Objects
     public static final String USER = "_User";
@@ -100,8 +101,5 @@ public class ParseConstant {
     public static final String HISTORY_ROUTE_ID = "routeId";
     public static final String HISTORY_USER_ID = "userId";
     public static final String HISTORY_CREATED_AT = "createdAt";
-
-
-
 
 }
