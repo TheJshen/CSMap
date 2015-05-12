@@ -1,9 +1,16 @@
 package com.example.kcco.csmap;
 
+import android.content.IntentSender;
 import android.graphics.Color;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,21 +18,29 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 
 //import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends FragmentActivity implements
+            GoogleApiClient.ConnectionCallbacks,
+            GoogleApiClient.OnConnectionFailedListener,
+            LocationListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
     private static final LatLng GEISEL = new LatLng(32.881132, -117.237639);
     private static CameraPosition cameraPosition;
-
-
     private Polyline testLine;
+
+    private GoogleApiClient mGoogleApiClient;
+    public static final String TAG = MapsActivity.class.getSimpleName();
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +53,37 @@ public class MapsActivity extends FragmentActivity {
                 .add(UCSD, GEISEL)
                 .width(5)
                 .color(Color.RED));
+
+        // Create new GoogleApiClient to use LocationServices API
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        // Create the LocationRequest object
+        mLocationRequest = LocationRequest.create()
+                .setPriority( LocationRequest.PRIORITY_HIGH_ACCURACY )
+                .setInterval( 10 * 10000 ) // 10 seconds, in milliseconds
+                .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
     }
 
+    // When app resumes from pause
     @Override
     protected void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        setUpMapIfNeeded(); // for map
+        mGoogleApiClient.connect(); // for GPS
+    }
+
+    // When the app gets paused
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if( mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this );
+            mGoogleApiClient.disconnect();
+        }
     }
 
     /**
@@ -83,6 +123,7 @@ public class MapsActivity extends FragmentActivity {
         //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UCSD, 19));
         //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
         // Sets the camera position to cameraPosition
         cameraPosition = new CameraPosition.Builder()
                 .target(UCSD)      // Sets the center of the map to Mountain View
@@ -93,4 +134,55 @@ public class MapsActivity extends FragmentActivity {
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    // for GPS location
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if( connectionResult.hasResolution() ) {
+            try {
+                // Start an Activity that tries to resolve error
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST );
+            } catch ( IntentSender.SendIntentException e ) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.i(TAG, "Location services connection failed with code " +
+                connectionResult.getErrorCode() );
+        }
+    }
+
+    // for GPS location
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(TAG, "Location services connected.");
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if( location == null ) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
+        }
+        else {
+            handleNewLocation(location);
+        }
+    }
+
+    // for GPS location
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i( TAG, "Location services suspended. Please reconnect." );
+    }
+
+    // for GPS location
+    private void handleNewLocation( Location location ) {
+        Log.d( TAG, location.toString() );
+        double currentLat = location.getLatitude();
+        double currentLng = location.getLongitude();
+        LatLng currentPos = new LatLng( currentLat, currentLng );
+        MarkerOptions options = new MarkerOptions().position(currentPos).title("HERE!");
+        mMap.addMarker(options);
+    }
+
+    // for GPS location
+    @Override
+    public void onLocationChanged(Location location) {
+        handleNewLocation( location );
+    }
 }
