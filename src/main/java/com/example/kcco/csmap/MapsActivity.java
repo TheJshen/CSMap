@@ -24,10 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 
-public class MapsActivity extends FragmentActivity {//implements
-            //GoogleApiClient.ConnectionCallbacks,
-            //GoogleApiClient.OnConnectionFailedListener,
-            //LocationListener {
+public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
 
     public GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
@@ -74,7 +71,7 @@ public class MapsActivity extends FragmentActivity {//implements
                 .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
                 */
 
-        GPS = new RouteTracker(this);
+        GPS = new RouteTracker(this, this);
     }
 
     // When app resumes from pause
@@ -143,6 +140,20 @@ public class MapsActivity extends FragmentActivity {//implements
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    @Override
+    public void handleNewLocation(Location location) {
+
+        double currentLatitude = location.getLatitude();
+        double currentLongitude = location.getLongitude();
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(currentLatitude, currentLongitude)).title("Current Location"));
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("I am here!");
+        mMap.addMarker(options);
     }
 
     /*

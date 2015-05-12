@@ -1,5 +1,7 @@
 package com.example.kcco.csmap;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,15 +24,21 @@ public class RouteTracker implements
             GoogleApiClient.OnConnectionFailedListener,
             LocationListener {
 
-    private static MapsActivity mapsActivity;
+    public interface LocationCallBack {
+        void handleNewLocation(Location location);
+    }
+
     private static GoogleApiClient mGoogleApiClient;
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest; // For GPS
+    private Context mContext;
+    private LocationCallBack mLocationCallBack;
 
-    public RouteTracker( MapsActivity main ) {
-        mapsActivity = main;
-        mGoogleApiClient = new GoogleApiClient.Builder( mapsActivity )
+    public RouteTracker(Context context, LocationCallBack callback) {
+        mContext = context;
+        mLocationCallBack = callback;
+        mGoogleApiClient = new GoogleApiClient.Builder( context )
                 .addConnectionCallbacks( this )
                 .addOnConnectionFailedListener( this )
                 .addApi(LocationServices.API)
@@ -51,7 +59,7 @@ public class RouteTracker implements
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
         }
         else {
-            handleNewLocation(location);
+            mLocationCallBack.handleNewLocation(location);
         }
     }
 
@@ -62,15 +70,16 @@ public class RouteTracker implements
 
     @Override
     public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+        mLocationCallBack.handleNewLocation(location);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Activity activity = (Activity)mContext;
         if( connectionResult.hasResolution() ) {
             try {
                 // Start an Activity that tries to resolve error
-                connectionResult.startResolutionForResult(mapsActivity, CONNECTION_FAILURE_RESOLUTION_REQUEST );
+                connectionResult.startResolutionForResult(activity, CONNECTION_FAILURE_RESOLUTION_REQUEST );
             } catch ( IntentSender.SendIntentException e ) {
                 e.printStackTrace();
             }
@@ -78,15 +87,6 @@ public class RouteTracker implements
             Log.i(TAG, "Location services connection failed with code " +
                     connectionResult.getErrorCode() );
         }
-    }
-
-    private void handleNewLocation( Location location ) {
-        Log.d( TAG, location.toString() );
-        double currentLat = location.getLatitude();
-        double currentLng = location.getLongitude();
-        LatLng currentPos = new LatLng( currentLat, currentLng );
-        MarkerOptions options = new MarkerOptions().position(currentPos).title("HERE!");
-        mapsActivity.mMap.addMarker(options);
     }
 
     public static void onResume() {
@@ -98,5 +98,9 @@ public class RouteTracker implements
             LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
+    }
+
+    public void startGPSTrack() {
+
     }
 }
