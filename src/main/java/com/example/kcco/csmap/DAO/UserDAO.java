@@ -1,4 +1,4 @@
-package kachan.dao.DAO;
+package com.example.kcco.csmap.DAO;
 
 import android.app.Activity;
 import android.util.Log;
