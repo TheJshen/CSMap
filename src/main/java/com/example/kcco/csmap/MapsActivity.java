@@ -2,26 +2,20 @@ package com.example.kcco.csmap;
 
 import java.util.ArrayList;
 
-import android.content.IntentSender;
-import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import com.google.android.gms.maps.model.Polyline;
 
 
 public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
@@ -31,16 +25,16 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     // Used for testing the route lines
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
     private static final LatLng GEISEL = new LatLng(32.881132, -117.237639);
+    private static final LatLng RIMAC = new LatLng(32.887298, -117.239616);
+    // Used for testing to create route based on ArrayList
     private ArrayList<LatLng> route = new ArrayList<>();
+    // Route object
     private Route newRoute;
+    private Polyline currentDisplayed;
 
     // Used to set camera position
     private static CameraPosition cameraPosition;
 
-    /*private GoogleApiClient mGoogleApiClient;
-    public static final String TAG = MapsActivity.class.getSimpleName();
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest mLocationRequest;*/
 
     private static RouteTracker GPS;
 
@@ -50,26 +44,18 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         // Display map
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-        // Create the test line from Center to Geisel
-        route.add(UCSD);
-        route.add(GEISEL);
-        newRoute = new Route(route);
-        mMap.addPolyline(newRoute.getRoute());
 
-        /*
-        // Create new GoogleApiClient to use LocationServices API
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        // Button used to test tracking
+        final Button button = (Button) findViewById(R.id.btnSurrey);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
-        // Create the LocationRequest object
-        mLocationRequest = LocationRequest.create()
-                .setPriority( LocationRequest.PRIORITY_HIGH_ACCURACY )
-                .setInterval( 10 * 10000 ) // 10 seconds, in milliseconds
-                .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
-                */
+                if(GPS.tracking == false)
+                    GPS.startGPSTrack();
+                else
+                    GPS.stopGPSTrack();
+            }
+        });
 
         GPS = new RouteTracker(this, this);
     }
@@ -79,7 +65,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded(); // for map
-        //mGoogleApiClient.connect(); // for GPS
         RouteTracker.onResume();
     }
 
@@ -87,10 +72,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     @Override
     protected void onPause() {
         super.onPause();
-        /*if( mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this );
-            mGoogleApiClient.disconnect();
-        }*/
         GPS.onPause();
     }
 
@@ -148,65 +129,36 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        route.add(latLng); // Save the first point
 
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(currentLatitude, currentLongitude)).title("Current Location"));
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
-                .title("I am here!");
+                .title("You are here!");
+
         mMap.addMarker(options);
     }
 
-    /*
-    // for GPS location
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if( connectionResult.hasResolution() ) {
-            try {
-                // Start an Activity that tries to resolve error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST );
-            } catch ( IntentSender.SendIntentException e ) {
-                e.printStackTrace();
-            }
+    public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
+        for(int i = 0; i < Lat.size(); ++i) {
+            route.add(new LatLng(Lat.get(i), Lng.get(i)));
+        }
+        newRoute = new Route(route);
+        mMap.addPolyline(newRoute.drawRoute());
+    }
+
+
+    @Override
+    public void updateRoutePts(Location location) {
+        double currentLatitude = location.getLatitude();
+        double currentLongitude = location.getLongitude();
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        if(currentDisplayed != null) {
+            newRoute.addToRoute(currentDisplayed, latLng);
         } else {
-            Log.i(TAG, "Location services connection failed with code " +
-                connectionResult.getErrorCode() );
+            route.add(latLng);
+            newRoute = new Route(route);
+            currentDisplayed = mMap.addPolyline(newRoute.drawRoute());
         }
     }
-
-    // for GPS location
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Location services connected.");
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if( location == null ) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
-        }
-        else {
-            handleNewLocation(location);
-        }
-    }
-
-    // for GPS location
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i( TAG, "Location services suspended. Please reconnect." );
-    }
-
-    // for GPS location
-    private void handleNewLocation( Location location ) {
-        Log.d( TAG, location.toString() );
-        double currentLat = location.getLatitude();
-        double currentLng = location.getLongitude();
-        LatLng currentPos = new LatLng( currentLat, currentLng );
-        MarkerOptions options = new MarkerOptions().position(currentPos).title("HERE!");
-        mMap.addMarker(options);
-    }
-
-    // for GPS location
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation( location );
-    }
-    */
 }

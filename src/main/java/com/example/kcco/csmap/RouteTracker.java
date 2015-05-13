@@ -12,28 +12,39 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 
 /**
  * Created by jason on 5/11/15.
+ * This is the MapsActivity. Everything that controls what happens on the map would go here.
  */
 public class RouteTracker implements
-            GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,
-            LocationListener {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
+    // Interface for to do callback from RouteTracker ie updating gps points
     public interface LocationCallBack {
         void handleNewLocation(Location location);
+        void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng);
+        void updateRoutePts(Location location);
     }
 
-    private static GoogleApiClient mGoogleApiClient;
+    private static GoogleApiClient mGoogleApiClient; // Google Services API
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
     private LocationRequest mLocationRequest; // For GPS
-    private Context mContext;
-    private LocationCallBack mLocationCallBack;
+    private Context mContext; //
+    private LocationCallBack mLocationCallBack; // Callback
+
+    // These ArrayLists will save the lat and lng of the collected points to be passed into route.java or database
+    private ArrayList<Double> trackedLocLat = new ArrayList<>();
+    private ArrayList<Double> trackedLocLng = new ArrayList<>();
+
+    public boolean tracking = false;
 
     public RouteTracker(Context context, LocationCallBack callback) {
         mContext = context;
@@ -48,6 +59,8 @@ public class RouteTracker implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval( 10 * 10000 ) // 10 seconds, in milliseconds
                 .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
+        //.setSmallestDisplacement(3); // minimum 3 meters per update
+
     }
 
     @Override
@@ -65,12 +78,15 @@ public class RouteTracker implements
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i( TAG, "Location services suspended. Please reconnect." );
+        Log.i(TAG, "Location services suspended. Please reconnect.");
     }
 
     @Override
     public void onLocationChanged(Location location) {
         mLocationCallBack.handleNewLocation(location);
+        if( tracking == true ) {
+            mLocationCallBack.updateRoutePts(location); // keeps updating the points
+        }
     }
 
     @Override
@@ -100,7 +116,21 @@ public class RouteTracker implements
         }
     }
 
+    // Starts receiving location updates
     public void startGPSTrack() {
-
+        tracking = true;
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
     }
+
+    // Stops receiving real time location updates
+    public void stopGPSTrack() {
+        tracking = false;
+        if(mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+        //mLocationCallBack.plotNewRoute(trackedLocLat, trackedLocLng);
+        //trackedLocLat = new ArrayList<>();
+        //trackedLocLng = new ArrayList<>();
+    }
+
 }
