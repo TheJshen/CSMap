@@ -60,9 +60,9 @@ public class RouteTracker implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval( 100 ) //  in milliseconds
-                .setFastestInterval( 50  ) // in milliseconds
-                .setMaxWaitTime( 100 );
+                .setInterval( 50 ) //  in milliseconds
+                .setFastestInterval( 25  ) // in milliseconds
+                .setMaxWaitTime( 75 );
                 //.setSmallestDisplacement(3); // minimum 3 meters per update
 
     }

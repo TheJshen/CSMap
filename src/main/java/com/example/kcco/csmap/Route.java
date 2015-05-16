@@ -30,6 +30,15 @@ public class Route {
         routePts = points;
     }
 
+    public Route( ArrayList<Double> lat, ArrayList<Double> lng ) {
+        routePts = new ArrayList<LatLng>();
+        for(int i = 0; i < lat.size(); i++ ) {
+            LatLng newCoord = new LatLng( lat.get(i), lng.get(i) );
+            routePts.add( newCoord );
+        }
+    }
+
+
     // Returns PolyLineOptions to be added to the google map
     public PolylineOptions drawRoute() {
         return new PolylineOptions()

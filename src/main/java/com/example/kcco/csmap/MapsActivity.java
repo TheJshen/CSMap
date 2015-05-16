@@ -158,7 +158,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         //LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        pointUpdateCounter++;
+        pointUpdateCounter++;//
         // Calculate the average of 5 points
         if( pointUpdateCounter == POINTS_PER_AVERAGE ) {
             latAvg += currentLatitude;
@@ -174,6 +174,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
                 newRoute = new Route(route);
                 currentDisplayed = mMap.addPolyline(newRoute.drawRoute());
             }
+            latAvg = lngAvg = 0;
         }
         else {
             latAvg += currentLatitude;
