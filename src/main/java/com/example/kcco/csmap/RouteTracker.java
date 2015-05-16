@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -24,6 +25,8 @@ public class RouteTracker implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+
 
     // Interface for to do callback from RouteTracker ie updating gps points
     public interface LocationCallBack {
@@ -57,7 +60,7 @@ public class RouteTracker implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval( 10 * 10000 ) // 10 seconds, in milliseconds
+                .setInterval( 5 * 10000 ) // 10 seconds, in milliseconds
                 .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
         //.setSmallestDisplacement(3); // minimum 3 meters per update
 
@@ -83,10 +86,11 @@ public class RouteTracker implements
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocationCallBack.handleNewLocation(location);
-        if( tracking == true ) {
+        //mLocationCallBack.handleNewLocation(location);
+        //if( tracking == true ) {
             mLocationCallBack.updateRoutePts(location); // keeps updating the points
-        }
+            Log.d("ok", "some message");
+        //}
     }
 
     @Override
@@ -111,26 +115,26 @@ public class RouteTracker implements
 
     public void onPause() {
         if(mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
+            //LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
     }
 
     // Starts receiving location updates
     public void startGPSTrack() {
-        tracking = true;
+        //tracking = true;
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
     }
 
     // Stops receiving real time location updates
     public void stopGPSTrack() {
-        tracking = false;
+        //tracking = false;
         if(mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
-        //mLocationCallBack.plotNewRoute(trackedLocLat, trackedLocLng);
-        //trackedLocLat = new ArrayList<>();
-        //trackedLocLng = new ArrayList<>();
+        mLocationCallBack.plotNewRoute(trackedLocLat, trackedLocLng);
+        trackedLocLat = new ArrayList<>();
+        trackedLocLng = new ArrayList<>();
     }
 
 }
