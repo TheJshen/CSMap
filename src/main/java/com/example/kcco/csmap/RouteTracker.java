@@ -36,12 +36,12 @@ public class RouteTracker implements
     }
 
     private static GoogleApiClient mGoogleApiClient; // Google Services API
+    private LocationRequest mLocationRequest; // For GPS
+    private LocationCallBack mLocationCallBack; // Callback
+    private Context mContext; //
+
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-
-    private LocationRequest mLocationRequest; // For GPS
-    private Context mContext; //
-    private LocationCallBack mLocationCallBack; // Callback
 
     // These ArrayLists will save the lat and lng of the collected points to be passed into route.java or database
     private ArrayList<Double> trackedLocLat = new ArrayList<>();
@@ -60,8 +60,8 @@ public class RouteTracker implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval( 5 * 10000 ) // 10 seconds, in milliseconds
-                .setFastestInterval( 1 * 1000 ); // 1 second, in milliseconds
+                .setInterval( 5 * 10000 ) // 5 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
         //.setSmallestDisplacement(3); // minimum 3 meters per update
 
     }
@@ -69,9 +69,9 @@ public class RouteTracker implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Location services connected.");
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        if( location == null ) {
+            if( location == null ) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
         }
         else {
@@ -116,7 +116,7 @@ public class RouteTracker implements
     public void onPause() {
         if(mGoogleApiClient.isConnected()) {
             //LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
+            //mGoogleApiClient.disconnect(); // Do not disconnect so it will keep tracking the background
         }
     }
 

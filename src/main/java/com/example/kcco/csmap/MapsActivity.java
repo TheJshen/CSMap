@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.Polyline;
 
 public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
 
+    private static final int POINTS_PER_AVERAGE = 5;
     public GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     // Used for testing the route lines
@@ -28,6 +29,10 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     private static final LatLng RIMAC = new LatLng(32.887298, -117.239616);
     // Used for testing to create route based on ArrayList
     private ArrayList<LatLng> route = new ArrayList<>();
+
+    // For averaging points
+    private int pointUpdateCounter = 0;
+    private double latAvg=0, lngAvg=0;
     // Route object
     private Route newRoute;
     private Polyline currentDisplayed;
@@ -152,13 +157,27 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     public void updateRoutePts(Location location) {
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        if(currentDisplayed != null) {
-            newRoute.addToRoute(currentDisplayed, latLng);
-        } else {
-            route.add(latLng);
-            newRoute = new Route(route);
-            currentDisplayed = mMap.addPolyline(newRoute.drawRoute());
+        //LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        pointUpdateCounter++;
+        // Calculate the average of 5 points
+        if( pointUpdateCounter == POINTS_PER_AVERAGE ) {
+            latAvg += currentLatitude;
+            lngAvg += currentLongitude;
+            latAvg /= POINTS_PER_AVERAGE;
+            lngAvg /= POINTS_PER_AVERAGE;
+            pointUpdateCounter = 0; // resets counter
+            LatLng latLng = new LatLng(latAvg, lngAvg);
+            if(currentDisplayed != null) {
+                newRoute.addToRoute(currentDisplayed, latLng);
+            } else {
+                route.add(latLng);
+                newRoute = new Route(route);
+                currentDisplayed = mMap.addPolyline(newRoute.drawRoute());
+            }
+        }
+        else {
+            latAvg += currentLatitude;
+            lngAvg += currentLongitude;
         }
     }
 }
