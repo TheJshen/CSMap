@@ -32,11 +32,14 @@ public class ParseConstant {
     public static final String ROUTES_ENDLOC = "endLoc";
     public static final String ROUTES_CREATEDBY = "createBy";
     public static final String ROUTES_TIMESPENT = "timeSpent";
+    public static final String ROUTES_TRANSPORT = "transport";
 
-    //These are column (key) names for Parse Route# Object
-    public static final String ROUTE_NUM_INDEX = "index";
-    public static final String ROUTE_NUM_X = "x";
-    public static final String ROUTE_NUM_Y = "y";
+    //These are column (key) names for Parse SubRoute Object
+    public static final String SUBROUTE = "SubRoute";
+    public static final String SUBROUTE_ROUTE_ID = "routeId";
+    public static final String SUBROUTE_NUM_INDEX = "index";
+    public static final String SUBROUTE_NUM_X = "x";
+    public static final String SUBROUTE_NUM_Y = "y";
 
     //These are column (key names for Parse PossibleEdges Objects
     //All three tables share the same columns name
@@ -45,6 +48,7 @@ public class ParseConstant {
     public static final String POSSIBLE_Y1 = "y1";
     public static final String POSSIBLE_X2 = "x2";
     public static final String POSSIBLE_Y2 = "y2";
+    public static final String POSSIBLE_TRANSPORT = "transport";
     public static final String POSSIBLE_BLOCKED = "blocked";
     public static final String POSSIBLE_REASON = "reason";
 
@@ -79,7 +83,8 @@ public class ParseConstant {
     public static final String USER = "_User";
     public static final String USER_USERNAME = "username";
     public static final String USER_EMAIL = "email";
-    public static final String USER_PASSWORD = "password";
+    //Parse does not allow to get to the password
+    //public static final String USER_PASSWORD = "password";
     public static final String USER_NAME = "fullName";
     public static final String USER_USER_ID = "userId";
     public static final String USER_PHONE = "phone";
@@ -101,5 +106,8 @@ public class ParseConstant {
     public static final String HISTORY_ROUTE_ID = "routeId";
     public static final String HISTORY_USER_ID = "userId";
     public static final String HISTORY_CREATED_AT = "createdAt";
+
+
+
 
 }
