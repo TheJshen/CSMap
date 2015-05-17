@@ -1,5 +1,8 @@
 package com.example.kcco.csmap.DAO;
 
+import android.app.Activity;
+
+import com.parse.Parse;
 import com.parse.ParseObject;
 
 /**
@@ -107,7 +110,9 @@ public class ParseConstant {
     public static final String HISTORY_USER_ID = "userId";
     public static final String HISTORY_CREATED_AT = "createdAt";
 
-
+    public static void initial(Activity activity){
+        Parse.initialize(activity, APP_ID, CLINT_ID);
+    }
 
 
 }

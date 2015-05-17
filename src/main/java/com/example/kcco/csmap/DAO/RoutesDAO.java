@@ -334,13 +334,13 @@ public class RoutesDAO {
 
     /* Name: searchAllRoutes (not tested)
      * Describe:
-     *      it will search all routes with given start and end location
+     *      it will search all routes (id) with given start and end location
      * Parameter:
      *      String strLoc: the search parameter
      *      String endLoc: the search parameter
      *      Activity activity: the activity calls this function, needed for exception
     * Return:
-    *      ArrayList<RoutesDAO> list if any match; else null.
+    *      int[] routeId if any match; else null.
     */
     public static int[] searchAllRoutes(String strLoc, String endLoc, final Activity activity) {
         //define local variable(s) here
@@ -380,13 +380,13 @@ public class RoutesDAO {
 
     /* Name: searchDestination (not tested)
      * Describe:
-     *      it will search all routes with given start and end location
+     *      it will tell if the given place exists or not
      * Parameter:
      *      String strLoc: the search parameter
      *      String endLoc: the search parameter
      *      Activity activity: the activity calls this function, needed for exception
     * Return:
-    *      ArrayList<RoutesDAO> list if any match; else null.
+    *      true if any match; else false.
     */
     public static boolean searchDestination(String endLoc, final Activity activity) {
         //define local variable(s) here
@@ -414,6 +414,45 @@ public class RoutesDAO {
 
         return false;
     }
+
+    /* Name: searchClosestPlace (not tested)
+     * Describe:
+     *      it will search the closest places with given location and distance
+     * Parameter:
+     *      double x: the search parameter
+     *      double y: the search parameter
+     *      double distance: the search parameter
+     *      Activity activity: the activity calls this function, needed for exception
+    * Return:
+    *      ArrayList<RoutesDAO> list if any match; else null.
+    */
+    public static boolean searchClosetestPlace(String endLoc, final Activity activity) {
+        //define local variable(s) here
+        ArrayList<ParseObject> results = null;
+
+        //query to fill out all the search requirement
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
+        query.whereEqualTo(ParseConstant.PLACES_NAME, endLoc);
+
+        try {
+            results = (ArrayList<ParseObject>) query.find();
+        }
+        catch(ParseException e) {
+            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        //There has match cases in User table.
+        if( results != null && results.size() != 0){
+            //This part is debug purpose to show all results.
+            Log.d("RoutesDAO", "searchDestination(endLoc) return boolean, yes ");
+
+            //Return result for the calling function.
+            return true;
+        }
+
+        return false;
+    }
+
 
 
 
