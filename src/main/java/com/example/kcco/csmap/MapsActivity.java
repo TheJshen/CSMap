@@ -72,7 +72,9 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Log.v("Listener", "Tapped the " + marker.getTitle() + " info window Gary");
+
                 Intent nextScreen = new Intent(MapsActivity.this, ClassroomInfoActivity.class);
+                nextScreen.putExtra("BuildingName", marker.getTitle());
                 startActivityForResult(nextScreen, 0);
             }
         });
