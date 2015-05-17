@@ -7,6 +7,6 @@
     tools:context="com.example.kcco.csmap.ClassroomInfoActivity">
 
     <TextView android:text="Hello Classrooms" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" android:id="@+id/text"/>
 
 </RelativeLayout>

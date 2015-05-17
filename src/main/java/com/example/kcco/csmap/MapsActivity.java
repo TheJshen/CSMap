@@ -77,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             }
         });
 
-        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings) {
+        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
             mMap.addMarker(new MarkerOptions()
                             //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.garyp))

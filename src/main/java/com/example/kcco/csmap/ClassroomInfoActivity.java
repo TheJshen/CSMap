@@ -4,6 +4,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class ClassroomInfoActivity extends ActionBarActivity {
@@ -11,7 +13,10 @@ public class ClassroomInfoActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_classroom_info);
+
+        ((TextView)findViewById(R.id.text)).setText("This works!");
     }
 
     @Override
