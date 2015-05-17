@@ -2,9 +2,11 @@ package com.example.kcco.csmap;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -12,8 +14,10 @@ import android.widget.Button;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
@@ -40,7 +44,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     // Used to set camera position
     private static CameraPosition cameraPosition;
 
-
     private static RouteTracker GPS;
 
     @Override
@@ -64,7 +67,26 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
 
         GPS = new RouteTracker(this, this);
 
-        new BuildingMarker(mMap);
+        // Set up building markers
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Log.v("Listener", "Tapped the " + marker.getTitle() + " info window Gary");
+                Intent nextScreen = new Intent(MapsActivity.this, ClassroomInfoActivity.class);
+                startActivityForResult(nextScreen, 0);
+            }
+        });
+
+        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings) {
+            mMap.addMarker(new MarkerOptions()
+                            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.garyp))
+                            .position(building.getPosition())
+                            .title(building.getTitle())
+                            .snippet(building.getSnippet())
+            );
+        }
+
     }
 
     // When app resumes from pause
