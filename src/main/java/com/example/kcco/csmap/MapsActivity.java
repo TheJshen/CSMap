@@ -63,6 +63,8 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         });
 
         GPS = new RouteTracker(this, this);
+
+        new BuildingMarker(mMap);
     }
 
     // When app resumes from pause
