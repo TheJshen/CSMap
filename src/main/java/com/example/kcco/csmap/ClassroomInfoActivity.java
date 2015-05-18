@@ -125,7 +125,7 @@ public class ClassroomInfoActivity extends ActionBarActivity {
         thisBuilding.addClass("214", "CSE 141 - Intro/Computer Architecture", "MWF", "1:00p-1:50p");
         //The stuff above is temporary to test functionality
 
-        ((TextView) findViewById(R.id.text)).setText(thisBuilding.toString());
+        ((TextView) findViewById(R.id.classroom_info_text)).setText(thisBuilding.toString());
     }
 
     @Override

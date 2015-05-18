@@ -55,11 +55,11 @@ public class WeekdayTimetable {
 		int endIdx = timeToIdx(endTime);
 		
 		for(int i = startIdx; i < endIdx; ++i) {
-			if(days.indexOf("M") != -1)  this.monday[i] = classTitle;
-			if(days.indexOf("Tu") != -1) this.tuesday[i] = classTitle;
-			if(days.indexOf("W") != -1)  this.wednesday[i] = classTitle;
-			if(days.indexOf("Th") != -1) this.thursday[i] = classTitle;
-			if(days.indexOf("F") != -1)  this.friday[i] = classTitle;
+			if(days.contains("M"))  this.monday[i] = classTitle;
+			if(days.contains("Tu")) this.tuesday[i] = classTitle;
+			if(days.contains("W"))  this.wednesday[i] = classTitle;
+			if(days.contains("Th")) this.thursday[i] = classTitle;
+			if(days.contains("F"))  this.friday[i] = classTitle;
 		}
 	}
 	

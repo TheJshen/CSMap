@@ -75,14 +75,14 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
 
                 Intent nextScreen = new Intent(MapsActivity.this, ClassroomInfoActivity.class);
                 nextScreen.putExtra("BuildingName", marker.getTitle());
-                startActivityForResult(nextScreen, 0);
+                startActivity(nextScreen);
             }
         });
 
         for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
             mMap.addMarker(new MarkerOptions()
                             //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.garyp))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.gary_pointer))
                             .position(building.getPosition())
                             .title(building.getTitle())
                             .snippet(building.getSnippet())
