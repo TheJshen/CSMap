@@ -5,4 +5,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Default (Error) Strings for views -->
+    <string name="title_default">TITLE HERE</string>
+    <string name="content_default">CONTENT HERE</string>
 </resources>
