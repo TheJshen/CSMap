@@ -54,7 +54,7 @@ public class Route {
     public PolylineOptions drawRoute() {
         return new PolylineOptions()
                 .addAll(routePts)
-                .width(5)
+                .width(10)
                 .color(Color.BLUE);
     }
 

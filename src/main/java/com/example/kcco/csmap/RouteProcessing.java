@@ -92,5 +92,39 @@ public class RouteProcessing {
 
     }
 
-}
+
+
+    /**TODO: Method that will take a current location and give the best routes to the destination
+     * Up to whoever wants to work on it.
+     * Implementation should go something like this:
+     *      find all the paths to the destination, with that find the closest coordinate to the
+     *      current location, have a certain threshold. Looking through the individual coordinate
+     *      arrays of the routes might be the difficult thing to figure out.
+     *
+     */
+    public void findClosestRoute()
+    {
+
+    }
+
+    /** TODO: Method that will take an inputted route and use DAO's to get it into the data base
+     * Might need a helper method to identify similar routes and not duplicate
+     *
+     */
+    public void uploadNewRoute()
+    {
+
+    }
+
+
+    /**
+     * TODO Method to use the DAO and get the different RouteIds associated with the end and
+     * starting points
+     */
+    public ArrayList<Integer> findRoutes( String start, String destination, int transport)
+    {
+        return null;
+    }
+
+} // END OF FILE
 

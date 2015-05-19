@@ -22,6 +22,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
 
+/**TODO: Need to get the map to follow the user
+ * TODO: Get the navigation layer to show the users location currently
+ * TODO: Have a route be able to inputted into the data base
+ */
+
+
+
 public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
 
     private static final int POINTS_PER_AVERAGE = 5;
@@ -130,7 +137,9 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
+                mMap.setMyLocationEnabled(true);
                 setUpMap();
+
             }
         }
     }
@@ -144,11 +153,15 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UCSD, 19));
         //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
+            /*TODORouteTracker tmep = new RouteTracker(this, this);
+            Location myLocation =  tmep.getPreviousLocation();
+            LatLng firstLoc = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+            */
+        //LatLng first = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
         // Sets the camera position to cameraPosition
         cameraPosition = new CameraPosition.Builder()
                 .target(UCSD)      // Sets the center of the map to Mountain View
-                .zoom(19)                   // Sets the zoom
+                .zoom(15)                   // Sets the zoom
                 .bearing(0)                // Sets the orientation of the camera to North
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
@@ -162,12 +175,19 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
         route.add(latLng); // Save the first point
+        cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
+                .zoom(13)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-        MarkerOptions options = new MarkerOptions()
+        /*MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .title("You are here!");
 
-        mMap.addMarker(options);
+        mMap.addMarker(options);*/
     }
 
     @Override
