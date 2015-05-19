@@ -2,6 +2,10 @@ package com.example.kcco.csmap;
 
 /**
  * Created by jason on 5/6/15.
+ *
+ * Last Edit:
+ *              Luis 5/18/15
+ *
  */
 
 import android.graphics.Color;
@@ -30,6 +34,13 @@ public class Route {
         routePts = points;
     }
 
+/*    public Route( ArrayList<LatLng> points, String created_by, int routeT)
+    {
+        routePts = points;
+        createdBy = created_by;
+        routeTime = routeT;
+    }*/
+
     public Route( ArrayList<Double> lat, ArrayList<Double> lng ) {
         routePts = new ArrayList<LatLng>();
         for(int i = 0; i < lat.size(); i++ ) {
@@ -47,9 +58,12 @@ public class Route {
                 .color(Color.BLUE);
     }
 
+
+
     // Appends another point onto the route. Used for live tracking
     public void addToRoute(Polyline route, LatLng lastPoint) {
         routePts.add(lastPoint); // append a point to the route already displayed
         route.setPoints(routePts); //
     }
+
 }

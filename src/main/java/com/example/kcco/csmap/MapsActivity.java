@@ -31,6 +31,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
     private static final LatLng GEISEL = new LatLng(32.881132, -117.237639);
     private static final LatLng RIMAC = new LatLng(32.887298, -117.239616);
+
     // Used for testing to create route based on ArrayList
     private ArrayList<LatLng> route = new ArrayList<>();
 
@@ -176,6 +177,15 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         }
         newRoute = new Route(route);
         mMap.addPolyline(newRoute.drawRoute());
+    }
+
+    public void plottingRecommendations(ArrayList<Integer> inputIDs)
+    {
+        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(inputIDs, this);
+        for( int index = 0 ; index < bestRoutes.size() ; index++)
+        {
+            mMap.addPolyline(bestRoutes.get(index).drawRoute());
+        }
     }
 
 
