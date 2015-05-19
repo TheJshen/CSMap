@@ -16,7 +16,7 @@ public class MapsConstants {
         public MarkerDetails(double lat, double lng, String title) {
             this.position = new LatLng(lat,lng);
             this.title = title;
-            this.snippet = "This happens to be " + this.title;
+            this.snippet = "Click here to get classroom schedule information";
         }
 
         public LatLng getPosition() { return this.position; }

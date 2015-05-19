@@ -117,7 +117,7 @@ public class WeekdayTimetable {
 	 * @author David Luu
 	 */
 	private String toStringForDay (String day, String[] dayArr) {
-		String str = "  " + day + ":";
+		String str = "\t" + day + ":";
 		boolean first = true;
 		boolean tracking = false;
 		String currName = "";
@@ -136,7 +136,7 @@ public class WeekdayTimetable {
 				}
 				tracking = true;
 				currName = dayArr[i];
-				str += "    " + dayArr[i] + " -- " + idxToTime(i) + "-";
+				str += "\t\t" + dayArr[i] + " -- " + idxToTime(i) + "-";
 			}
 			//End of period of occupancy
 			if(tracking && dayArr[i].equals("")) {
@@ -144,7 +144,7 @@ public class WeekdayTimetable {
 				str += idxToTime(i) + '\n';
 			}
 		}
-		
+
 		return str;
 	}
 	

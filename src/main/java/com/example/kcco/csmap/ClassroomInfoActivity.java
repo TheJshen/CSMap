@@ -17,10 +17,12 @@ public class ClassroomInfoActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_classroom_info);
 
+        //Get the name of the selected building
+        String buildingName = (String) getIntent().getExtras().get("BuildingName");
+
         //TODO: Get info from parse
 
         //The stuff below is temporary to test functionality
-        String buildingName = (String) getIntent().getExtras().get("BuildingName");
         UCSDBuilding thisBuilding = new UCSDBuilding(buildingName);
 
         thisBuilding.addClass("217B", "BENG 168 - Biomolecular Engineering", "M", "12:00p-12:50p");
