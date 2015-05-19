@@ -332,6 +332,45 @@ public class RoutesDAO {
         return null;
     }
 
+    /* Name: searchARoute (not tested)
+     * Describe:
+     *      it will search a route with given routeId
+     * Parameter:
+     *      int routeId: the search parameter
+     *      Activity activity: the activity calls this function, needed for exception
+    * Return:
+    *      RouteDAO route if any match; else null.
+    */
+    public static RoutesDAO searchARoute(int routeId, final Activity activity) {
+        //define local variable(s) here
+        ArrayList<ParseObject> results = null;
+        RoutesDAO route;
+
+        //query to fill out all the search requirement
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.ROUTES);
+        query.whereEqualTo(ParseConstant.ROUTES_ROUTE_ID, routeId);
+
+        try {
+            results = (ArrayList<ParseObject>) query.find();
+        }
+        catch(ParseException e) {
+            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        //There has match cases in User table.
+        if( results != null && results.size() != 0){
+            route = new RoutesDAO(results.get(0), activity);
+
+            //This part is debug purpose to show all results.
+            Log.d("RoutesDAO", "searchARoute(strLoc, endLoc) return RouteDAO " + route.getRouteId());
+
+            //Return result for the calling function.
+            return route;
+        }
+
+        return null;
+    }
+
     /* Name: searchAllRoutes (not tested)
      * Describe:
      *      it will search all routes (id) with given start and end location
@@ -416,23 +455,39 @@ public class RoutesDAO {
     }
 
     /* Name: searchClosestPlace (not tested)
-     * Describe:
-     *      it will search the closest places with given location and distance
-     * Parameter:
-     *      double x: the search parameter
-     *      double y: the search parameter
-     *      double distance: the search parameter
-     *      Activity activity: the activity calls this function, needed for exception
-    * Return:
-    *      ArrayList<RoutesDAO> list if any match; else null.
-    */
-    public static boolean searchClosetestPlace(String endLoc, final Activity activity) {
+    * Describe:
+    *      it will search the closest places with given location and distance
+    * Parameter:
+    *      double x: the search parameter
+    *      double y: the search parameter
+    *      double distance: the search parameter
+    *      Activity activity: the activity calls this function, needed for exception
+   * Return:
+   *      ArrayList<RoutesDAO> list if any match; else null.
+   */
+    public static String[] searchClosestPlace(double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
+        String []names;
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereEqualTo(ParseConstant.PLACES_NAME, endLoc);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X1, x + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X1, x - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y1, y + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y1, y - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X2, x + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X2, x - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y2, y + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y2, y - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X3, x + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X3, x - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y3, y + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y3, y - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X4, x + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X4, x - distance);
+        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y4, y + distance);
+        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y4, y - distance);
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -443,16 +498,20 @@ public class RoutesDAO {
 
         //There has match cases in User table.
         if( results != null && results.size() != 0){
+            names = new String[results.size()];
+            for( int i = 0; i < results.size(); i++){
+                BuildingDAO temp = new BuildingDAO(results.get(i), activity);
+                names[i] = temp.getName();
+            }
             //This part is debug purpose to show all results.
-            Log.d("RoutesDAO", "searchDestination(endLoc) return boolean, yes ");
+            Log.d("RoutesDAO", "searchClosestPlace(x,y,distance) return names[] " + names.length);
 
             //Return result for the calling function.
-            return true;
+            return names;
         }
 
-        return false;
+        return null;
     }
-
 
 
 
