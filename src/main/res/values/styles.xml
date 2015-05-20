@@ -84,6 +84,8 @@
         <item name="android:scrollbars">none</item>
         <item name="android:fillViewport">true</item>
         <item name="android:overScrollMode">never</item>
+
+        <item name="android:background">@color/button_color</item>
     </style>
 
     <style name="MainTheme.ButtonContainer">
@@ -93,9 +95,32 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
+    <style name="MainTheme.ButtonContainer.Left">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+
+        <item name="android:orientation">horizontal</item>
+
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="MainTheme.ButtonContainer.Right">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+
+        <item name="android:orientation">horizontal</item>
+
+        <item name="android:gravity">right</item>
+    </style>
+
     <style name="MainTheme.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">fill_parent</item>
+
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+        <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
 
         <item name="android:background">@drawable/button_option</item>
     </style>

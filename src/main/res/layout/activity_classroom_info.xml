@@ -17,7 +17,7 @@
         style="@style/MainTheme.ButtonScroller">
 
         <LinearLayout
-            style="@style/MainTheme.ButtonContainer">
+            style="@style/MainTheme.ButtonContainer.Left">
 
             <Button style="@style/MainTheme.Button" android:id="@+id/Button1" android:text="@string/button1"/>
             <Button style="@style/MainTheme.Button" android:id="@+id/Button2" android:text="@string/button2"/>

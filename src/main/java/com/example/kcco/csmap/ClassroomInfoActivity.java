@@ -51,17 +51,6 @@ public class ClassroomInfoActivity extends ActionBarActivity {
         */
         /* END TEST ADD TEXT */
 
-
-        /* TEST BUTTON */
-        Button button = (Button) findViewById(R.id.Button1);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.v("Listener", "Button Works");
-            }
-        });
-        /* END TEST BUTTON */
-
         /* TEST ADD BUTTONS */
         for(int i = 1; i <= 100; i++) {
             Button newButton = new Button(this);
@@ -78,6 +67,15 @@ public class ClassroomInfoActivity extends ActionBarActivity {
             );
             // i = 1 (0) is not a valid ID so it gets put in default location
             rlParams.addRule(RelativeLayout.BELOW, i - 1);
+
+            // Add the Listener for the Button
+            final int iF = i;
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.v("Listener", "Button Works " + iF);
+                }
+            });
 
             // Add new TextView to RelativeLayout
             ((RelativeLayout) findViewById(R.id.classroom_info_main)).addView(newButton,rlParams);
