@@ -5,6 +5,9 @@
             android:gravity="fill"/>
     </item>
     <item>
+        <color android:color="@color/main_color"></color>
+    </item>
+    <item>
         <bitmap android:src="@drawable/background_overlay"
             android:gravity="fill"/>
     </item>

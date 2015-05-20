@@ -32,12 +32,13 @@
     <!-- Main Display  -->
     <ScrollView
         android:layout_below="@+id/classroom_info_button"
-        style="@style/MainTheme.ScrollView">
+        style="@style/MainTheme.MainScrollView">
 
-        <TextView
-            android:id="@+id/classroom_info_text"
-            style="@style/MainTheme.MainDisplay"
-            android:text="@string/content_default"/>
+        <RelativeLayout
+            android:id="@+id/classroom_info_main"
+            style="@style/MainTheme.MainContainer.Button">
+
+        </RelativeLayout>
 
     </ScrollView>
 
