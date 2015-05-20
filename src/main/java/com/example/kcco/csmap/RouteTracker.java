@@ -138,7 +138,7 @@ public class RouteTracker implements
         trackedLocLng = new ArrayList<>();
     }
 
-
+    /*
     public Location getPreviousLocation()
     {
 
@@ -153,5 +153,5 @@ public class RouteTracker implements
 
 
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    }
+    }*/
 }
