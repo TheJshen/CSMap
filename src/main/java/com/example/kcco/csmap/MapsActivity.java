@@ -172,14 +172,14 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
         route.add(latLng); // Save the first point
-        cameraPosition = new CameraPosition.Builder()
+        /*cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
                 .zoom(13)                   // Sets the zoom
                 .bearing(0)                // Sets the orientation of the camera to North
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
+        */
         /*MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .title("You are here!");
