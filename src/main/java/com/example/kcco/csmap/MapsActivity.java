@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -79,8 +78,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Log.v("Listener", "Tapped the " + marker.getTitle() + " info window Gary");
-
                 Intent nextScreen = new Intent(MapsActivity.this, ClassroomInfoActivity.class);
                 nextScreen.putExtra("BuildingName", marker.getTitle());
                 startActivity(nextScreen);
@@ -90,7 +87,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
             mMap.addMarker(new MarkerOptions()
                             //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.gary_pointer))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
                             .position(building.getPosition())
                             .title(building.getTitle())
                             .snippet(building.getSnippet())

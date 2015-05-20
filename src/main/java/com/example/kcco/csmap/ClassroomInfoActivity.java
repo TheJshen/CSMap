@@ -6,7 +6,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Button;
+import android.util.Log;
 
 
 public class ClassroomInfoActivity extends ActionBarActivity {
@@ -25,7 +28,7 @@ public class ClassroomInfoActivity extends ActionBarActivity {
 
         //TODO: Get info from parse
 
-        //The stuff below is temporary to test functionality
+        /* TEST MAIN VIEW */
         UCSDBuilding thisBuilding = new UCSDBuilding(buildingName);
 
         thisBuilding.addClass("217B", "BENG 168 - Biomolecular Engineering", "M", "12:00p-12:50p");
@@ -128,9 +131,19 @@ public class ClassroomInfoActivity extends ActionBarActivity {
         thisBuilding.addClass("119", "CSE 140L - Digital Systems Laboratory", "F", "4:00p-4:50p");
         thisBuilding.addClass("119", "CSE 140L - Digital Systems Laboratory", "F", "5:00p-5:50p");
         thisBuilding.addClass("214", "CSE 141 - Intro/Computer Architecture", "MWF", "1:00p-1:50p");
-        //The stuff above is temporary to test functionality
 
         ((TextView) findViewById(R.id.classroom_info_text)).setText(thisBuilding.toString());
+        /* END TEST MAIN VIEW */
+
+        /* TEST BUTTON */
+        Button button = (Button) findViewById(R.id.Button1);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("Listener", "Button Works");
+            }
+        });
+        /* END TEST BUTTON */
     }
 
     @Override

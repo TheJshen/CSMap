@@ -5,7 +5,7 @@
             android:gravity="fill"/>
     </item>
     <item>
-        <bitmap android:src="@drawable/glass_layer"
+        <bitmap android:src="@drawable/background_overlay"
             android:gravity="fill"/>
     </item>
 </layer-list>

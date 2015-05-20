@@ -1,65 +1,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="com.example.kcco.csmap.ClassroomInfoActivity"
     android:id="@+id/activity_classroom_info"
-    android:background="@drawable/layerlist_test">
+    style="@style/LayoutContainerTheme">
 
+    <!-- Title Bar -->
     <TextView
         android:id="@+id/classroom_info_title"
-        style="@style/MainTheme.TitleBar"
-        >
-
+        style="@style/MainTheme.TitleBar">
     </TextView>
 
+    <!-- Button Bar -->
     <HorizontalScrollView
         android:id="@+id/classroom_info_button"
         android:layout_below="@id/classroom_info_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:fillViewport="true"
-        android:overScrollMode="never">
+        style="@style/MainTheme.ButtonScroller">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            style="@style/MainTheme.ButtonContainer">
 
-            <Button
-            style="@style/MainTheme.Button"
-            android:text="@string/button1"/>
-
-            <Button
-                style="@style/MainTheme.Button"
-                android:text="@string/button2"/>
-
-            <Button
-                style="@style/MainTheme.Button"
-                android:text="@string/button3"/>
-
-            <Button
-                style="@style/MainTheme.Button"
-                android:text="@string/button4"/>
-
-            <Button
-                style="@style/MainTheme.Button"
-                android:text="@string/button5"/>
+            <Button style="@style/MainTheme.Button" android:id="@+id/Button1" android:text="@string/button1"/>
+            <Button style="@style/MainTheme.Button" android:id="@+id/Button2" android:text="@string/button2"/>
+            <Button style="@style/MainTheme.Button" android:id="@+id/Button3" android:text="@string/button3"/>
+            <Button style="@style/MainTheme.Button" android:id="@+id/Button4" android:text="@string/button4"/>
+            <Button style="@style/MainTheme.Button" android:id="@+id/Button5" android:text="@string/button5"/>
 
         </LinearLayout>
 
     </HorizontalScrollView>
 
+    <!-- Main Display  -->
     <ScrollView
         android:layout_below="@+id/classroom_info_button"
-        style="@style/MainTheme.ScrollView"
-        >
+        style="@style/MainTheme.ScrollView">
 
         <TextView
             android:id="@+id/classroom_info_text"
             style="@style/MainTheme.MainDisplay"
-            android:text="SCHEDULE INFO HERE"/>
+            android:text="@string/content_default"/>
 
     </ScrollView>
 
