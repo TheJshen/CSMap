@@ -20,6 +20,9 @@ public class ClassroomInfoActivity extends ActionBarActivity {
         //Get the name of the selected building
         String buildingName = (String) getIntent().getExtras().get("BuildingName");
 
+        //Set title to the name of the building
+        ((TextView) findViewById(R.id.classroom_info_title)).setText(buildingName);
+
         //TODO: Get info from parse
 
         //The stuff below is temporary to test functionality
