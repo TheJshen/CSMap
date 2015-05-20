@@ -1,19 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.kcco.csmap.ClassroomInfoActivity"
-    android:id="@+id/activity_classroom_info"
+    tools:context="com.example.kcco.csmap.RoomAvailOptionsActivity"
+    android:id="@+id/activity_room_avail_options"
     style="@style/LayoutContainerTheme">
 
     <!-- Title Bar -->
     <TextView
-        android:id="@+id/classroom_info_title"
+        android:id="@+id/room_avail_options_title"
         style="@style/MainTheme.TitleBar">
     </TextView>
 
     <!-- Button Bar -->
     <HorizontalScrollView
-        android:id="@+id/classroom_info_button"
-        android:layout_below="@id/classroom_info_title"
+        android:id="@+id/room_avail_options_button"
+        android:layout_below="@id/room_avail_options_title"
         style="@style/MainTheme.ButtonScroller">
 
         <LinearLayout
@@ -31,12 +31,12 @@
 
     <!-- Main Display  -->
     <ScrollView
-        android:layout_below="@+id/classroom_info_button"
+        android:layout_below="@+id/room_avail_options_button"
         style="@style/MainTheme.MainScrollView">
 
         <RelativeLayout
-            android:id="@+id/classroom_info_main"
-            style="@style/MainTheme.MainContainer.Button">
+            android:id="@+id/room_avail_options_main"
+            style="@style/MainTheme.MainButton">
 
         </RelativeLayout>
 

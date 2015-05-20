@@ -1,0 +1,30 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.kcco.csmap.RoomAvailInfoActivity"
+    style="@style/LayoutContainerTheme">
+
+    <!-- Title Bar -->
+    <TextView
+        android:id="@+id/room_avail_info_title"
+        style="@style/MainTheme.TitleBar">
+    </TextView>
+
+    <!-- Main Display  -->
+    <ScrollView
+        android:layout_below="@+id/room_avail_info_title"
+        style="@style/MainTheme.MainScrollView">
+
+        <RelativeLayout
+            android:id="@+id/room_avail_info_main"
+            style="@style/MainTheme.MainButton">
+
+            <TextView
+                android:id="@+id/room_avail_info_main_text"
+                style="@style/MainTheme.MainText" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

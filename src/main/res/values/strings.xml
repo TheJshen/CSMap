@@ -16,4 +16,5 @@
     <string name="button3">Button3</string>
     <string name="button4">Button4</string>
     <string name="button5">Button5</string>
+    <string name="title_activity_room_avail_info">RoomAvailInfoActivity</string>
 </resources>

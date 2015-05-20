@@ -1,5 +1,7 @@
 package com.example.kcco.csmap.ClassroomSchedule;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -50,10 +52,25 @@ public class UCSDBuilding {
 			newC.addClass(courseTitle, days, timePeriod);
 		}
 	}
+
+
+	/**
+	 * Returns a list of the classrooms inside this building.
+	 * @return List containing the names of all classrooms inside this building
+	 * @author David Luu
+	 */
+	public ArrayList<String> listClassrooms() {
+		ArrayList<String> classroomNames = new ArrayList<String>();
+		for (UCSDClassroom classroom : classrooms.values()) {
+			classroomNames.add(name + " " + classroom.getRoomNumber());
+		}
+		Collections.sort(classroomNames);
+		return classroomNames;
+	}
 	
 	
 	/**
-	 * Returns the string representation of the UCSDClassroom.
+	 * Returns the string representation of the UCSDBuilding.
 	 * @return String representing the building object and its classrooms
 	 * @author David Luu
 	 */

@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent nextScreen = new Intent(MapsActivity.this, ClassroomInfoActivity.class);
+                Intent nextScreen = new Intent(MapsActivity.this, RoomAvailOptionsActivity.class);
                 nextScreen.putExtra("BuildingName", marker.getTitle());
                 startActivity(nextScreen);
             }

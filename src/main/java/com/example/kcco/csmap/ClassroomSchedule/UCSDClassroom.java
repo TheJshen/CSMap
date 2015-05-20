@@ -34,6 +34,16 @@ public class UCSDClassroom {
 	public void addClass(String className, String days, String time) {
 		roomSchedule.fillInTimePeriod(className, days, time);
 	}
+
+
+	/**
+	 * Returns the room number of this UCSDClassroom object.
+	 * @return The room number
+	 * @author David Luu
+	 */
+	public String getRoomNumber() {
+		return this.roomNumber;
+	}
 	
 	
 	/**
