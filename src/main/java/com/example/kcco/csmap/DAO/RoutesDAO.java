@@ -11,6 +11,7 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by KaChan on 5/16/2015.
@@ -154,6 +155,31 @@ public class RoutesDAO {
         }
     }
 
+    /* Name: createSubRoute (not tested)
+     * Describe:
+     *      This function is gathering all required data locally before it is
+     *      sent to Parse server. This can ensure all required data is filled
+     *      properly. All data should be VALID before pass to this function.
+     * Parameter:
+     *      int routeId: data required for column routeId
+     *      ArrayList<double> x: data required for column x
+     *      ArrayList<double> y: data required for column y
+     * Return:
+     *      int routeId: it is the next empty routeId
+     */
+    public void createSubRoute(int routeId, ArrayList<LatLng> location){
+        subRoutes = new ArrayList<ParseObject>();
+        for( int i = 0; i < location.size(); i++ ){
+            current = new ParseObject(ParseConstant.SUBROUTE);
+            setSubRouteId(routeId);
+            setSubRouteIndex(i);
+            setSubRouteX(location.get(i).latitude);
+            setSubRouteY(location.get(i).longitude);
+
+            subRoutes.add(current);
+        }
+    }
+
     /* Name: createPossibleEdge (not tested)
      * Describe:
      *      This function is gathering all required data locally before it is
@@ -174,7 +200,7 @@ public class RoutesDAO {
             setPossibleEdgeX1(x.get(i));
             setPossibleEdgeY1(y.get(i));
             setPossibleEdgeX2(x.get(i + 1));
-            setPossibleEdgeX2(y.get(i + 1));
+            setPossibleEdgeY2(y.get(i + 1));
             setPossibleEdgeReason("");
             setPossibleEdgeBlocked(false);
 
@@ -292,11 +318,13 @@ public class RoutesDAO {
      *      it will search all location in a given routeId
      * Parameter:
      *      int routeId: the search parameter.
+     *      int index: the search parameter.
+     *      boolean reversed: the order determination.
      *      Activity activity: the activity calls this function, needed for exception
     * Return:
     *      ArrayList<RoutesDAO> list if any match; else null.
     */
-    public static ArrayList<LatLng> searchSubRoutes(int routeId, final Activity activity) {
+    public static ArrayList<LatLng> searchSubRoutes(int routeId, int index, boolean reversed, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<LatLng> list = null;
@@ -304,7 +332,14 @@ public class RoutesDAO {
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.SUBROUTE);
         query.whereEqualTo(ParseConstant.SUBROUTE_ROUTE_ID, routeId);
-        query.addAscendingOrder(ParseConstant.SUBROUTE_NUM_INDEX);
+        if(reversed) {
+            query.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_INDEX, index);
+            query.orderByDescending(ParseConstant.SUBROUTE_NUM_INDEX);
+        }
+        else{
+            query.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_INDEX, index);
+            query.orderByAscending(ParseConstant.SUBROUTE_NUM_INDEX);
+        }
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -330,6 +365,32 @@ public class RoutesDAO {
         }
 
         return null;
+    }
+
+    /* Name: searchSubRoutes (not tested)
+     * Describe:
+     *      This is override function that default with 0 index and increasing order
+     * Parameter:
+     *      int routeId: the search parameter.
+     *      Activity activity: the activity calls this function, needed for exception
+    * Return:
+    *      ArrayList<RoutesDAO> list if any match; else null.
+    */
+    public static ArrayList<LatLng> searchSubRoutes(int routeId, final Activity activity) {
+        return searchSubRoutes(routeId, 0, false, activity);
+    }
+
+    /* Name: searchSubRoutes (not tested)
+     * Describe:
+     *      This is override function with RouteDAO that holds the information
+     * Parameter:
+     *      int routeId: the search parameter.
+     *      Activity activity: the activity calls this function, needed for exception
+    * Return:
+    *      ArrayList<RoutesDAO> list if any match; else null.
+    */
+    public static ArrayList<LatLng> searchSubRoutes(RoutesDAO thisRoute, boolean reversed, final Activity activity) {
+        return searchSubRoutes(thisRoute.getSubRouteId(), thisRoute.getSubRouteIndex(), reversed, activity);
     }
 
     /* Name: searchARoute (not tested)
@@ -416,6 +477,181 @@ public class RoutesDAO {
         return null;
     }
 
+    /* Name: searchCloseRoutesAsce (not tested)
+     * Describe:
+     *      it will search the route has END location is same as the destination, and
+     *      such routes have any vertices that are close to current location in range. It
+     *      will return a list of RoutesDAO to hold information for all result routes.
+     *      "Close" is close the current location, not the closest distance.
+     * Parameter:
+     *      ArrayList<Integer> routeIds: the search parameter
+     *      double x: the search parameter
+     *      double y: the search parameter.
+     *      double distance: the search parameter.
+     *      Activity activity: the activity calls this function, needed for exception
+     * Return:
+     *      ArrayList<RoutesDAO> routes if any match; else null.
+     */
+    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(String destination, double x, double y, double distance, final Activity activity) {
+        //define local variable(s) here
+        ArrayList<ParseObject> results = null;
+        ArrayList<RoutesDAO> routes;
+        RoutesDAO closestPoint;
+        double smallestDistance = distance * 2.0;
+        int closestIndex = 0;
+
+        int currentRouteId;
+        double currentDistance;
+
+        //query to fill out all the search requirement
+        //Querry for the start location same as destination in the Routes table
+        ParseQuery<ParseObject> endLoc =  ParseQuery.getQuery(ParseConstant.ROUTES);
+        endLoc.whereEqualTo(ParseConstant.ROUTES_ENDLOC, destination);
+
+        //Querry for the same routeId in the SubRoute within the given location range.
+        ParseQuery<ParseObject> endSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
+        endSubRoute.whereMatchesKeyInQuery(ParseConstant.SUBROUTE_ROUTE_ID, ParseConstant.ROUTES_ROUTE_ID, endLoc);
+        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
+        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
+        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
+        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
+        endSubRoute.orderByAscending(ParseConstant.SUBROUTE_NUM_INDEX);
+
+        try {
+            results = (ArrayList<ParseObject>) endSubRoute.find();
+        }
+        catch(ParseException e) {
+            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        //There has match cases in Routes and SubRoute Tables
+        if( results != null && results.size() != 0){
+            routes = new ArrayList<RoutesDAO>();
+            currentRouteId = results.get(0).getInt(ParseConstant.SUBROUTE_ROUTE_ID);
+
+            for( ParseObject obj: results ){
+                RoutesDAO temp = new RoutesDAO(obj, activity);
+                if( currentRouteId != temp.getRouteId() ){
+                    //add the previous RoutesDAO info before beginning the next new route.
+                    closestPoint = new RoutesDAO(activity);
+                    closestPoint.setSubRouteIndex(closestIndex);
+                    closestPoint.setSubRouteId(currentRouteId);
+                    routes.add(closestPoint);
+
+                    //reset to current info before next new route
+                    currentRouteId = temp.getRouteId();
+                    closestIndex = temp.getSubRouteIndex();
+                    smallestDistance = distance * 2.0;
+                }
+                currentDistance = getDistance(x, y, temp.getSubRouteX(), temp.getSubRouteY());
+                if( currentDistance < smallestDistance){
+                    closestIndex = temp.getSubRouteIndex();
+                    smallestDistance = currentDistance;
+                }
+            }
+
+            //add the last RoutesDAO with its information.
+            RoutesDAO newRoutes = new RoutesDAO(activity);
+            newRoutes.setSubRouteIndex(closestIndex);
+            newRoutes.setRouteId(currentRouteId);
+            routes.add(newRoutes);
+
+            //This part is debug purpose to show all results.
+            Log.d("RoutesDAO", "searchCloseRouteAsce(destination, x, y, distance) return # of RoutesDAO " + routes.size());
+
+            //Return result for the calling function.
+            return routes;
+        }
+        return null;
+    }
+
+    /* Name: searchCloseRoutesDesc (not tested)
+     * Describe:
+     *      it will search the route has START location is same as the destination, and
+     *      such routes have any vertices that are close to current location in range. It
+     *      will return a list of RoutesDAO to hold information for all result routes.
+     *      "Close" is close the current location, not the closest distance.
+     * Parameter:
+     *      ArrayList<Integer> routeIds: the search parameter
+     *      double x: the search parameter
+     *      double y: the search parameter.
+     *      double distance: the search parameter.
+     *      Activity activity: the activity calls this function, needed for exception
+     * Return:
+     *      ArrayList<RoutesDAO> routes if any match; else null.
+     */
+    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(String destination, double x, double y, double distance, final Activity activity) {
+        //define local variable(s) here
+        ArrayList<ParseObject> results = null;
+        ArrayList<RoutesDAO> routes;
+        RoutesDAO closestPoint;
+        double smallestDistance = distance * 2.0;
+        int closestIndex = 0;
+
+        int currentRouteId;
+        double currentDistance;
+
+        //query to fill out all the search requirement
+        //Querry for the start location same as destination in the Routes table
+        ParseQuery<ParseObject> startLoc =  ParseQuery.getQuery(ParseConstant.ROUTES);
+        startLoc.whereEqualTo(ParseConstant.ROUTES_STRLOC, destination);
+
+        //Querry for the same routeId in the SubRoute within the given location range.
+        ParseQuery<ParseObject> startSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
+        startSubRoute.whereMatchesKeyInQuery(ParseConstant.SUBROUTE_ROUTE_ID, ParseConstant.ROUTES_ROUTE_ID, startLoc);
+        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
+        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
+        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
+        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
+        startSubRoute.orderByDescending(ParseConstant.SUBROUTE_NUM_INDEX);
+
+        try {
+            results = (ArrayList<ParseObject>) startSubRoute.find();
+        }
+        catch(ParseException e) {
+            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        //There has match cases in Routes and SubRoute Tables
+        if( results != null && results.size() != 0){
+            routes = new ArrayList<RoutesDAO>();
+            currentRouteId = results.get(0).getInt(ParseConstant.SUBROUTE_ROUTE_ID);
+
+            for( ParseObject obj: results ){
+                RoutesDAO temp = new RoutesDAO(obj, activity);
+                if( currentRouteId != temp.getRouteId() ){
+                    //add the previous RoutesDAO info before beginning the next new route.
+                    closestPoint = new RoutesDAO(activity);
+                    closestPoint.setSubRouteIndex(closestIndex);
+                    closestPoint.setSubRouteId(currentRouteId);
+                    routes.add(closestPoint);
+
+                    //reset to current info before next new route
+                    currentRouteId = temp.getRouteId();
+                    closestIndex = temp.getSubRouteIndex();
+                    smallestDistance = distance * 2.0;
+                }
+                currentDistance = getDistance(x, y, temp.getSubRouteX(), temp.getSubRouteY());
+                if( currentDistance < smallestDistance){
+                    closestIndex = temp.getSubRouteIndex();
+                    smallestDistance = currentDistance;
+                }
+            }
+
+            //add the last RoutesDAO with its information.
+            RoutesDAO newRoutes = new RoutesDAO(activity);
+            newRoutes.setSubRouteIndex(closestIndex);
+            newRoutes.setRouteId(currentRouteId);
+            routes.add(newRoutes);
+
+            //This part is debug purpose to show all results.
+            Log.d("RoutesDAO", "searchCloseRouteDesc(destination, x, y, distance) return # of RoutesDAO " + routes.size());
+
+            //Return result for the calling function.
+            return routes;
+        }
+        return null;
+    }
 
     /* Name: searchDestination (not tested)
      * Describe:
@@ -424,9 +660,9 @@ public class RoutesDAO {
      *      String strLoc: the search parameter
      *      String endLoc: the search parameter
      *      Activity activity: the activity calls this function, needed for exception
-    * Return:
-    *      true if any match; else false.
-    */
+     * Return:
+     *      true if any match; else false.
+     */
     public static boolean searchDestination(String endLoc, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
@@ -462,13 +698,17 @@ public class RoutesDAO {
     *      double y: the search parameter
     *      double distance: the search parameter
     *      Activity activity: the activity calls this function, needed for exception
-   * Return:
-   *      ArrayList<RoutesDAO> list if any match; else null.
-   */
-    public static String[] searchClosestPlace(double x, double y, double distance, final Activity activity) {
+    * Return:
+    *      ArrayList<RoutesDAO> list if any match; else null.
+    */
+    public static String searchClosestPlace(double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
-        String []names;
+        String closestPlace = "";
+        double smallestDistance = distance * 2;
+        double currentDistance;
+        double dx;
+        double dy;
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
@@ -498,22 +738,59 @@ public class RoutesDAO {
 
         //There has match cases in User table.
         if( results != null && results.size() != 0){
-            names = new String[results.size()];
-            for( int i = 0; i < results.size(); i++){
-                BuildingDAO temp = new BuildingDAO(results.get(i), activity);
-                names[i] = temp.getName();
+
+            for( ParseObject obj: results){
+                BuildingDAO temp = new BuildingDAO(obj, activity);
+                //That is the location has four points different
+                if( temp.getX1() != temp.getX2() || temp.getX1() != temp.getX3() || temp.getX1() != temp.getX4() ||
+                        temp.getY1() != temp.getY2() || temp.getY1() != temp.getY3() || temp.getY1() != temp.getY4()){
+
+                    double tempDistance = 0.0;
+                    currentDistance = getDistance(x, y, temp.getX1(), temp.getY1());
+
+                    tempDistance = getDistance(x, y, temp.getX1(), temp.getY1());
+                    if (tempDistance < currentDistance)
+                        currentDistance = tempDistance;
+
+                    tempDistance = getDistance(x, y, temp.getX2(), temp.getY2());
+                    if (tempDistance < currentDistance)
+                        currentDistance = tempDistance;
+
+                    tempDistance =  getDistance(x, y, temp.getX3(), temp.getY3());
+                    if (tempDistance < currentDistance)
+                        currentDistance = tempDistance;
+
+                    tempDistance =  getDistance(x, y, temp.getX4(), temp.getY4());
+                    if (tempDistance < currentDistance)
+                        currentDistance = tempDistance;
+                }
+                //This is the location has all four points are the same
+                else{
+                    currentDistance = getDistance(x, y, temp.getX1(), temp.getY1());
+                }
+
+                if( currentDistance < smallestDistance ) {
+                    smallestDistance = currentDistance;
+                    closestPlace = temp.getName();
+                }
             }
+
             //This part is debug purpose to show all results.
-            Log.d("RoutesDAO", "searchClosestPlace(x,y,distance) return names[] " + names.length);
+            Log.d("RoutesDAO", "searchClosestPlace(x,y,distance) return place " + closestPlace);
 
             //Return result for the calling function.
-            return names;
+            return closestPlace;
         }
 
         return null;
     }
 
 
+    private static double getDistance(double x1, double y1, double x2, double y2){
+        double dx = x1 - x2;
+        double dy = y1 - y2;
+        return Math.sqrt( (dx*dx) + (dy*dy) );
+    }
 
 
 
