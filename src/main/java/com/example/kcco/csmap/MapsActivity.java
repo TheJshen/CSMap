@@ -61,16 +61,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
-        // Button used to log user out
-        final Button log_out = (Button) findViewById(R.id.logout);
-        log_out.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ParseUser.logOutInBackground();
-                Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
-                switchActivity(1);
-            }
-        });
-
         // Button used to test tracking
         final Button button = (Button) findViewById(R.id.btnSurrey);
         button.setOnClickListener(new View.OnClickListener() {
@@ -262,6 +252,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     }
 
     public void logout(View view){
+        Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
         if (UserDAO.isUserActive()){
             UserDAO.logOut(MapsActivity.this);
         }
