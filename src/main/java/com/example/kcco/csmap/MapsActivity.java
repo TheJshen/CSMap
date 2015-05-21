@@ -65,15 +65,10 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if(GPS.tracking == false) {
+                if(GPS.tracking == false)
                     GPS.startGPSTrack();
-                    button.setText("Tracking");
-                }
-                else {
+                else
                     GPS.stopGPSTrack();
-                    button.setText("Stop");
-
-                }
             }
         });
 
@@ -237,6 +232,25 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         else {
             latAvg += currentLatitude;
             lngAvg += currentLongitude;
+        }
+    }
+
+    public void switchActivity(int caseNumber) {
+        if (caseNumber == 1) {
+            Intent intent = new Intent(MapsActivity.this, DispatchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            MapsActivity.this.startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(MapsActivity.this, SignUporLogin.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            MapsActivity.this.startActivity(intent);
+        }
+    }
+
+    public void logout(View view){
+        if (UserDAO.isUserActive()){
+            UserDAO.logOut(MapsActivity.this);
         }
     }
 }
