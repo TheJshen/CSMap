@@ -65,10 +65,15 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if(GPS.tracking == false)
+                if(GPS.tracking == false) {
                     GPS.startGPSTrack();
-                else
+                    button.setText("Tracking");
+                }
+                else {
                     GPS.stopGPSTrack();
+                    button.setText("Stop");
+
+                }
             }
         });
 
