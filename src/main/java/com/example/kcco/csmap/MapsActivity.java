@@ -74,8 +74,10 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
                         currentDisplayed = null; // get rid of currentDispalyed
                     }
                 }
-                else
+                else {
                     GPS.stopGPSTrack();
+
+                }
             }
         });
 
@@ -251,6 +253,10 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         }
     }
 
+    /*  Button function logout
+     *  Button name: btnLogout
+     *  Describe: logout user and direct user into SignUpOrLogin.
+     */
     public void logout(View view){
         Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
         if (UserDAO.isUserActive()){
