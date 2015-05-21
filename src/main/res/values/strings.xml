@@ -17,6 +17,8 @@
     <string name="content_default">CONTENT HERE</string>
 
     <!-- Button Strings -->
+    <string name="main_login">Login</string>
+    <string name="main_register">Register</string>
     <string name="login_login">Log In</string>
     <string name="register_sign_up">Sign Up</string>
     <string name="button1">Button1</string>

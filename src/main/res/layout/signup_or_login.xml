@@ -9,16 +9,12 @@
 
     <Button
         android:id="@+id/signup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        android:background="@drawable/gradient_button_base" />
+        style="@style/LoginRegister.Button"
+        android:text="@string/main_register" />
 
     <Button
         android:id="@+id/login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:background="@drawable/gradient_button_base" />
+        style="@style/LoginRegister.Button"
+        android:text="@string/main_login" />
 
 </LinearLayout>
