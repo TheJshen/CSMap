@@ -250,6 +250,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     }
 
     public void logout(View view){
+        Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
         if (UserDAO.isUserActive()){
             UserDAO.logOut(MapsActivity.this);
         }
