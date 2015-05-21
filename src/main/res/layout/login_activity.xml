@@ -6,6 +6,18 @@
     style="@style/LoginRegister.Background" >
 
     <!-- Login form -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <Button
+            android:id="@+id/signup"
+            style="@style/LoginRegister.AltActionButton"
+            android:text="@string/main_register" />
+
+    </LinearLayout>
+    
     <LinearLayout style="@style/LoginRegister.Container" >
 
         <EditText
@@ -16,11 +28,12 @@
         <EditText
             android:id="@+id/password"
             style="@style/LoginRegister.EditText.Password"
-            android:hint="@string/login_register_password" />
+            android:hint="@string/login_register_password"
+            android:imeOptions="actionSend" />
 
         <Button
             android:id="@+id/action_button"
-            style="@style/LoginRegister.Button"
+            style="@style/LoginRegister.ActionButton"
             android:text="@string/login_login" />
 
     </LinearLayout>

@@ -265,7 +265,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             MapsActivity.this.startActivity(intent);
         }
         else {
-            Intent intent = new Intent(MapsActivity.this, SignUporLogin.class);
+            Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             MapsActivity.this.startActivity(intent);
         }

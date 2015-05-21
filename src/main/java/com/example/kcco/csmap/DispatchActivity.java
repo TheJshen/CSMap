@@ -19,7 +19,7 @@ public class DispatchActivity extends Activity {
             startActivity(new Intent(this, MapsActivity.class));
         }
         else {
-            startActivity(new Intent(this, SignUporLogin.class));
+            startActivity(new Intent(this, LoginActivity.class));
         }
     }
 }

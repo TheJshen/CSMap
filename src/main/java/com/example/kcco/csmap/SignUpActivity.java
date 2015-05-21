@@ -106,7 +106,7 @@ public class SignUpActivity extends Activity {
             SignUpActivity.this.startActivity(intent);
         }
         else {
-            Intent intent = new Intent(SignUpActivity.this, SignUporLogin.class);
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             SignUpActivity.this.startActivity(intent);
         }

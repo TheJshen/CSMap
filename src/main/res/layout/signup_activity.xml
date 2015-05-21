@@ -27,7 +27,7 @@
 
         <Button
             android:id="@+id/action_button"
-            style="@style/LoginRegister.Button"
+            style="@style/LoginRegister.ActionButton"
             android:text="@string/register_sign_up" />
 
     </LinearLayout>

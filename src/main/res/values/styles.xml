@@ -53,7 +53,7 @@
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
         
-        <item name="android:background">@drawable/edit_text_background_normal</item>
+        <item name="android:background">@drawable/edit_text_background</item>
     </style>
 
     <style name="LoginRegister.EditText.Text">
@@ -68,7 +68,7 @@
         <item name="android:inputType">textEmailAddress</item>
     </style>
     
-    <style name="LoginRegister.Button">
+    <style name="LoginRegister.ActionButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
 
@@ -77,6 +77,14 @@
         <item name="android:background">@drawable/gradient_button_base</item>
     </style>
 
+    <style name="LoginRegister.AltActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:layout_marginTop">16dp</item>
+
+        <item name="android:background">@color/clear</item>
+    </style>
 
     <!-- Main Unifying Theme -->
 

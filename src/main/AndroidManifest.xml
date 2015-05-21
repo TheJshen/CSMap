@@ -50,10 +50,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+    </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
-        <activity android:name=".SignUporLogin" />
         <activity android:name=".MapsActivity" />
         <!--
         <activity

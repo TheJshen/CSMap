@@ -22,6 +22,13 @@ public class LoginActivity extends Activity {
         usernameView = (EditText) findViewById(R.id.username);
         passwordView = (EditText) findViewById(R.id.password);
 
+        (findViewById(R.id.signup)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginActivity.this.startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+            }
+        });
+
         findViewById(R.id.action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
