@@ -39,14 +39,14 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     private static final LatLng RIMAC = new LatLng(32.887298, -117.239616);
 
     // Used for testing to create route based on ArrayList
-    private ArrayList<LatLng> route = new ArrayList<>();
+    //private ArrayList<LatLng> route = new ArrayList<>();
 
     // For averaging points
     private int pointUpdateCounter = 0;
     private double latAvg=0, lngAvg=0;
     // Route object
-    private Route newRoute;
-    private Polyline currentDisplayed;
+    private Route routeToDisplay;
+    private Polyline currentDisplayed; // Polyline displayed on the map
 
     // Used to set camera position
     private static CameraPosition cameraPosition;
@@ -65,8 +65,14 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if(GPS.tracking == false)
+                if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
                     GPS.startGPSTrack();
+                    if(currentDisplayed != null) {
+                        // Removes the current displayed polyline when starting to track again
+                        currentDisplayed.remove();
+                        currentDisplayed = null; // get rid of currentDispalyed
+                    }
+                }
                 else
                     GPS.stopGPSTrack();
             }
@@ -171,7 +177,8 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        route.add(latLng); // Save the first point
+        //route.add(latLng); // Save the first point
+        routeToDisplay = GPS.returnCompletedRoute();
         /*cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
                 .zoom(13)                   // Sets the zoom
@@ -189,11 +196,13 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
 
     @Override
     public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
+        /*
         for(int i = 0; i < Lat.size(); ++i) {
             route.add(new LatLng(Lat.get(i), Lng.get(i)));
         }
         newRoute = new Route(route);
         mMap.addPolyline(newRoute.drawRoute());
+        */
     }
 
     public void plottingRecommendations(ArrayList<Integer> inputIDs)
@@ -206,32 +215,25 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     }
 
 
+    // This method updates the route plot on the map as the GPS is tracking a new route
+    // currentDisplayed is the Polyline displayed on the mapsActivity
     @Override
     public void updateRoutePts(Location location) {
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        //LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        pointUpdateCounter++;//
-        // Calculate the average of 5 points
-        if( pointUpdateCounter == POINTS_PER_AVERAGE ) {
-            latAvg += currentLatitude;
-            lngAvg += currentLongitude;
-            latAvg /= POINTS_PER_AVERAGE;
-            lngAvg /= POINTS_PER_AVERAGE;
-            pointUpdateCounter = 0; // resets counter
-            LatLng latLng = new LatLng(latAvg, lngAvg);
-            if(currentDisplayed != null) {
-                newRoute.addToRoute(currentDisplayed, latLng);
-            } else {
-                route.add(latLng);
-                newRoute = new Route(route);
-                currentDisplayed = mMap.addPolyline(newRoute.drawRoute());
-            }
-            latAvg = lngAvg = 0;
+        if(currentDisplayed == null) {
+            currentDisplayed = mMap.addPolyline(routeToDisplay.drawRoute());
+        } else {
+            currentDisplayed.setPoints(routeToDisplay.getLatLngArray());
         }
-        else {
-            latAvg += currentLatitude;
-            lngAvg += currentLongitude;
-        }
+    }
+
+    // This method is used to center on current location
+    public void dropPinAndCenterCamera(LatLng pointToCenterOn) {
+        cameraPosition = new CameraPosition.Builder()
+                .target(pointToCenterOn)      // Sets the center of the map to Mountain View
+                .zoom(15)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 }

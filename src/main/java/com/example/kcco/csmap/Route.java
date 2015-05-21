@@ -23,29 +23,34 @@ import java.util.Date;
  */
 public class Route {
 
-    private ArrayList<LatLng> routePts;
+    private static final int LINE_WIDTH = 10;
+    private ArrayList<LatLng> routePoints;
     private String createdBy;
     private int routeTime;
     Date createAt, updatedAt;
 
 
+    // No arg constructor. Creates empty route
+    public Route() {
+        routePoints = new ArrayList<>();
+    }
+
     // Constructor saves the points into the private membervariable
     public Route( ArrayList<LatLng> points ) {
-        routePts = points;
+        routePoints = points;
     }
 
 /*    public Route( ArrayList<LatLng> points, String created_by, int routeT)
     {
-        routePts = points;
         createdBy = created_by;
         routeTime = routeT;
     }*/
 
     public Route( ArrayList<Double> lat, ArrayList<Double> lng ) {
-        routePts = new ArrayList<LatLng>();
+        routePoints = new ArrayList<LatLng>();
         for(int i = 0; i < lat.size(); i++ ) {
             LatLng newCoord = new LatLng( lat.get(i), lng.get(i) );
-            routePts.add( newCoord );
+            routePoints.add(newCoord);
         }
     }
 
@@ -53,17 +58,41 @@ public class Route {
     // Returns PolyLineOptions to be added to the google map
     public PolylineOptions drawRoute() {
         return new PolylineOptions()
-                .addAll(routePts)
-                .width(10)
+                .addAll(routePoints)
+                .width(LINE_WIDTH)
                 .color(Color.BLUE);
     }
 
 
+    public void addToRoute(LatLng lastPoint) {
+        routePoints.add(lastPoint); // append a point to the array
+    }
 
     // Appends another point onto the route. Used for live tracking
     public void addToRoute(Polyline route, LatLng lastPoint) {
-        routePts.add(lastPoint); // append a point to the route already displayed
-        route.setPoints(routePts); //
+        routePoints.add(lastPoint); // append a point to the route already displayed
+        route.setPoints(routePoints); //
     }
 
+    public ArrayList<LatLng> getLatLngArray() {
+        return routePoints;
+    }
+
+    // Used to pull out the list of Latitude Points
+    public ArrayList<Double> getLatitudeArray() {
+        ArrayList<Double> toReturn = new ArrayList<>();
+        for(int i = 0; i < routePoints.size(); i++ ) {
+            toReturn.add(routePoints.get(i).latitude);
+        }
+        return toReturn;
+    }
+
+    // Used to pull out the list of Longitude Points
+    public ArrayList<Double> getLongitudeArray() {
+        ArrayList<Double> toReturn = new ArrayList<>();
+        for(int i = 0; i < routePoints.size(); i++ ) {
+            toReturn.add(routePoints.get(i).longitude);
+        }
+        return toReturn;
+    }
 }
