@@ -347,7 +347,8 @@ public class UserDAO{
             public void done(ParseException e) {
                 if (e != null) {
                     Messenger.toast(e.getMessage(), activity);
-                } else {
+                }
+                else {
                     ((MapsActivity) activity).switchActivity(1);
                 }
             }
