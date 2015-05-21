@@ -306,57 +306,59 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
             //search if the start location of thisRoute is existed
-            x = latLngRoute.get(0).latitude;
-            y = latLngRoute.get(0).longitude;
-            existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
-            //start location did not exist
-            if (existedPlace == null) {
-                //startLoc should be the string generate from the front end.
-                startLoc = "Somewhere";
-                existedPlace = new BuildingDAO(MapsActivity.this);
-                existedPlace.createBuilding(startLoc, userId, x, y);
-                existedPlace.sendBuildingInfo();
-            }
-            //start location did exist
-            else {
-                startLoc = existedPlace.getName();
-                //Assume front end prompt current place name, and then user change it.
-                startLoc = "Somewhere2";
-                existedPlace.setName(startLoc);
-                existedPlace.sendBuildingInfo();
-            }
+            // Makes sure that there is at least two points in the route
+            if( latLngRoute.size() > 1 ) {
+                x = latLngRoute.get(0).latitude;
+                y = latLngRoute.get(0).longitude;
+                existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
+                //start location did not exist
+                if (existedPlace == null) {
+                    //startLoc should be the string generate from the front end.
+                    startLoc = "Somewhere";
+                    existedPlace = new BuildingDAO(MapsActivity.this);
+                    existedPlace.createBuilding(startLoc, userId, x, y);
+                    existedPlace.sendBuildingInfo();
+                }
+                //start location did exist
+                else {
+                    startLoc = existedPlace.getName();
+                    //Assume front end prompt current place name, and then user change it.
+                    startLoc = "Somewhere2";
+                    existedPlace.setName(startLoc);
+                    existedPlace.sendBuildingInfo();
+                }
 
-            //search if the end location of thisRoute is existed
-            x = latLngRoute.get(latLngRoute.size() - 1).latitude;
-            y = latLngRoute.get(latLngRoute.size() - 1).longitude;
-            existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
-            //end location did not exist
-            if (existedPlace == null) {
-                //endLoc should be the string generate from the front end.
-                endLoc = "Elsewhere";
-                existedPlace = new BuildingDAO(MapsActivity.this);
-                existedPlace.createBuilding(endLoc, userId, x, y);
-                existedPlace.sendBuildingInfo();
+                //search if the end location of thisRoute is existed
+                x = latLngRoute.get(latLngRoute.size() - 1).latitude;
+                y = latLngRoute.get(latLngRoute.size() - 1).longitude;
+                existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
+                //end location did not exist
+                if (existedPlace == null) {
+                    //endLoc should be the string generate from the front end.
+                    endLoc = "Elsewhere";
+                    existedPlace = new BuildingDAO(MapsActivity.this);
+                    existedPlace.createBuilding(endLoc, userId, x, y);
+                    existedPlace.sendBuildingInfo();
+                }
+                //end location did exist
+                else {
+                    endLoc = existedPlace.getName();
+                    //Assume front end prompt current place name, and then user change it.
+                    endLoc = "Elsewhere2";
+                    existedPlace.setName(endLoc);
+                    existedPlace.sendBuildingInfo();
+                }
+                //Finished generated for the name of start and end locations
+
+                // This section assumes it generate info from front end
+                transport = 8;
+                timeSpent = 9382; // in second
+
+                int routeId = routeInfo.createRoute(startLoc, endLoc, userId, transport, timeSpent);
+                routeInfo.sendRouteInfo();
+                subRoute.createSubRoute(routeId, latLngRoute);
+                subRoute.sendSubRouteInfo();
             }
-            //end location did exist
-            else {
-                endLoc = existedPlace.getName();
-                //Assume front end prompt current place name, and then user change it.
-                endLoc = "Elsewhere2";
-                existedPlace.setName(endLoc);
-                existedPlace.sendBuildingInfo();
-            }
-            //Finished generated for the name of start and end locations
-
-
-            // This section assumes it generate info from front end
-            transport = 8;
-            timeSpent = 9382; // in second
-
-            int routeId = routeInfo.createRoute(startLoc, endLoc, userId, transport, timeSpent);
-            routeInfo.sendRouteInfo();
-            subRoute.createSubRoute(routeId, latLngRoute);
-            subRoute.sendSubRouteInfo();
 
         }
     }
