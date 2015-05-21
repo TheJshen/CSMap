@@ -1,6 +1,11 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".LoginActivity" >
+    tools:context=".LoginActivity"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/Login"
+    android:background="@drawable/background_login" >
 
     <!-- Login form -->
 
@@ -20,7 +25,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Username"
+                android:textColorHint="@color/text_color_hint"
                 android:inputType="text"
+                android:textColor="@color/text_color"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -29,12 +36,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
+                android:textColorHint="@color/text_color_hint"
                 android:inputType="textPassword"
+                android:textColor="@color/text_color"
                 android:maxLines="1"
-                android:singleLine="true"
-                android:imeActionId="@+id/login"
-                android:imeActionLabel="Login"
-                android:imeOptions="actionUnspecified" />
+                android:singleLine="true" />
 
             <Button
                 android:id="@+id/action_button"
@@ -45,7 +51,9 @@
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
                 android:text="Log in" />
+
         </LinearLayout>
+
     </ScrollView>
 
-</merge>
+</LinearLayout>
