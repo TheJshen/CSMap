@@ -49,7 +49,7 @@ public class SignUpActivity extends Activity {
 
                     for (int i = 0; i < email.length(); i++) {
                         if (!(email.substring(i, i + 1).equals("@") ||
-                                email.substring(email.length() - 4, email.length()).equals(".com"))) {
+                                email.substring(email.length() - 4, email.length() - 3).equals("."))) {
                             valError = true;
                             valErrorMessage.append("enter a valid email address.");
                             break;

@@ -86,6 +86,10 @@ public class LoginActivity extends Activity {
         if (caseNumber == 1) {
             Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            Bundle user = new Bundle();
+            user.putString("username",usernameView.getText().toString());
+            user.putString("password", passwordView.getText().toString());
+            intent.putExtras(user);
             LoginActivity.this.startActivity(intent);
         }
         else {
