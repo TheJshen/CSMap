@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,7 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -60,16 +58,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         // Display map
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-
-        // Button used to log user out
-        final Button log_out = (Button) findViewById(R.id.logout);
-        log_out.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ParseUser.logOutInBackground();
-                Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
-                switchActivity(1);
-            }
-        });
 
         // Button used to test tracking
         final Button button = (Button) findViewById(R.id.btnSurrey);
