@@ -1,64 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background_login" >
+    style="@style/LoginRegister.Background" >
 
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Username"
-        android:textColorHint="@color/text_color_hint"
-        android:inputType="text"
-        android:maxLines="1"
-        android:singleLine="true" />
+    <LinearLayout style="@style/LoginRegister.Container" >
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email Address"
-        android:textColorHint="@color/text_color_hint"
-        android:inputType="textEmailAddress"
-        android:maxLines="1"
-        android:singleLine="true" />
+        <EditText
+            android:id="@+id/username"
+            style="@style/LoginRegister.EditText.Text"
+            android:hint="@string/login_register_username" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:textColorHint="@color/text_color_hint"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true" />
+        <EditText
+            android:id="@+id/email"
+            style="@style/LoginRegister.EditText.Email"
+            android:hint="@string/register_email" />
 
-    <EditText
-        android:id="@+id/passwordAgain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password Again"
-        android:textColorHint="@color/text_color_hint"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true" />
-        <!--
-        android:imeActionId="@+id/login"
-        android:imeActionLabel="Sign In"
-        android:imeOptions="actionUnspecified"-->
+        <EditText
+            android:id="@+id/password"
+            style="@style/LoginRegister.EditText.Password"
+            android:hint="@string/login_register_password" />
 
+        <EditText
+            android:id="@+id/passwordAgain"
+            style="@style/LoginRegister.EditText.Password"
+            android:hint="@string/register_password_again" />
 
-    <Button
-        android:id="@+id/action_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="16dp"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp"
-        android:text="Sign Up"/>
+        <Button
+            android:id="@+id/action_button"
+            style="@style/LoginRegister.Button"
+            android:text="@string/register_sign_up" />
+
+    </LinearLayout>
 
 </LinearLayout>

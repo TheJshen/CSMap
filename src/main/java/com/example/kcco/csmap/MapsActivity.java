@@ -266,19 +266,4 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             UserDAO.logOut(MapsActivity.this);
         }
     }
-
-    public void switchActivity(int caseNumber) {
-        if (caseNumber == 1) {
-            Intent intent = new Intent(MapsActivity.this, SignUporLogin.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            MapsActivity.this.startActivity(intent);
-        }
-        /* In case need to switch to other activity
-        else {
-            Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            LoginActivity.this.startActivity(intent);
-        }
-        */
-    }
 }

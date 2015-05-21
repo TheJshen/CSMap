@@ -1,59 +1,27 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".LoginActivity"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    style="@style/Login"
-    android:background="@drawable/background_login" >
+    style="@style/LoginRegister.Background" >
 
     <!-- Login form -->
+    <LinearLayout style="@style/LoginRegister.Container" >
 
-    <ScrollView
-        android:id="@+id/login_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        <EditText
+            android:id="@+id/username"
+            style="@style/LoginRegister.EditText.Text"
+            android:hint="@string/login_register_username" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/password"
+            style="@style/LoginRegister.EditText.Password"
+            android:hint="@string/login_register_password" />
 
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/action_button"
+            style="@style/LoginRegister.Button"
+            android:text="@string/login_login" />
 
-            <EditText
-                android:id="@+id/username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Username"
-                android:textColorHint="@color/text_color_hint"
-                android:inputType="text"
-                android:textColor="@color/text_color"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-            <EditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:textColorHint="@color/text_color_hint"
-                android:inputType="textPassword"
-                android:textColor="@color/text_color"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-            <Button
-                android:id="@+id/action_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:text="Log in" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

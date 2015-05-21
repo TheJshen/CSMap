@@ -17,8 +17,64 @@
 
     <!-- Login Theme -->
 
-    <style name="Login">
-        <item name="android:textColor">@color/text_color_hint</item>
+    <style name="LoginRegister">
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColorHint">@color/text_color_hint</item>
+    </style>
+
+    <style name="LoginRegister.Background">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+
+        <item name="android:orientation">vertical</item>
+
+        <item name="android:background">@drawable/background_login</item>
+    </style>
+
+    <style name="LoginRegister.Container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:orientation">vertical</item>
+
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="LoginRegister.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:paddingLeft">@dimen/login_text_box_text_margin</item>
+        <item name="android:paddingTop">@dimen/login_text_box_text_margin</item>
+        <item name="android:paddingBottom">@dimen/login_text_box_text_margin</item>
+        
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        
+        <item name="android:background">@drawable/edit_text_background_normal</item>
+    </style>
+
+    <style name="LoginRegister.EditText.Text">
+        <item name="android:inputType">text</item>
+    </style>
+
+    <style name="LoginRegister.EditText.Password">
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="LoginRegister.EditText.Email">
+        <item name="android:inputType">textEmailAddress</item>
+    </style>
+    
+    <style name="LoginRegister.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:layout_marginTop">16dp</item>
+
+        <item name="android:background">@drawable/gradient_button_base</item>
     </style>
 
 

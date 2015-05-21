@@ -6,11 +6,19 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Text Field Hints -->
+    <string name="login_register_username">Username</string>
+    <string name="login_register_password">Password</string>
+    <string name="register_email">Email Address</string>
+    <string name="register_password_again">Password Again</string>
+
     <!-- Default (Error) Strings for views -->
     <string name="title_default">TITLE HERE</string>
     <string name="content_default">CONTENT HERE</string>
 
     <!-- Button Strings -->
+    <string name="login_login">Log In</string>
+    <string name="register_sign_up">Sign Up</string>
     <string name="button1">Button1</string>
     <string name="button2">Button2</string>
     <string name="button3">Button3</string>
