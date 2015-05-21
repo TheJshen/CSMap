@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.LogInCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -56,8 +57,6 @@ public class UserDAO{
     ParseObject thisBookmark;
     ParseObject thisHistory;
     boolean result = false;
-    private static final String TAG = "tag";
-
 
     /* Name: UserDAO
     * Describe:
@@ -312,31 +311,6 @@ public class UserDAO{
      *      String password if any match; else null.
      */
     public static void logIn(String username, String password, final Activity activity) {
-        /*
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if(e == null && user != null){
-                    //user is logged in.
-                    String success = "Success, Welcome!";
-                    Messenger.toast(success, activity);
-                    ((LoginActivity)activity).switchActivity(1);
-                }
-                else if (user == null) {
-                    String errorMessage = "The user does not exist. Please try again.";
-                    Messenger.toast(errorMessage, activity);
-                    //((LoginActivity)activity).switchActivity(0);
-                }
-                else{
-                    //ParseException, check message
-                    String errorMessage = "Parse Error: userLogin(): " + e.getMessage();
-                    Messenger.error(errorMessage, activity);
-                    ((LoginActivity)activity).switchActivity(0);
-                    return;
-                }
-            }
-        });
-        */
         // Login with the original test database
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
@@ -350,11 +324,36 @@ public class UserDAO{
                     //show the error message
                     Messenger.toast(e.getMessage(), activity);
                 } else {
-                    ((LoginActivity)activity).switchActivity(1);
+                    ((LoginActivity) activity).switchActivity(1);
                 }
             }
         });
     }
+
+    /* Name: logOut (not tested)
+     * Describe:
+     *      it will log the user out
+     * Parameter:
+     *      String username: the search parameter.
+     *      String password: the search parameter
+     *      Activity activity: the activity calls this function, needed for exception
+     * Return:
+     *      String password if any match; else null.
+     */
+
+    public static void logOut (final Activity activity) {
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Messenger.toast(e.getMessage(), activity);
+                } else {
+                    ((MapsActivity) activity).switchActivity(1);
+                }
+            }
+        });
+    }
+
 
     /* Name: sendBookmarkInfo
      * Describe:
@@ -368,7 +367,7 @@ public class UserDAO{
             public void done(ParseException e) {
                 if (e == null) {
                     //bookmark is saved successfully
-                    String success = "Bookmrak is saved!";
+                    String success = "Bookmark is saved!";
                     Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
@@ -403,6 +402,22 @@ public class UserDAO{
     }
 
 /////////////////////////////////searching data ///////////////////////////////////////////////////
+
+    /* Name: isUserActive
+     * Describe:
+     *      it will get the currently Active User
+     * Parameter:
+     *      int userId: the search parameter.
+     *      Activity activity: the activity calls this funtion, needed for exception
+     * Return:
+     *      String username if any match; else null.
+     */
+    public static boolean isUserActive() {
+        if (ParseUser.getCurrentUser() == null)
+            return false;
+        else
+            return true;
+    }
 
     /* Name: searchUser
      * Describe:

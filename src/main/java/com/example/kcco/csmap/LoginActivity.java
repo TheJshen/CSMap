@@ -3,7 +3,6 @@ package com.example.kcco.csmap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -13,20 +12,16 @@ import android.widget.Toast;
 public class LoginActivity extends Activity {
     private EditText usernameView;
     private EditText passwordView;
-    private static final String TAG = "tag";
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
-        Log.i(TAG, "hello");
         super.onCreate(savedInstanceState);
-        Log.i(TAG, "bye");
 
         setContentView(R.layout.login_activity);
 
         usernameView = (EditText) findViewById(R.id.username);
         passwordView = (EditText) findViewById(R.id.password);
 
-        Log.i(TAG, "before click");
         findViewById(R.id.action_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -236,4 +236,23 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
+
+    public void switchActivity(int caseNumber) {
+        if (caseNumber == 1) {
+            Intent intent = new Intent(MapsActivity.this, DispatchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            MapsActivity.this.startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(MapsActivity.this, SignUporLogin.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            MapsActivity.this.startActivity(intent);
+        }
+    }
+
+    public void logout(View view){
+        if (UserDAO.isUserActive()){
+            UserDAO.logOut(MapsActivity.this);
+        }
+    }
 }

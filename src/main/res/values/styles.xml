@@ -15,6 +15,12 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
+    <!-- Login Theme -->
+
+    <style name="Login">
+        <item name="android:textColor">@color/text_color_hint</item>
+    </style>
+
 
     <!-- Main Unifying Theme -->
 
@@ -72,6 +78,18 @@
         <item name="android:text">@string/title_default</item>
 
         <item name="android:background">@color/title_color</item>
+    </style>
+
+    <style name="MainTheme.BackButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+        <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
+
+        <item name="android:background">@drawable/button_option</item>
     </style>
 
 
