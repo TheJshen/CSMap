@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -42,12 +43,14 @@ public class RouteTracker implements
 
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private final static int POINTS_PER_AVERAGE = 5;
 
     // These ArrayLists will save the lat and lng of the collected points to be passed into route.java or database
-    private ArrayList<Double> trackedLocLat = new ArrayList<>();
-    private ArrayList<Double> trackedLocLng = new ArrayList<>();
+    private double latAvg = 0, lngAvg = 0;
+    private Route currentTrackingRoute;
 
-    public boolean tracking = false;
+    public boolean tracking = false; // If the button can do the toggling we can remove this boolean
+    private int pointUpdateCounter = 0;
 
     public RouteTracker(Context context, LocationCallBack callback) {
         mContext = context;
@@ -87,11 +90,11 @@ public class RouteTracker implements
 
     @Override
     public void onLocationChanged(Location location) {
-        //mLocationCallBack.handleNewLocation(location);
-        //if( tracking == true ) {
-            mLocationCallBack.updateRoutePts(location); // keeps updating the points
-            Log.d("ok", "some message");
-        //}
+        mLocationCallBack.handleNewLocation(location);
+        if( tracking == true ) {
+            mLocationCallBack.updateRoutePts(location); // keeps updating the points. Used to draw to map
+            addNewPointToRoute(location); // Called to store the points into arrays
+        }
     }
 
     @Override
@@ -110,6 +113,7 @@ public class RouteTracker implements
         }
     }
 
+    // Connect on resume
     public static void onResume() {
         mGoogleApiClient.connect();
     }
@@ -123,20 +127,49 @@ public class RouteTracker implements
 
     // Starts receiving location updates
     public void startGPSTrack() {
-        //tracking = true;
+        tracking = true;
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
+        currentTrackingRoute = new Route(); // Create new route when tracking starts
     }
 
     // Stops receiving real time location updates
     public void stopGPSTrack() {
-        //tracking = false;
+        tracking = false;
         if(mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
-        mLocationCallBack.plotNewRoute(trackedLocLat, trackedLocLng);
-        trackedLocLat = new ArrayList<>();
-        trackedLocLng = new ArrayList<>();
+        /* When finished with tracking add in time and other misc. info. to be stored in route */
+
+        //mLocationCallBack.plotNewRoute(trackedLocLat, trackedLocLng);
     }
+
+    // Takes the points from location updates and add them to a list to be passed into route.
+    public void addNewPointToRoute(Location location) {
+        double currentLatitude = location.getLatitude();
+        double currentLongitude = location.getLongitude();
+        //LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        pointUpdateCounter++;//
+        // Calculate the average of 5 points
+        if( pointUpdateCounter == POINTS_PER_AVERAGE ) {
+            pointUpdateCounter = 0; // resets counter
+            latAvg += currentLatitude;
+            lngAvg += currentLongitude;
+            latAvg /= POINTS_PER_AVERAGE;
+            lngAvg /= POINTS_PER_AVERAGE;
+            currentTrackingRoute.addToRoute(new LatLng(latAvg, lngAvg));
+            latAvg = lngAvg = 0; // reset for next few points
+        }
+        else {
+            latAvg += currentLatitude; // keeps adding the new lat if < POINTS_PER_AVERAGE
+            lngAvg += currentLongitude; // same as above but for lng
+        }
+    }
+
+    // Return route object to be plotted onto map and/or added to database
+    public Route returnCompletedRoute() {
+        return currentTrackingRoute;
+    }
+
 
     /*
     public Location getPreviousLocation()
