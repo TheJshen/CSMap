@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.LogInCallback;
-import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -340,6 +339,7 @@ public class UserDAO{
      * Return:
      *      String password if any match; else null.
      */
+    /*
     public static void logOut (final Activity activity) {
         ParseUser.logOutInBackground(new LogOutCallback() {
             @Override
@@ -353,6 +353,7 @@ public class UserDAO{
             }
         });
     }
+    */
 
     /* Name: sendBookmarkInfo
      * Describe:
