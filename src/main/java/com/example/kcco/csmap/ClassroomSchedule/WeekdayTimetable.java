@@ -1,5 +1,7 @@
 package com.example.kcco.csmap.ClassroomSchedule;
 
+import java.util.ArrayList;
+
 /**
  * Class that represents a weekly schedule for Monday-Friday. Has functions
  * fill in and retrieve the data in the schedule.
@@ -20,7 +22,6 @@ public class WeekdayTimetable {
 	/**
 	 * Default constructor for a new WeekdayTimetable object. Initializes all
 	 * arrays to default value (false) to represent an empty timetable.
-	 * @author David Luu
 	 */
 	public WeekdayTimetable() {
 		this.monday = new String[ARRSIZE];
@@ -45,7 +46,6 @@ public class WeekdayTimetable {
 	 * @param classTitle Name of the class that is in the room for the given period
 	 * @param days Days of the week to fill in in the form "MTuWThF"
 	 * @param time String representation of the time period in the form "hh:mm(a/p)-hh:mm(a/p)"
-	 * @author David Luu
 	 */
 	public void fillInTimePeriod(String classTitle, String days, String time) {
 		String startTime = time.substring(0, time.indexOf('-'));
@@ -69,10 +69,9 @@ public class WeekdayTimetable {
 	 * "hh:mm(a/p)" and returns the array index corresponding to that time.
 	 * @param time The string representation of the time to get the array index for
 	 * @return Int representing the array index corresponding to the time
-	 * @author David Luu
 	 */
 	private int timeToIdx(String time) {
-		int hour = Integer.parseInt(time.substring(0,time.indexOf(':')));
+		int hour = Integer.parseInt(time.substring(0, time.indexOf(':')));
 		if(time.indexOf('p') != -1 && hour != 12) {
 			hour += 12;
 		}
@@ -80,7 +79,7 @@ public class WeekdayTimetable {
 			hour -= 12;
 		}
 		
-		int minute = Integer.parseInt(time.substring(time.indexOf(':')+1,time.length()-1));
+		int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1, time.length() - 1));
 		
 		return (6 * hour) + (minute / 10);
 	}
@@ -92,7 +91,6 @@ public class WeekdayTimetable {
 	 * Delegates to toStringForDay to get the string representation for
 	 * individual days.
 	 * @return String representing this WeekdayTimetable object
-	 * @author David Luu
 	 */
 	@Override
 	public String toString () {
@@ -114,7 +112,6 @@ public class WeekdayTimetable {
 	 * @param day The name of the day to generate a string for
 	 * @param dayArr The array containing the information about the day
 	 * @return String representing of the schedule for the inputed day
-	 * @author David Luu
 	 */
 	private String toStringForDay (String day, String[] dayArr) {
 		String str = "\t" + day + ":";
@@ -154,7 +151,6 @@ public class WeekdayTimetable {
 	 * of the time corresponding to the inputed index. Format is "hh:mm(a/p)"
 	 * @param idx Index corresponding the an index in one of the day arrays
 	 * @return String representing the time corresponding to the inputed index
-	 * @author David Luu
 	 */
 	private String idxToTime (int idx) {
 		String str = "";
@@ -188,4 +184,52 @@ public class WeekdayTimetable {
 		return str;
 	}
 
+	public ArrayList<ScheduleInfo> toParcelableList() {
+		ArrayList<ScheduleInfo> out = new ArrayList<ScheduleInfo>();
+
+		out.addAll(toListForDay("Monday", this.monday));
+		out.addAll(toListForDay("Tuesday", this.tuesday));
+		out.addAll(toListForDay("Wednesday", this.wednesday));
+		out.addAll(toListForDay("Thursday", this.thursday));
+		out.addAll(toListForDay("Friday", this.friday));
+
+		return out;
+	}
+
+	private ArrayList<ScheduleInfo> toListForDay (String day, String[] dayArr) {
+		ArrayList<ScheduleInfo> out = new ArrayList<ScheduleInfo>();
+
+		boolean tracking = false;
+		String currName = "";
+		String currTime = "";
+
+		for(int i = 0; i < ARRSIZE; ++i) {
+			//Continuous period of time, different class
+			if(tracking && !dayArr[i].equals(currName)) {
+				tracking = false;
+
+				out.add(new ScheduleInfo(day, currTime + idxToTime(i), currName));
+				currName = "";
+				currTime = "";
+			}
+			//New period of occupancy
+			if(!tracking && !dayArr[i].equals("")) {
+				tracking = true;
+				currName = dayArr[i];
+				currTime +=  idxToTime(i) + "-";
+			}
+			//End of period of occupancy
+			if(tracking && dayArr[i].equals("")) {
+				tracking = false;
+
+				out.add(new ScheduleInfo(day, currTime + idxToTime(i), currName));
+				currName = "";
+				currTime = "";
+
+				currTime += idxToTime(i);
+			}
+		}
+
+		return out;
+	}
 }

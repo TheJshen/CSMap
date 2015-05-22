@@ -24,11 +24,12 @@
 
         <RelativeLayout
             android:id="@+id/room_avail_info_main"
-            style="@style/MainTheme.MainButton">
+            style="@style/MainTheme.MainScrollContainer">
 
             <TextView
                 android:id="@+id/room_avail_info_main_text"
-                style="@style/MainTheme.MainText" />
+                style="@style/MainTheme.MainTextList"
+                android:text="@string/content_default" />
 
         </RelativeLayout>
 

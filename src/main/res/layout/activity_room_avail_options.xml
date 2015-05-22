@@ -21,8 +21,13 @@
     <!-- Main Display  -->
     <ScrollView
         android:layout_below="@+id/room_avail_options_title"
-        style="@style/MainTheme.MainScrollView"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        style="@style/MainTheme.MainScrollView" >
+
+        <RelativeLayout
+            android:id="@+id/room_avail_options_main"
+            style="@style/MainTheme.MainScrollContainer">
+
+        </RelativeLayout>
 
     </ScrollView>
 

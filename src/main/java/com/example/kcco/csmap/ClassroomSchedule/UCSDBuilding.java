@@ -62,7 +62,7 @@ public class UCSDBuilding {
 	public ArrayList<String> listClassrooms() {
 		ArrayList<String> classroomNames = new ArrayList<String>();
 		for (UCSDClassroom classroom : classrooms.values()) {
-			classroomNames.add(name + " " + classroom.getRoomNumber());
+			classroomNames.add(classroom.getRoomNumber());
 		}
 		Collections.sort(classroomNames);
 		return classroomNames;
@@ -85,6 +85,10 @@ public class UCSDBuilding {
 		}
 		
 		return str;
+	}
+
+	public UCSDClassroom getClassroomByNumber(String number) {
+		return classrooms.get(number);
 	}
 	
 }

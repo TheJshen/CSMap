@@ -32,7 +32,7 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
 
         //TODO: Get info from parse
         /* TEST DATA SET (ACTUAL CLASSROOM INFO FOR CENTER HALL) */
-        UCSDBuilding thisBuilding = new UCSDBuilding(buildingName);
+        final UCSDBuilding thisBuilding = new UCSDBuilding(buildingName);
         thisBuilding.addClass("217B", "BENG 168 - Biomolecular Engineering", "M", "12:00p-12:50p");
         thisBuilding.addClass("217A", "BENG 168 - Biomolecular Engineering", "F", "10:00a-10:50a");
         thisBuilding.addClass("222", "BENG 172 - Bioengineering Laboratory", "M", "10:00a-10:50a");
@@ -164,7 +164,7 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
 
             // Apply UI Design
             newButton.setId(id);
-            newButton.setText(classroomNames.get(i));
+            newButton.setText(buildingName + " " + classroomNames.get(i));
             newButton.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
             newButton.setTextColor(getResources().getColor(R.color.text_color));
             newButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main, null));
@@ -181,15 +181,14 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //NavUtils.navigateUpFromSameTask(RoomAvailOptionsActivity.this); //BACK NAVIGATION
-
                     Intent nextScreen = new Intent(RoomAvailOptionsActivity.this, RoomAvailInfoActivity.class);
                     nextScreen.putExtra("ClassroomName", classroomName);
+                    nextScreen.putParcelableArrayListExtra("ClassroomInfo", thisBuilding.getClassroomByNumber(classroomName).scheduleToParcelableList());
                     startActivity(nextScreen);
                 }
             });
 
-            // Add new TextView to RelativeLayout
+            // Add new Layout to RelativeLayout
             ((RelativeLayout) findViewById(R.id.room_avail_options_main)).addView(newButton,rlParams);
         }
         /* END TEST ADD BUTTONS*/
