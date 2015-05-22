@@ -1,5 +1,7 @@
 package com.example.kcco.csmap.ClassroomSchedule;
 
+import java.util.ArrayList;
+
 /**
  * Class that represents a single classroom. A classroom has an identifying
  * room number and a weekday schedule for the room.
@@ -16,7 +18,6 @@ public class UCSDClassroom {
 	 * Constructor for a new UCSDClassroom object. A UCSDClassroom can only be
 	 * created with a roomNumber identifier.
 	 * @param roomNumber The number of the room
-	 * @author David Luu
 	 */
 	public UCSDClassroom(String roomNumber) {
 		this.roomNumber = roomNumber;
@@ -29,7 +30,6 @@ public class UCSDClassroom {
 	 * @param className The name of the class
 	 * @param days The days when the class section meets
 	 * @param time String representation of the time period in the form "hh:mm(a/p)-hh:mm(a/p)"
-	 * @author David Luu
 	 */
 	public void addClass(String className, String days, String time) {
 		roomSchedule.fillInTimePeriod(className, days, time);
@@ -39,7 +39,6 @@ public class UCSDClassroom {
 	/**
 	 * Returns the room number of this UCSDClassroom object.
 	 * @return The room number
-	 * @author David Luu
 	 */
 	public String getRoomNumber() {
 		return this.roomNumber;
@@ -49,11 +48,18 @@ public class UCSDClassroom {
 	/**
 	 * Returns the string representation of the UCSDClassroom.
 	 * @return String representing the classroom object and its schedule
-	 * @author David Luu
 	 */
 	@Override
 	public String toString() {
 		return this.roomNumber + "\n" + roomSchedule.toString() + "\n";
 	}
-	
+
+
+	/**
+	 * Returns a ParcelableList representing the schedule.
+	 * @return A ParcelableList
+	 */
+	public ArrayList<ScheduleInfo> scheduleToParcelableList() {
+		return roomSchedule.toParcelableList();
+	}
 }

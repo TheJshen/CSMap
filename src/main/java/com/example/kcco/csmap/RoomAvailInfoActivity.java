@@ -1,13 +1,14 @@
 package com.example.kcco.csmap;
 
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
+
+import com.example.kcco.csmap.ClassroomSchedule.ScheduleInfo;
+
+import java.util.ArrayList;
 
 
 public class RoomAvailInfoActivity extends ActionBarActivity {
@@ -20,7 +21,12 @@ public class RoomAvailInfoActivity extends ActionBarActivity {
         //TODO Dynamically create text views and populate main area/Remove room_avail_info_main_text
         ((TextView) findViewById(R.id.room_avail_info_title)).setText((String) getIntent().getExtras().get("ClassroomName"));
 
-        ((TextView) findViewById(R.id.room_avail_info_main_text)).setText("Setting Main Text Success");
+        ((TextView) findViewById(R.id.room_avail_info_main_text)).setText("");
+
+        ArrayList<ScheduleInfo> infoList = getIntent().getParcelableArrayListExtra("ClassroomInfo");
+        for(ScheduleInfo info : infoList) {
+            ((TextView) findViewById(R.id.room_avail_info_main_text)).append(info.getPrintable() + "\n\n");
+        }
     }
 
     @Override

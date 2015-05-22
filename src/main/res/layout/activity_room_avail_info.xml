@@ -4,10 +4,17 @@
     tools:context="com.example.kcco.csmap.RoomAvailInfoActivity"
     style="@style/LayoutContainerTheme">
 
+    <!-- Banner Bar -->
+    <TextView
+        android:id="@+id/room_avail_info_banner"
+        style="@style/MainTheme.BannerBar">
+    </TextView>
+
     <!-- Title Bar -->
     <TextView
         android:id="@+id/room_avail_info_title"
-        style="@style/MainTheme.TitleBar">
+        android:layout_below="@id/room_avail_info_banner"
+        style="@style/MainTheme.TitleBar" >
     </TextView>
 
     <!-- Main Display  -->
@@ -17,11 +24,12 @@
 
         <RelativeLayout
             android:id="@+id/room_avail_info_main"
-            style="@style/MainTheme.MainButton">
+            style="@style/MainTheme.MainScrollContainer">
 
             <TextView
                 android:id="@+id/room_avail_info_main_text"
-                style="@style/MainTheme.MainText" />
+                style="@style/MainTheme.MainTextList"
+                android:text="@string/content_default" />
 
         </RelativeLayout>
 
