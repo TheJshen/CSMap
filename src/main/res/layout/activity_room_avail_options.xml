@@ -5,41 +5,24 @@
     android:id="@+id/activity_room_avail_options"
     style="@style/LayoutContainerTheme">
 
+    <!-- Banner Bar -->
+    <TextView
+        android:id="@+id/room_avail_options_banner"
+        style="@style/MainTheme.BannerBar">
+    </TextView>
+
     <!-- Title Bar -->
     <TextView
         android:id="@+id/room_avail_options_title"
-        style="@style/MainTheme.TitleBar">
+        android:layout_below="@id/room_avail_options_banner"
+        style="@style/MainTheme.TitleBar" >
     </TextView>
-
-    <!-- Button Bar -->
-    <HorizontalScrollView
-        android:id="@+id/room_avail_options_button"
-        android:layout_below="@id/room_avail_options_title"
-        style="@style/MainTheme.ButtonScroller">
-
-        <LinearLayout
-            style="@style/MainTheme.ButtonContainer.Left">
-
-            <Button style="@style/MainTheme.Button" android:id="@+id/Button1" android:text="@string/button1"/>
-            <Button style="@style/MainTheme.Button" android:id="@+id/Button2" android:text="@string/button2"/>
-            <Button style="@style/MainTheme.Button" android:id="@+id/Button3" android:text="@string/button3"/>
-            <Button style="@style/MainTheme.Button" android:id="@+id/Button4" android:text="@string/button4"/>
-            <Button style="@style/MainTheme.Button" android:id="@+id/Button5" android:text="@string/button5"/>
-
-        </LinearLayout>
-
-    </HorizontalScrollView>
 
     <!-- Main Display  -->
     <ScrollView
-        android:layout_below="@+id/room_avail_options_button"
-        style="@style/MainTheme.MainScrollView">
-
-        <RelativeLayout
-            android:id="@+id/room_avail_options_main"
-            style="@style/MainTheme.MainButton">
-
-        </RelativeLayout>
+        android:layout_below="@+id/room_avail_options_title"
+        style="@style/MainTheme.MainScrollView"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
     </ScrollView>
 
