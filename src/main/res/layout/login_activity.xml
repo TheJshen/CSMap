@@ -5,20 +5,16 @@
     tools:context=".LoginActivity"
     style="@style/LoginRegister.Background" >
 
-    <!-- Login form -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right">
+    <LinearLayout style="@style/LoginRegister.AltActionContainer">
 
         <Button
-            android:id="@+id/signup"
+            android:id="@+id/button_register"
             style="@style/LoginRegister.AltActionButton"
-            android:text="@string/main_register" />
+            android:text="@string/login_register" />
 
     </LinearLayout>
     
-    <LinearLayout style="@style/LoginRegister.Container" >
+    <LinearLayout style="@style/LoginRegister.ActionContainer" >
 
         <EditText
             android:id="@+id/username"
@@ -28,11 +24,10 @@
         <EditText
             android:id="@+id/password"
             style="@style/LoginRegister.EditText.Password"
-            android:hint="@string/login_register_password"
-            android:imeOptions="actionSend" />
+            android:hint="@string/login_register_password" />
 
         <Button
-            android:id="@+id/action_button"
+            android:id="@+id/button_signup"
             style="@style/LoginRegister.ActionButton"
             android:text="@string/login_login" />
 

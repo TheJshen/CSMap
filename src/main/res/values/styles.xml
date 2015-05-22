@@ -20,6 +20,8 @@
     <style name="LoginRegister">
         <item name="android:textColor">@color/text_color</item>
         <item name="android:textColorHint">@color/text_color_hint</item>
+
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
     </style>
 
     <style name="LoginRegister.Background">
@@ -31,7 +33,7 @@
         <item name="android:background">@drawable/background_login</item>
     </style>
 
-    <style name="LoginRegister.Container">
+    <style name="LoginRegister.ActionContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
 
@@ -40,6 +42,13 @@
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="LoginRegister.AltActionContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:gravity">right</item>
     </style>
 
     <style name="LoginRegister.EditText">
@@ -82,6 +91,8 @@
         <item name="android:layout_height">wrap_content</item>
 
         <item name="android:layout_marginTop">16dp</item>
+
+        <item name="android:textSize">@dimen/abc_text_size_small_material</item>
 
         <item name="android:background">@color/clear</item>
     </style>
