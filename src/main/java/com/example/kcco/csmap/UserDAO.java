@@ -226,19 +226,20 @@ public class UserDAO{
         thisUser.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
-                final ProgressDialog dlg = new ProgressDialog(activity);
+                /*final*/ ProgressDialog dlg = new ProgressDialog(activity);
                 dlg.setTitle("Please wait.");
                 dlg.setMessage("Signing up, please wait.");
                 dlg.show();
                 if (e == null) {
                     //sign up successfully
                     String success = "Success, Welcome!";
+                    dlg.dismiss();
                     Messenger.toast(success, activity);
                     ((SignUpActivity) activity).switchActivity(1);
                 } else {
-                    dlg.dismiss();
                     // Sign up didn't succeed. pass exception to Messenger
                     String errorMessage = "Parse Error: userSignUp(): " + e.getMessage();
+                    dlg.dismiss();
                     Messenger.toast(errorMessage, activity);
                     //((SignUpActivity) activity).switchActivity(0);
                 }
@@ -315,15 +316,15 @@ public class UserDAO{
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
-                final ProgressDialog dlg = new ProgressDialog(activity);
+                /*final*/ ProgressDialog dlg = new ProgressDialog(activity);
                 dlg.setTitle("Please wait.");
                 dlg.setMessage("Logging in, please wait.");
                 dlg.show();
                 if (e != null) {
-                    dlg.dismiss();
                     //show the error message
                     Messenger.toast(e.getMessage(), activity);
                 } else {
+                    dlg.dismiss();
                     ((LoginActivity) activity).switchActivity(1);
                 }
             }
