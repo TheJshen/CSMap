@@ -5,8 +5,16 @@
     tools:context=".LoginActivity"
     style="@style/LoginRegister.Background" >
 
-    <!-- Login form -->
-    <LinearLayout style="@style/LoginRegister.Container" >
+    <LinearLayout style="@style/LoginRegister.AltActionContainer">
+
+        <Button
+            android:id="@+id/button_register"
+            style="@style/LoginRegister.AltActionButton"
+            android:text="@string/login_register" />
+
+    </LinearLayout>
+    
+    <LinearLayout style="@style/LoginRegister.ActionContainer" >
 
         <EditText
             android:id="@+id/username"
@@ -19,8 +27,8 @@
             android:hint="@string/login_register_password" />
 
         <Button
-            android:id="@+id/action_button"
-            style="@style/LoginRegister.Button"
+            android:id="@+id/button_signup"
+            style="@style/LoginRegister.ActionButton"
             android:text="@string/login_login" />
 
     </LinearLayout>

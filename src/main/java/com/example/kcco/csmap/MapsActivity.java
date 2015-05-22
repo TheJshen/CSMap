@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.RoutesDAO;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -60,22 +63,41 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         setUpMapIfNeeded();
 
         // Button used to test tracking
-        final Button button = (Button) findViewById(R.id.btnSurrey);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
-                    GPS.startGPSTrack();
-                    if(currentDisplayed != null) {
-                        // Removes the current displayed polyline when starting to track again
-                        currentDisplayed.remove();
-                        currentDisplayed = null; // get rid of currentDispalyed
-                    }
-                }
-                else
-                    GPS.stopGPSTrack();
-            }
-        });
+//        final Button button = (Button) findViewById(R.id.btnSurrey);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
+//                    GPS.startGPSTrack();
+//                    if(currentDisplayed != null) {
+//                        // Removes the current displayed polyline when starting to track again
+//                        currentDisplayed.remove();
+//                        currentDisplayed = null; // get rid of currentDispalyed
+//                    }
+//                }
+//                else {
+//                    GPS.stopGPSTrack();
+//                    Route thisRoute = GPS.returnCompletedRoute();
+//                    RoutesDAO routeInfo = new RoutesDAO(MapsActivity.this);
+//                    RoutesDAO subRoute = new RoutesDAO(MapsActivity.this);
+//
+//                    // This section assumes it generate info from front end
+//                    String startLoc = "Somewhere";
+//                    String endLoc = "Elsewhere";
+//                    ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
+//                    int userId = UserDAO.getCurrentUserId();
+//                    int transport = 8;
+//                    int timeSpent = 9382; // in second
+//
+//                    int routeId = routeInfo.createRoute(startLoc, endLoc, userId, transport, timeSpent);
+//                    routeInfo.sendRouteInfo();
+//                    subRoute.createSubRoute(routeId, latLngRoute);
+//                    subRoute.sendSubRouteInfo();
+//
+//
+//                }
+//            }
+//        });
 
         GPS = new RouteTracker(this, this);
 
@@ -243,16 +265,103 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             MapsActivity.this.startActivity(intent);
         }
         else {
-            Intent intent = new Intent(MapsActivity.this, SignUporLogin.class);
+            Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             MapsActivity.this.startActivity(intent);
         }
     }
 
+    /*  Button function logout
+     *  Button name: btnLogout
+     *  Describe: logout user and direct user into SignUpOrLogin.
+     */
     public void logout(View view){
         Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
         if (UserDAO.isUserActive()){
             UserDAO.logOut(MapsActivity.this);
         }
     }
+
+    public void track(View view){
+        if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
+            GPS.startGPSTrack();
+            ((Button)view).setText("Stop");
+            if(currentDisplayed != null) {
+                // Removes the current displayed polyline when starting to track again
+                currentDisplayed.remove();
+                currentDisplayed = null; // get rid of currentDispalyed
+            }
+        }
+        else {
+            GPS.stopGPSTrack();
+            ((Button)view).setText("Track");
+            Route thisRoute = GPS.returnCompletedRoute();
+            RoutesDAO routeInfo = new RoutesDAO(MapsActivity.this);
+            RoutesDAO subRoute = new RoutesDAO(MapsActivity.this);
+            BuildingDAO existedPlace;
+            String startLoc, endLoc;
+            double x, y;
+            int transport, timeSpent;
+            int userId = UserDAO.getCurrentUserId();
+            ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
+
+            //search if the start location of thisRoute is existed
+            // Makes sure that there is at least two points in the route
+            if( latLngRoute.size() > 1 ) {
+                x = latLngRoute.get(0).latitude;
+                y = latLngRoute.get(0).longitude;
+                existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
+                //start location did not exist
+                if (existedPlace == null) {
+                    //startLoc should be the string generate from the front end.
+                    startLoc = "Somewhere";
+                    existedPlace = new BuildingDAO(MapsActivity.this);
+                    existedPlace.createBuilding(startLoc, userId, x, y);
+                    existedPlace.sendBuildingInfo();
+                }
+                //start location did exist
+                else {
+                    startLoc = existedPlace.getName();
+                    //Assume front end prompt current place name, and then user change it.
+                    startLoc = "Somewhere2";
+                    existedPlace.setName(startLoc);
+                    existedPlace.sendBuildingInfo();
+                }
+
+                //search if the end location of thisRoute is existed
+                x = latLngRoute.get(latLngRoute.size() - 1).latitude;
+                y = latLngRoute.get(latLngRoute.size() - 1).longitude;
+                existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
+                //end location did not exist
+                if (existedPlace == null) {
+                    //endLoc should be the string generate from the front end.
+                    endLoc = "Elsewhere";
+                    existedPlace = new BuildingDAO(MapsActivity.this);
+                    existedPlace.createBuilding(endLoc, userId, x, y);
+                    existedPlace.sendBuildingInfo();
+                }
+                //end location did exist
+                else {
+                    endLoc = existedPlace.getName();
+                    //Assume front end prompt current place name, and then user change it.
+                    endLoc = "Elsewhere2";
+                    existedPlace.setName(endLoc);
+                    existedPlace.sendBuildingInfo();
+                }
+                //Finished generated for the name of start and end locations
+
+                // This section assumes it generate info from front end
+                transport = 8;
+                timeSpent = 9382; // in second
+
+                int routeId = routeInfo.createRoute(startLoc, endLoc, userId, transport, timeSpent);
+                routeInfo.sendRouteInfo();
+                subRoute.createSubRoute(routeId, latLngRoute);
+                subRoute.sendSubRouteInfo();
+            }
+
+        }
+    }
+
+
 }

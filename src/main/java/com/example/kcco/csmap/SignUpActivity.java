@@ -28,8 +28,15 @@ public class SignUpActivity extends Activity {
         passwordView = (EditText) findViewById(R.id.password);
         passwordAgainView = (EditText) findViewById(R.id.passwordAgain);
 
+        findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SignUpActivity.this.startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+            }
+        });
+
         //set up the submit button_option click handler
-        findViewById(R.id.action_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button_signup).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // validate the sign up data
@@ -115,7 +122,7 @@ public class SignUpActivity extends Activity {
             SignUpActivity.this.startActivity(intent);
         }
         else {
-            Intent intent = new Intent(SignUpActivity.this, SignUporLogin.class);
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             SignUpActivity.this.startActivity(intent);
         }

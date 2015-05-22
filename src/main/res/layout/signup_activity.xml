@@ -3,7 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/LoginRegister.Background" >
 
-    <LinearLayout style="@style/LoginRegister.Container" >
+    <LinearLayout style="@style/LoginRegister.AltActionContainer">
+
+        <Button
+            android:id="@+id/button_login"
+            style="@style/LoginRegister.AltActionButton"
+            android:text="@string/login_login" />
+
+    </LinearLayout>
+
+    <LinearLayout style="@style/LoginRegister.ActionContainer" >
 
         <EditText
             android:id="@+id/username"
@@ -26,8 +35,8 @@
             android:hint="@string/register_password_again" />
 
         <Button
-            android:id="@+id/action_button"
-            style="@style/LoginRegister.Button"
+            android:id="@+id/button_signup"
+            style="@style/LoginRegister.ActionButton"
             android:text="@string/register_sign_up" />
 
     </LinearLayout>

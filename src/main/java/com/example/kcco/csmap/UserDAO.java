@@ -347,8 +347,7 @@ public class UserDAO{
             public void done(ParseException e) {
                 if (e != null) {
                     Messenger.toast(e.getMessage(), activity);
-                }
-                else {
+                } else {
                     ((MapsActivity) activity).switchActivity(1);
                 }
             }
@@ -404,14 +403,27 @@ public class UserDAO{
 
 /////////////////////////////////searching data ///////////////////////////////////////////////////
 
+    /* Name: getCurrentUserId
+     * Describe:
+     *      it will get the currently Active User Id
+     * Parameter:
+     * Return:
+     *      int userId if any match; else 0.
+     */
+    public static int getCurrentUserId() {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null)
+            return 0;
+        else
+            return currentUser.getInt(com.example.kcco.csmap.DAO.ParseConstant.USER_USER_ID);
+    }
+
     /* Name: isUserActive
      * Describe:
      *      it will get the currently Active User
      * Parameter:
-     *      int userId: the search parameter.
-     *      Activity activity: the activity calls this funtion, needed for exception
      * Return:
-     *      String username if any match; else null.
+     *      boolean false if no active user; else true.
      */
     public static boolean isUserActive() {
         if (ParseUser.getCurrentUser() == null)
