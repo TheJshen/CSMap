@@ -46,15 +46,24 @@ public class SignUpActivity extends Activity {
                 } else {
 
                     String email = emailView.getText().toString();
+                    boolean valid = false;
 
                     for (int i = 0; i < email.length(); i++) {
-                        if (!(email.substring(i, i + 1).equals("@") ||
-                                email.substring(email.length() - 4, email.length() - 3).equals("."))) {
-                            valError = true;
-                            valErrorMessage.append("enter a valid email address.");
-                            break;
+                        if (email.substring(i, i + 1).equals("@")) {
+                            for (int j = i; j < email.length(); j++) {
+                                if (email.substring(j, j+1).equals(".")) {
+                                    if (j != email.length() - 1) {
+                                        valid = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
+                    }
 
+                    if (!valid) {
+                        valError = true;
+                        valErrorMessage.append("enter a valid email address.");
                     }
                 }
 
