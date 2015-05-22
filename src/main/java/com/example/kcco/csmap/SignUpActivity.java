@@ -28,8 +28,15 @@ public class SignUpActivity extends Activity {
         passwordView = (EditText) findViewById(R.id.password);
         passwordAgainView = (EditText) findViewById(R.id.passwordAgain);
 
+        findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SignUpActivity.this.startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+            }
+        });
+
         //set up the submit button_option click handler
-        findViewById(R.id.action_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button_signup).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // validate the sign up data
@@ -46,15 +53,24 @@ public class SignUpActivity extends Activity {
                 } else {
 
                     String email = emailView.getText().toString();
+                    boolean valid = false;
 
                     for (int i = 0; i < email.length(); i++) {
-                        if (!(email.substring(i, i + 1).equals("@") ||
-                                email.substring(email.length() - 4, email.length() - 3).equals("."))) {
-                            valError = true;
-                            valErrorMessage.append("enter a valid email address.");
-                            break;
+                        if (email.substring(i, i + 1).equals("@")) {
+                            for (int j = i; j < email.length(); j++) {
+                                if (email.substring(j, j+1).equals(".")) {
+                                    if (j != email.length() - 1) {
+                                        valid = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
+                    }
 
+                    if (!valid) {
+                        valError = true;
+                        valErrorMessage.append("enter a valid email address.");
                     }
                 }
 
