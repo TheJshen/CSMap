@@ -40,15 +40,15 @@ public class BuildingDAO {
     //following are places table
     public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name); }
     public void setPlaceId( int placeId ) { current.put(ParseConstant.PLACES_PLACE_ID, placeId); }
-    public void setCratedBy( int createdBy ) { current.put(ParseConstant.PLACES_PLACE_ID, createdBy); }
+    public void setCratedBy( int createdBy ) { current.put(ParseConstant.PLACES_CREATED_BY, createdBy); }
     public void setX1( double x1) { current.put(ParseConstant.PLACES_X1, x1); }
-    public void setY1( double y1) { current.put(ParseConstant.PLACES_X1, y1); }
-    public void setX2( double x2) { current.put(ParseConstant.PLACES_X1, x2); }
-    public void setY2( double y2) { current.put(ParseConstant.PLACES_X1, y2); }
-    public void setX3( double x3) { current.put(ParseConstant.PLACES_X1, x3); }
-    public void setY3( double y3) { current.put(ParseConstant.PLACES_X1, y3); }
-    public void setX4( double x4) { current.put(ParseConstant.PLACES_X1, x4); }
-    public void setY4( double y4) { current.put(ParseConstant.PLACES_X1, y4); }
+    public void setY1( double y1) { current.put(ParseConstant.PLACES_Y1, y1); }
+    public void setX2( double x2) { current.put(ParseConstant.PLACES_X2, x2); }
+    public void setY2( double y2) { current.put(ParseConstant.PLACES_Y2, y2); }
+    public void setX3( double x3) { current.put(ParseConstant.PLACES_X3, x3); }
+    public void setY3( double y3) { current.put(ParseConstant.PLACES_Y3, y3); }
+    public void setX4( double x4) { current.put(ParseConstant.PLACES_X4, x4); }
+    public void setY4( double y4) { current.put(ParseConstant.PLACES_Y4, y4); }
     //following are classroom table
     public void setClassroomName( String name ) { current.put(ParseConstant.CLASS_NAME, name);}
     public void setClassroomPlaceId( int placeId ) { current.put(ParseConstant.CLASS_PLACE_ID, placeId);}
