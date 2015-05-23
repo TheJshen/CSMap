@@ -157,7 +157,7 @@ public class BuildingDAO {
     * Return:
             */
     public void updateBuildingInfo(int placeId, String name, int createdBy, LatLng point, double radius){
-        current = searchBuilding( placeId, activity).current;
+        current = searchBuilding(placeId, activity).current;
         setName(name);
         setCratedBy(createdBy);
         setCenterPoint(point);
@@ -411,53 +411,6 @@ public class BuildingDAO {
     }
 
     /* Name: searchBuilding (not tested)
-     * Describe:
-     *      it will search a place by the given location
-     * Parameter:
-     *      double x: the search parameter.
-     *      double y: the search parameter.
-     *      double distance: the search parameter in miles
-     *      Activity activity: the activity calls this function, needed for exception
-     * Return:
-     *      BuildingDAO building if any match; else null.
-     */
-    public static BuildingDAO searchBuilding(double x, double y, double distance, final Activity activity) {
-        //define local variable(s) here
-        ArrayList<ParseObject> results = null;
-        BuildingDAO building;
-        ParseGeoPoint currentLocation = new ParseGeoPoint(x, y);
-
-        //query to fill out all the search requirement
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereWithinMiles(ParseConstant.PLACES_CENTER_POINT, currentLocation, distance);
-        query.setLimit(5);
-//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X1, x);
-//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X2, x);
-//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y1, y);
-//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y4, y);
-
-        try {
-            results = (ArrayList<ParseObject>) query.find();
-        }
-        catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        //There has match cases in User table.
-        if( results.size() != 0){
-            building = new BuildingDAO(results.get(0), activity);
-
-            //This part is debug purpose to show all results.
-            Log.d("BuildingDAO", "searchBuilding(x, y) return BuildingDAO, placeName " + building.getName());
-
-            //Return result for the calling function.
-            return building;
-        }
-
-        return null;
-    }
-
-    /* Name: searchBuilding (not tested)
         * Describe:
         *      it will search a place by the given location
         * Parameter:
@@ -499,6 +452,48 @@ public class BuildingDAO {
         return null;
     }
 
+    /* Name: searchAllBuilding (not tested)
+        * Describe:
+        *      it will search a place that contains the given subString
+        * Parameter:
+        *      String building: location contains the search parameters.
+        *      double distance: the search parameter in miles
+        *      Activity activity: the activity calls this function, needed for exception
+        * Return:
+        *      ArrayList<BuildingDAO> building if any match; else null.
+        */
+    public static ArrayList<BuildingDAO> searchAllBuildings(String subString, final Activity activity) {
+        //define local variable(s) here
+        ArrayList<ParseObject> results = null;
+        ArrayList<BuildingDAO> buildings;
+
+        //query to fill out all the search requirement
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
+        query.whereContains(ParseConstant.PLACES_NAME, subString);
+
+        try {
+            results = (ArrayList<ParseObject>) query.find();
+        }
+        catch(ParseException e) {
+            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        //There has match cases in User table.
+        if( results.size() != 0){
+            buildings = new ArrayList<BuildingDAO>(results.size());
+            for( ParseObject obj: results ){
+                buildings.add(new BuildingDAO(obj, activity));
+            }
+
+            //This part is debug purpose to show all results.
+            Log.d("BuildingDAO", "searchAllBuildings(subString) return ArrayList<BuildingDAO>, size: " + buildings.size());
+
+            //Return result for the calling function.
+            return buildings;
+        }
+
+        return null;
+    }
 
     /* Name: searchClassrooms (not tested)
      * Describe:
@@ -512,7 +507,7 @@ public class BuildingDAO {
     public static String[] searchClassrooms(int placeId, final Activity activity){
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
-        BuildingDAO building = null;
+        BuildingDAO building;
         String[] classes;
 
         //query to fill out all the search requirement
