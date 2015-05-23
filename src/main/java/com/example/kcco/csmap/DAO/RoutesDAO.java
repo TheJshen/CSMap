@@ -598,7 +598,7 @@ public class RoutesDAO {
      * Return:
      *      ArrayList<RoutesDAO> routes if any match; else null.
      */
-    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(String destination, double x, double y, double distance, final Activity activity) {
+    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(int destination, double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
@@ -685,9 +685,10 @@ public class RoutesDAO {
      * Return:
      *      true if any match; else false.
      */
-    public static boolean searchDestination(String endLoc, final Activity activity) {
+    public static ArrayList<Integer> searchDestination(String endLoc, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
+        ArrayList<Integer> destinations = null;
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
@@ -702,14 +703,19 @@ public class RoutesDAO {
 
         //There has match cases in User table.
         if( results != null && results.size() != 0){
+            for( ParseObject obj: results){
+                BuildingDAO temp = new BuildingDAO(obj, activity);
+                destinations.add(new Integer(temp.getPlaceId()));
+            }
+
             //This part is debug purpose to show all results.
             Log.d("RoutesDAO", "searchDestination(endLoc) return boolean, yes ");
 
             //Return result for the calling function.
-            return true;
+            return destinations;
         }
 
-        return false;
+        return null;
     }
 
     /* Name: searchClosestPlace (not tested)
