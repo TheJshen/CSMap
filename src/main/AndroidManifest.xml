@@ -50,7 +50,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-    </activity>
+        </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MapsActivity" />
@@ -80,6 +80,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.kcco.csmap.RoomAvailOptionsActivity" />
+        </activity>
+        <activity
+            android:name=".MapSearchActivity"
+            android:label="@string/title_activity_map_search" >
         </activity>
     </application>
 

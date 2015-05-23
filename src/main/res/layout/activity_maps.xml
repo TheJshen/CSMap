@@ -20,6 +20,12 @@
             style="@style/MainTheme.ButtonContainer.Right">
 
             <Button
+                android:id="@+id/btnSearch"
+                style="@style/MainTheme.Button"
+                android:text="Search"
+                android:onClick="goToSearchActivity" />
+
+            <Button
                 android:id="@+id/btnLogout"
                 style="@style/MainTheme.Button"
                 android:onClick="logout"
