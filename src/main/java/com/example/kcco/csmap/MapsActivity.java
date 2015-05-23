@@ -250,7 +250,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             UserDAO.logOut(MapsActivity.this);
         }
         else {
-            UserDAO.logOut(MapsActivity.this);
             Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
         }
     }
