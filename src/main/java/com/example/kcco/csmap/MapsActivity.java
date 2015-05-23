@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -31,6 +32,10 @@ import java.util.ArrayList;
 
 
 public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
+
+    //Constant for distance
+    private static final double SEARCH_DISTANCE = 0.01; //in miles
+    private static final double BUILDING_DISTANCE = 0.01; //in miles
 
     private static final int POINTS_PER_AVERAGE = 5;
     public GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -61,43 +66,6 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         // Display map
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-
-        // Button used to test tracking
-//        final Button button = (Button) findViewById(R.id.btnSurrey);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//                if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
-//                    GPS.startGPSTrack();
-//                    if(currentDisplayed != null) {
-//                        // Removes the current displayed polyline when starting to track again
-//                        currentDisplayed.remove();
-//                        currentDisplayed = null; // get rid of currentDispalyed
-//                    }
-//                }
-//                else {
-//                    GPS.stopGPSTrack();
-//                    Route thisRoute = GPS.returnCompletedRoute();
-//                    RoutesDAO routeInfo = new RoutesDAO(MapsActivity.this);
-//                    RoutesDAO subRoute = new RoutesDAO(MapsActivity.this);
-//
-//                    // This section assumes it generate info from front end
-//                    String startLoc = "Somewhere";
-//                    String endLoc = "Elsewhere";
-//                    ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
-//                    int userId = UserDAO.getCurrentUserId();
-//                    int transport = 8;
-//                    int timeSpent = 9382; // in second
-//
-//                    int routeId = routeInfo.createRoute(startLoc, endLoc, userId, transport, timeSpent);
-//                    routeInfo.sendRouteInfo();
-//                    subRoute.createSubRoute(routeId, latLngRoute);
-//                    subRoute.sendSubRouteInfo();
-//
-//
-//                }
-//            }
-//        });
 
         GPS = new RouteTracker(this, this);
 
@@ -276,9 +244,14 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
      *  Describe: logout user and direct user into SignUpOrLogin.
      */
     public void logout(View view){
-        Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
         if (UserDAO.isUserActive()){
+            Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
+            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " Logout");
             UserDAO.logOut(MapsActivity.this);
+        }
+        else {
+            UserDAO.logOut(MapsActivity.this);
+            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
         }
     }
 
@@ -298,9 +271,9 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             Route thisRoute = GPS.returnCompletedRoute();
             RoutesDAO routeInfo = new RoutesDAO(MapsActivity.this);
             RoutesDAO subRoute = new RoutesDAO(MapsActivity.this);
-            BuildingDAO existedPlace;
-            String startLoc, endLoc;
-            double x, y;
+
+            //local variables for route information
+            int startLocId, endLocId;
             int transport, timeSpent;
             int userId = UserDAO.getCurrentUserId();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
@@ -308,59 +281,50 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             //search if the start location of thisRoute is existed
             // Makes sure that there is at least two points in the route
             if( latLngRoute.size() > 1 ) {
-                x = latLngRoute.get(0).latitude;
-                y = latLngRoute.get(0).longitude;
-                existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
-                //start location did not exist
-                if (existedPlace == null) {
-                    //startLoc should be the string generate from the front end.
-                    startLoc = "Somewhere";
-                    existedPlace = new BuildingDAO(MapsActivity.this);
-                    existedPlace.createBuilding(startLoc, userId, x, y);
-                    existedPlace.sendBuildingInfo();
-                }
-                //start location did exist
-                else {
-                    startLoc = existedPlace.getName();
-                    //Assume front end prompt current place name, and then user change it.
-                    startLoc = "Somewhere2";
-                    existedPlace.setName(startLoc);
-                    existedPlace.sendBuildingInfo();
-                }
-
-                //search if the end location of thisRoute is existed
-                x = latLngRoute.get(latLngRoute.size() - 1).latitude;
-                y = latLngRoute.get(latLngRoute.size() - 1).longitude;
-                existedPlace = BuildingDAO.searchBuilding(x, y, MapsActivity.this);
-                //end location did not exist
-                if (existedPlace == null) {
-                    //endLoc should be the string generate from the front end.
-                    endLoc = "Elsewhere";
-                    existedPlace = new BuildingDAO(MapsActivity.this);
-                    existedPlace.createBuilding(endLoc, userId, x, y);
-                    existedPlace.sendBuildingInfo();
-                }
-                //end location did exist
-                else {
-                    endLoc = existedPlace.getName();
-                    //Assume front end prompt current place name, and then user change it.
-                    endLoc = "Elsewhere2";
-                    existedPlace.setName(endLoc);
-                    existedPlace.sendBuildingInfo();
-                }
-                //Finished generated for the name of start and end locations
 
                 // This section assumes it generate info from front end
+                startLocId = verifyExistedPlace(latLngRoute.get(0), "Start Location");
+                endLocId = verifyExistedPlace(latLngRoute.get(latLngRoute.size()-1), "End Location");
                 transport = 8;
                 timeSpent = 9382; // in second
 
-                int routeId = routeInfo.createRoute(startLoc, endLoc, userId, transport, timeSpent);
+                int routeId = routeInfo.createRoute(startLocId, endLocId, userId, transport, timeSpent);
                 routeInfo.sendRouteInfo();
                 subRoute.createSubRoute(routeId, latLngRoute);
                 subRoute.sendSubRouteInfo();
             }
 
         }
+    }
+
+    private int verifyExistedPlace(LatLng point, String promptName){
+        String placeName;
+        int placeId;
+        int userId = UserDAO.getCurrentUserId();
+
+        //search if the given location point is existed in database.
+        BuildingDAO existedPlace = BuildingDAO.searchBuilding(point,
+                SEARCH_DISTANCE, MapsActivity.this);
+
+        //the given location point did not exist in database
+        if (existedPlace == null) {
+            //the placeName should be the string generate from the front end.
+            placeName = "Somewhere";
+            existedPlace = new BuildingDAO(MapsActivity.this);
+            existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
+            placeId = existedPlace.getPlaceId();
+            existedPlace.sendBuildingInfo();
+        }
+        //the given location point did exist in database
+        else {
+            placeName = existedPlace.getName();
+            //Assume front end prompt current place name, and then user change it.
+            placeName = "Somewhere2";
+            placeId = existedPlace.getPlaceId();
+            existedPlace.setName(placeName);
+            existedPlace.sendBuildingInfo();
+        }
+        return placeId;
     }
 
 

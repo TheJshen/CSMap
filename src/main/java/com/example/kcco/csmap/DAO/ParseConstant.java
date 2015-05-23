@@ -41,8 +41,9 @@ public class ParseConstant {
     public static final String SUBROUTE = "SubRoute";
     public static final String SUBROUTE_ROUTE_ID = "routeId";
     public static final String SUBROUTE_NUM_INDEX = "index";
-    public static final String SUBROUTE_NUM_X = "x";
-    public static final String SUBROUTE_NUM_Y = "y";
+//    public static final String SUBROUTE_NUM_X = "x";
+//    public static final String SUBROUTE_NUM_Y = "y";
+    public static final String SUBROUTE_POINT = "point";
 
     //These are column (key names for Parse PossibleEdges Objects
     //All three tables share the same columns name
@@ -60,14 +61,16 @@ public class ParseConstant {
     public static final String PLACES_PLACE_ID = "placeId";
     public static final String PLACES_NAME = "name";
     public static final String PLACES_CREATED_BY = "createdBy";
-    public static final String PLACES_X1 = "x1";
-    public static final String PLACES_Y1 = "y1";
-    public static final String PLACES_X2 = "x2";
-    public static final String PLACES_Y2 = "y2";
-    public static final String PLACES_X3 = "x3";
-    public static final String PLACES_Y3 = "y3";
-    public static final String PLACES_X4 = "x4";
-    public static final String PLACES_Y4 = "y4";
+//    public static final String PLACES_X1 = "x1";
+//    public static final String PLACES_Y1 = "y1";
+//    public static final String PLACES_X2 = "x2";
+//    public static final String PLACES_Y2 = "y2";
+//    public static final String PLACES_X3 = "x3";
+//    public static final String PLACES_Y3 = "y3";
+//    public static final String PLACES_X4 = "x4";
+//    public static final String PLACES_Y4 = "y4";
+    public static final String PLACES_CENTER_POINT = "centerPoint";
+    public static final String PALCES_RADIUS = "radius";
 
     //These are column (key) names for Parse Classroom Objects
     public static final String CLASS = "Classroom";

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -41,14 +43,19 @@ public class BuildingDAO {
     public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name); }
     public void setPlaceId( int placeId ) { current.put(ParseConstant.PLACES_PLACE_ID, placeId); }
     public void setCratedBy( int createdBy ) { current.put(ParseConstant.PLACES_CREATED_BY, createdBy); }
-    public void setX1( double x1) { current.put(ParseConstant.PLACES_X1, x1); }
-    public void setY1( double y1) { current.put(ParseConstant.PLACES_Y1, y1); }
-    public void setX2( double x2) { current.put(ParseConstant.PLACES_X2, x2); }
-    public void setY2( double y2) { current.put(ParseConstant.PLACES_Y2, y2); }
-    public void setX3( double x3) { current.put(ParseConstant.PLACES_X3, x3); }
-    public void setY3( double y3) { current.put(ParseConstant.PLACES_Y3, y3); }
-    public void setX4( double x4) { current.put(ParseConstant.PLACES_X4, x4); }
-    public void setY4( double y4) { current.put(ParseConstant.PLACES_Y4, y4); }
+//    public void setX1( double x1) { current.put(ParseConstant.PLACES_X1, x1); }
+//    public void setY1( double y1) { current.put(ParseConstant.PLACES_Y1, y1); }
+//    public void setX2( double x2) { current.put(ParseConstant.PLACES_X2, x2); }
+//    public void setY2( double y2) { current.put(ParseConstant.PLACES_Y2, y2); }
+//    public void setX3( double x3) { current.put(ParseConstant.PLACES_X3, x3); }
+//    public void setY3( double y3) { current.put(ParseConstant.PLACES_Y3, y3); }
+//    public void setX4( double x4) { current.put(ParseConstant.PLACES_X4, x4); }
+//    public void setY4( double y4) { current.put(ParseConstant.PLACES_Y4, y4); }
+    public void setCenterPoint( LatLng point ) {
+        ParseGeoPoint newPoint = new ParseGeoPoint(point.latitude, point.longitude);
+        current.put(ParseConstant.PLACES_CENTER_POINT, newPoint);
+    }
+    public void setRadius( double radius ) { current.put(ParseConstant.PALCES_RADIUS, radius);}
     //following are classroom table
     public void setClassroomName( String name ) { current.put(ParseConstant.CLASS_NAME, name);}
     public void setClassroomPlaceId( int placeId ) { current.put(ParseConstant.CLASS_PLACE_ID, placeId);}
@@ -70,14 +77,19 @@ public class BuildingDAO {
     public String getName() { return current.getString(ParseConstant.PLACES_NAME); }
     public int getPlaceId() { return current.getInt(ParseConstant.PLACES_PLACE_ID); }
     public int getCratedBy() { return current.getInt(ParseConstant.PLACES_CREATED_BY); }
-    public double getX1() { return current.getDouble(ParseConstant.PLACES_X1); }
-    public double getY1() { return current.getDouble(ParseConstant.PLACES_Y1); }
-    public double getX2() { return current.getDouble(ParseConstant.PLACES_X2); }
-    public double getY2() { return current.getDouble(ParseConstant.PLACES_Y2); }
-    public double getX3() { return current.getDouble(ParseConstant.PLACES_X3); }
-    public double getY3() { return current.getDouble(ParseConstant.PLACES_Y3); }
-    public double getX4() { return current.getDouble(ParseConstant.PLACES_X4); }
-    public double getY4() { return current.getDouble(ParseConstant.PLACES_Y4); }
+//    public double getX1() { return current.getDouble(ParseConstant.PLACES_X1); }
+//    public double getY1() { return current.getDouble(ParseConstant.PLACES_Y1); }
+//    public double getX2() { return current.getDouble(ParseConstant.PLACES_X2); }
+//    public double getY2() { return current.getDouble(ParseConstant.PLACES_Y2); }
+//    public double getX3() { return current.getDouble(ParseConstant.PLACES_X3); }
+//    public double getY3() { return current.getDouble(ParseConstant.PLACES_Y3); }
+//    public double getX4() { return current.getDouble(ParseConstant.PLACES_X4); }
+//    public double getY4() { return current.getDouble(ParseConstant.PLACES_Y4); }
+    public LatLng getCenterPoint() {
+        ParseGeoPoint thisPoint = current.getParseGeoPoint(ParseConstant.PLACES_CENTER_POINT);
+        return new LatLng(thisPoint.getLatitude(), thisPoint.getLongitude());
+    }
+    public double getRadius() { return current.getDouble(ParseConstant.PALCES_RADIUS); }
     //following are classroom table
     public String getClassName() { return current.getString(ParseConstant.CLASS_NAME); }
     public int getClassPlaceId() { return current.getInt(ParseConstant.CLASS_PLACE_ID); }
@@ -96,53 +108,41 @@ public class BuildingDAO {
      *      properly. All data should be VALID before pass to this function.
      * Parameter:
      *      String name: data required for column username
-     *      in createdBy: data required for column createdBy, which is same as userId
-     *      double x1: data required for column x1, x-coordinate for top-left corner
-     *      double y1: data required for column y1, y-coordinate for top-left corner
-     *      double x2: data required for column x1, x-coordinate for top-right corner
-     *      double y2: data required for column y1, y-coordinate for top-right corner
-     *      double x3: data required for column x1, x-coordinate for bottom-right corner
-     *      double y3: data required for column y1, y-coordinate for bottom-right corner
-     *      double x4: data required for column x1, x-coordinate for bottom-left corner
-     *      double y4: data required for column y1, y-coordinate for bottom-left corner
+     *      int createdBy: data required for column createdBy, which is same as userId
+     *      LatLng point: data required for GeoPoint point.
+      *     double radius: data required for column radius.
      * Return:
      */
-    public void createBuilding(String name, int createdBy, double x1, double y1, double x2,
-                               double y2, double x3, double y3, double x4, double y4){
+    public void createBuilding(String name, int createdBy, LatLng point, double radius){
         current = new ParseObject(ParseConstant.PLACES);
         int count = searchNextEmptyPlaceId();
 
         setName(name);
         setPlaceId(count);
         setCratedBy(createdBy);
-        setX1(x1);
-        setY1(y1);
-        setX1(x2);
-        setY1(y2);
-        setX1(x3);
-        setY1(y3);
-        setX1(x4);
-        setY1(y4);
+        setCenterPoint(point);
+        setRadius(radius);
+//        setX1(x1);
+//        setY1(y1);
+//        setX1(x2);
+//        setY1(y2);
+//        setX1(x3);
+//        setY1(y3);
+//        setX1(x4);
+//        setY1(y4);
     }
 
     /* Name: createBuilding (not tested)
      * Describe:
-     *      This function is overloading createBuilding, passing info if a place has one point only
+     *      This function is overloading createBuilding, passing info if a place has no radius.
      * Parameter:
      *      String name: data required for column username
-     *      in createdBy: data required for column createdBy, which is same as userId
-     *      double x1: data required for column x1, x-coordinate for top-left corner
-     *      double y1: data required for column y1, y-coordinate for top-left corner
-     *      double x2: data required for column x1, x-coordinate for top-right corner
-     *      double y2: data required for column y1, y-coordinate for top-right corner
-     *      double x3: data required for column x1, x-coordinate for bottom-right corner
-     *      double y3: data required for column y1, y-coordinate for bottom-right corner
-     *      double x4: data required for column x1, x-coordinate for bottom-left corner
-     *      double y4: data required for column y1, y-coordinate for bottom-left corner
+     *      int createdBy: data required for column createdBy, which is same as userId
+     *      LatLng point: data required for GeoPoint point.
      * Return:
      */
-    public void createBuilding(String name, int createdBy, double x1, double y1){
-        createBuilding(name, createdBy, x1, y1, x1, y1, x1, y1, x1, y1);
+    public void createBuilding(String name, int createdBy, LatLng point){
+        createBuilding(name, createdBy, point, 0);
     }
 
     /* Name: updateBuildingInfo (not tested)
@@ -151,30 +151,25 @@ public class BuildingDAO {
     * Parameter:
     *      int placeId: used to search a place from Parse
     *      String name: updated data
-    *      in createdBy: updated data
-    *      double x1: updated data, x-coordinate for top-left corner
-    *      double y1: updated data, y-coordinate for top-left corner
-    *      double x2: updated data, x-coordinate for top-right corner
-    *      double y2: updated data, y-coordinate for top-right corner
-    *      double x3: updated data, x-coordinate for bottom-right corner
-    *      double y3: updated data, y-coordinate for bottom-right corner
-    *      double x4: updated data, x-coordinate for bottom-left corner
-    *      double y4: updated data, y-coordinate for bottom-left corner
+    *      int createdBy: updated data
+    *      LatLng point: updated point
+    *      double radius: updated data
     * Return:
             */
-    public void updateBuildingInfo(int placeId, String name, int createdBy, double x1, double y1, double x2,
-                                   double y2, double x3, double y3, double x4, double y4){
+    public void updateBuildingInfo(int placeId, String name, int createdBy, LatLng point, double radius){
         current = searchBuilding( placeId, activity).current;
         setName(name);
         setCratedBy(createdBy);
-        setX1(x1);
-        setY1(y1);
-        setX1(x2);
-        setY1(y2);
-        setX1(x3);
-        setY1(y3);
-        setX1(x4);
-        setY1(y4);
+        setCenterPoint(point);
+        setRadius(radius);
+//        setX1(x1);
+//        setY1(y1);
+//        setX1(x2);
+//        setY1(y2);
+//        setX1(x3);
+//        setY1(y3);
+//        setX1(x4);
+//        setY1(y4);
     }
 
     /* Name: createClassroom (not tested)
@@ -392,7 +387,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereEqualTo(ParseConstant.PLACES_NAME, placeName);
+        query.whereContains(ParseConstant.PLACES_NAME, placeName);
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -421,21 +416,25 @@ public class BuildingDAO {
      * Parameter:
      *      double x: the search parameter.
      *      double y: the search parameter.
+     *      double distance: the search parameter in miles
      *      Activity activity: the activity calls this function, needed for exception
      * Return:
      *      BuildingDAO building if any match; else null.
      */
-    public static BuildingDAO searchBuilding(double x, double y, final Activity activity) {
+    public static BuildingDAO searchBuilding(double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         BuildingDAO building;
+        ParseGeoPoint currentLocation = new ParseGeoPoint(x, y);
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X1, x);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X2, x);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y1, y);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y4, y);
+        query.whereWithinMiles(ParseConstant.PLACES_CENTER_POINT, currentLocation, distance);
+        query.setLimit(5);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X1, x);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X2, x);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y1, y);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y4, y);
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -457,6 +456,49 @@ public class BuildingDAO {
 
         return null;
     }
+
+    /* Name: searchBuilding (not tested)
+        * Describe:
+        *      it will search a place by the given location
+        * Parameter:
+        *      LatLng point: location contains the search parameters.
+        *      double distance: the search parameter in miles
+        *      Activity activity: the activity calls this function, needed for exception
+        * Return:
+        *      BuildingDAO building if any match; else null.
+        */
+    public static BuildingDAO searchBuilding(LatLng point, double distance, final Activity activity) {
+        //define local variable(s) here
+        ArrayList<ParseObject> results = null;
+        BuildingDAO building;
+        ParseGeoPoint currentLocation = new ParseGeoPoint(point.latitude, point.longitude);
+
+        //query to fill out all the search requirement
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
+        query.whereWithinMiles(ParseConstant.PLACES_CENTER_POINT, currentLocation, distance);
+        query.setLimit(5);
+
+        try {
+            results = (ArrayList<ParseObject>) query.find();
+        }
+        catch(ParseException e) {
+            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        //There has match cases in User table.
+        if( results.size() != 0){
+            building = new BuildingDAO(results.get(0), activity);
+
+            //This part is debug purpose to show all results.
+            Log.d("BuildingDAO", "searchBuilding(x, y) return BuildingDAO, placeName " + building.getName());
+
+            //Return result for the calling function.
+            return building;
+        }
+
+        return null;
+    }
+
 
     /* Name: searchClassrooms (not tested)
      * Describe:
@@ -702,5 +744,6 @@ public class BuildingDAO {
 
         return null;
     }
+
 
 }

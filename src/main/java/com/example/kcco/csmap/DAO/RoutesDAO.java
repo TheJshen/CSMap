@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -38,16 +39,20 @@ public class RoutesDAO {
      */
     //following are Routes table
     public void setRouteId( int routeId ) { current.put(ParseConstant.ROUTES_ROUTE_ID, routeId); }
-    public void setStartLoc( String startLoc ) { current.put(ParseConstant.ROUTES_STRLOC, startLoc); }
-    public void setEndLoc( String endLoc ) { current.put(ParseConstant.ROUTES_ENDLOC, endLoc); }
+    public void setStartLoc( int startLoc ) { current.put(ParseConstant.ROUTES_STRLOC, startLoc); }
+    public void setEndLoc( int endLoc ) { current.put(ParseConstant.ROUTES_ENDLOC, endLoc); }
     public void setCreatedBy( int userId ) { current.put(ParseConstant.ROUTES_CREATEDBY, userId); }
     public void setTimeSpent( int timeSpent ) { current.put(ParseConstant.ROUTES_TIMESPENT, timeSpent); }
     public void setTransport( int transport ) { current.put(ParseConstant.ROUTES_TRANSPORT, transport); }
     //following are SubRoute table
     public void setSubRouteId( int routeId ) { current.put(ParseConstant.SUBROUTE_ROUTE_ID, routeId); }
     public void setSubRouteIndex( int index ) { current.put(ParseConstant.SUBROUTE_NUM_INDEX, index); }
-    public void setSubRouteX( double x ) { current.put(ParseConstant.SUBROUTE_NUM_X, x); }
-    public void setSubRouteY( double y ) { current.put(ParseConstant.SUBROUTE_NUM_Y, y); }
+//    public void setSubRouteX( double x ) { current.put(ParseConstant.SUBROUTE_NUM_X, x); }
+//    public void setSubRouteY( double y ) { current.put(ParseConstant.SUBROUTE_NUM_Y, y); }
+    public void setSubRoutePoint( LatLng point ) {
+        ParseGeoPoint newPoint = new ParseGeoPoint(point.latitude, point.longitude);
+        current.put(ParseConstant.SUBROUTE_POINT, newPoint);
+    }
     //following are PossibleEdges table
     public void setPossibleEdgeX1( double x1 ) { current.put(ParseConstant.POSSIBLE_X1, x1);}
     public void setPossibleEdgeY1( double y1 ) { current.put(ParseConstant.POSSIBLE_X1, y1);}
@@ -66,16 +71,20 @@ public class RoutesDAO {
     */
     //Following are Routes table
     public int getRouteId() { return current.getInt(ParseConstant.ROUTES_ROUTE_ID); }
-    public String getStartLoc() { return current.getString(ParseConstant.ROUTES_STRLOC); }
-    public String getEndLoc() { return current.getString(ParseConstant.ROUTES_ENDLOC); }
+    public int getStartLoc() { return current.getInt(ParseConstant.ROUTES_STRLOC); }
+    public int getEndLoc() { return current.getInt(ParseConstant.ROUTES_ENDLOC); }
     public int getCreatedBy() { return current.getInt(ParseConstant.ROUTES_CREATEDBY); }
     public int getTimeSpent() { return current.getInt(ParseConstant.ROUTES_TIMESPENT); }
     public int getTransport() { return current.getInt(ParseConstant.ROUTES_TRANSPORT); }
     //following are SubRoute table
     public int getSubRouteId() { return current.getInt(ParseConstant.SUBROUTE_ROUTE_ID); }
     public int getSubRouteIndex() { return current.getInt(ParseConstant.SUBROUTE_NUM_INDEX); }
-    public double getSubRouteX() { return current.getDouble(ParseConstant.SUBROUTE_NUM_X); }
-    public double getSubRouteY() { return current.getDouble(ParseConstant.SUBROUTE_NUM_Y); }
+//    public double getSubRouteX() { return current.getDouble(ParseConstant.SUBROUTE_NUM_X); }
+//    public double getSubRouteY() { return current.getDouble(ParseConstant.SUBROUTE_NUM_Y); }
+    public LatLng getSubRoutePoint() {
+        ParseGeoPoint thisPoint = current.getParseGeoPoint(ParseConstant.SUBROUTE_POINT);
+        return new LatLng(thisPoint.getLatitude(), thisPoint.getLongitude());
+    }
     //following are PossibleEdges table
     public double getPossibleEdgeX1() { return current.getDouble(ParseConstant.POSSIBLE_X1); }
     public double getPossibleEdgeY1() { return current.getDouble(ParseConstant.POSSIBLE_Y1); }
@@ -93,15 +102,15 @@ public class RoutesDAO {
      *      sent to Parse server. This can ensure all required data is filled
      *      properly. All data should be VALID before pass to this function.
      * Parameter:
-     *      String startLoc: data required for column startLoc
-     *      String endLoc: data required for column endLoc
+     *      int startLoc: data required for column startLoc
+     *      int endLoc: data required for column endLoc
      *      int createdBy: data required for column createdBy
      *      int transport: data required for column transport
      *      int timeSpent: data required for column timeSpent
      * Return:
      *      int routeId: it is the next empty routeId
      */
-    public int createRoute(String startLoc, String endLoc, int createdBy, int transport, int timeSpent){
+    public int createRoute(int startLoc, int endLoc, int createdBy, int transport, int timeSpent){
         current = new ParseObject(ParseConstant.ROUTES);
         int routeId = searchNextEmptyRouteId();
 
@@ -119,14 +128,14 @@ public class RoutesDAO {
      * Describe:
      *      This function is overriding with less argument
      * Parameter:
-     *      String startLoc: data required for column startLoc
-     *      String endLoc: data required for column endLoc
+     *      int startLoc: data required for column startLoc
+     *      int endLoc: data required for column endLoc
      *      int createdBy: data required for column createdBy
      *      int transport: data required for column transport
      * Return:
      *      int routeId: it is the next empty routeId
      */
-    public int createRoute(String startLoc, String endLoc, int createdBy, int transport){
+    public int createRoute(int startLoc, int endLoc, int createdBy, int transport){
         return createRoute(startLoc, endLoc, createdBy, transport, 0);
     }
 
@@ -148,8 +157,9 @@ public class RoutesDAO {
             current = new ParseObject(ParseConstant.SUBROUTE);
             setSubRouteId(routeId);
             setSubRouteIndex(i);
-            setSubRouteX(x.get(i));
-            setSubRouteY(y.get(i));
+//            setSubRouteX(x.get(i));
+//            setSubRouteY(y.get(i));
+            setSubRoutePoint(new LatLng(x.get(i), y.get(i)));
 
             subRoutes.add(current);
         }
@@ -173,8 +183,9 @@ public class RoutesDAO {
             current = new ParseObject(ParseConstant.SUBROUTE);
             setSubRouteId(routeId);
             setSubRouteIndex(i);
-            setSubRouteX(location.get(i).latitude);
-            setSubRouteY(location.get(i).longitude);
+//            setSubRouteX(location.get(i).latitude);
+//            setSubRouteY(location.get(i).longitude);
+            setSubRoutePoint(location.get(i));
 
             subRoutes.add(current);
         }
@@ -319,7 +330,7 @@ public class RoutesDAO {
      * Parameter:
      *      int routeId: the search parameter.
      *      int index: the search parameter.
-     *      boolean reversed: the order determination.
+     *      boolean reversed: determine the order of SubRoute sequence.
      *      Activity activity: the activity calls this function, needed for exception
     * Return:
     *      ArrayList<RoutesDAO> list if any match; else null.
@@ -353,7 +364,8 @@ public class RoutesDAO {
             list = new ArrayList<LatLng>(results.size());
             for( ParseObject obj: results ) {
                 RoutesDAO tempRoute = new RoutesDAO(obj, activity);
-                list.add(new LatLng(tempRoute.getSubRouteX(), tempRoute.getSubRouteY()));
+//                list.add(new LatLng(tempRoute.getSubRouteX(), tempRoute.getSubRouteY()));
+                list.add(tempRoute.getSubRoutePoint());
             }
 
 
@@ -384,7 +396,8 @@ public class RoutesDAO {
      * Describe:
      *      This is override function with RouteDAO that holds the information
      * Parameter:
-     *      int routeId: the search parameter.
+     *      RoutesDAO thisRoute: contain data for the search parameter
+     *      boolean reversed: determine the order of SubRoute sequence.
      *      Activity activity: the activity calls this function, needed for exception
     * Return:
     *      ArrayList<RoutesDAO> list if any match; else null.
@@ -436,13 +449,13 @@ public class RoutesDAO {
      * Describe:
      *      it will search all routes (id) with given start and end location
      * Parameter:
-     *      String strLoc: the search parameter
-     *      String endLoc: the search parameter
+     *      int strLoc: the search parameter
+     *      int endLoc: the search parameter
      *      Activity activity: the activity calls this function, needed for exception
     * Return:
     *      int[] routeId if any match; else null.
     */
-    public static int[] searchAllRoutes(String strLoc, String endLoc, final Activity activity) {
+    public static int[] searchAllRoutes(int strLoc, int endLoc, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         int routeId[];
@@ -492,11 +505,12 @@ public class RoutesDAO {
      * Return:
      *      ArrayList<RoutesDAO> routes if any match; else null.
      */
-    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(String destination, double x, double y, double distance, final Activity activity) {
+    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(int destination, double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
         RoutesDAO closestPoint;
+        ParseGeoPoint currentLocation = new ParseGeoPoint(x, y);
         double smallestDistance = distance * 2.0;
         int closestIndex = 0;
 
@@ -511,11 +525,13 @@ public class RoutesDAO {
         //Querry for the same routeId in the SubRoute within the given location range.
         ParseQuery<ParseObject> endSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
         endSubRoute.whereMatchesKeyInQuery(ParseConstant.SUBROUTE_ROUTE_ID, ParseConstant.ROUTES_ROUTE_ID, endLoc);
-        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
-        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
-        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
-        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
+//        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
+//        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
+//        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
+//        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
+        endSubRoute.whereWithinMiles(ParseConstant.SUBROUTE_POINT, currentLocation, distance);
         endSubRoute.orderByAscending(ParseConstant.SUBROUTE_NUM_INDEX);
+        endSubRoute.setLimit(1000);
 
         try {
             results = (ArrayList<ParseObject>) endSubRoute.find();
@@ -543,7 +559,7 @@ public class RoutesDAO {
                     closestIndex = temp.getSubRouteIndex();
                     smallestDistance = distance * 2.0;
                 }
-                currentDistance = getDistance(x, y, temp.getSubRouteX(), temp.getSubRouteY());
+                currentDistance = getDistance(currentLocation, temp.getSubRoutePoint());
                 if( currentDistance < smallestDistance){
                     closestIndex = temp.getSubRouteIndex();
                     smallestDistance = currentDistance;
@@ -565,6 +581,8 @@ public class RoutesDAO {
         return null;
     }
 
+
+
     /* Name: searchCloseRoutesDesc (not tested)
      * Describe:
      *      it will search the route has START location is same as the destination, and
@@ -585,6 +603,8 @@ public class RoutesDAO {
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
         RoutesDAO closestPoint;
+        ParseGeoPoint currentLocation = new ParseGeoPoint(x, y);
+
         double smallestDistance = distance * 2.0;
         int closestIndex = 0;
 
@@ -599,11 +619,13 @@ public class RoutesDAO {
         //Querry for the same routeId in the SubRoute within the given location range.
         ParseQuery<ParseObject> startSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
         startSubRoute.whereMatchesKeyInQuery(ParseConstant.SUBROUTE_ROUTE_ID, ParseConstant.ROUTES_ROUTE_ID, startLoc);
-        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
-        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
-        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
-        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
+//        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
+//        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
+//        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
+//        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
+        startSubRoute.whereWithinMiles(ParseConstant.SUBROUTE_POINT, currentLocation, distance);
         startSubRoute.orderByDescending(ParseConstant.SUBROUTE_NUM_INDEX);
+        startSubRoute.setLimit(1000);
 
         try {
             results = (ArrayList<ParseObject>) startSubRoute.find();
@@ -631,7 +653,7 @@ public class RoutesDAO {
                     closestIndex = temp.getSubRouteIndex();
                     smallestDistance = distance * 2.0;
                 }
-                currentDistance = getDistance(x, y, temp.getSubRouteX(), temp.getSubRouteY());
+                currentDistance = getDistance(currentLocation, temp.getSubRoutePoint());
                 if( currentDistance < smallestDistance){
                     closestIndex = temp.getSubRouteIndex();
                     smallestDistance = currentDistance;
@@ -704,30 +726,31 @@ public class RoutesDAO {
     public static String searchClosestPlace(double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
+        ParseGeoPoint currentLocation = new ParseGeoPoint(x, y);
         String closestPlace = "";
         double smallestDistance = distance * 2;
         double currentDistance;
-        double dx;
-        double dy;
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X1, x + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X1, x - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y1, y + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y1, y - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X2, x + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X2, x - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y2, y + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y2, y - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X3, x + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X3, x - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y3, y + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y3, y - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X4, x + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X4, x - distance);
-        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y4, y + distance);
-        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y4, y - distance);
+        query.whereWithinMiles(ParseConstant.PLACES_CENTER_POINT, currentLocation, distance);
+        query.setLimit(10);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X1, x + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X1, x - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y1, y + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y1, y - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X2, x + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X2, x - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y2, y + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y2, y - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X3, x + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X3, x - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y3, y + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y3, y - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_X4, x + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_X4, x - distance);
+//        query.whereLessThanOrEqualTo(ParseConstant.PLACES_Y4, y + distance);
+//        query.whereGreaterThanOrEqualTo(ParseConstant.PLACES_Y4, y - distance);
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -741,33 +764,34 @@ public class RoutesDAO {
 
             for( ParseObject obj: results){
                 BuildingDAO temp = new BuildingDAO(obj, activity);
-                //That is the location has four points different
-                if( temp.getX1() != temp.getX2() || temp.getX1() != temp.getX3() || temp.getX1() != temp.getX4() ||
-                        temp.getY1() != temp.getY2() || temp.getY1() != temp.getY3() || temp.getY1() != temp.getY4()){
-
-                    double tempDistance = 0.0;
-                    currentDistance = getDistance(x, y, temp.getX1(), temp.getY1());
-
-                    tempDistance = getDistance(x, y, temp.getX1(), temp.getY1());
-                    if (tempDistance < currentDistance)
-                        currentDistance = tempDistance;
-
-                    tempDistance = getDistance(x, y, temp.getX2(), temp.getY2());
-                    if (tempDistance < currentDistance)
-                        currentDistance = tempDistance;
-
-                    tempDistance =  getDistance(x, y, temp.getX3(), temp.getY3());
-                    if (tempDistance < currentDistance)
-                        currentDistance = tempDistance;
-
-                    tempDistance =  getDistance(x, y, temp.getX4(), temp.getY4());
-                    if (tempDistance < currentDistance)
-                        currentDistance = tempDistance;
-                }
-                //This is the location has all four points are the same
-                else{
-                    currentDistance = getDistance(x, y, temp.getX1(), temp.getY1());
-                }
+//                //That is the location has four points different
+//                if( temp.getX1() != temp.getX2() || temp.getX1() != temp.getX3() || temp.getX1() != temp.getX4() ||
+//                        temp.getY1() != temp.getY2() || temp.getY1() != temp.getY3() || temp.getY1() != temp.getY4()){
+//
+//                    double tempDistance = 0.0;
+//                    currentDistance = getDistance(x, y, temp.getX1(), temp.getY1());
+//
+//                    tempDistance = getDistance(x, y, temp.getX1(), temp.getY1());
+//                    if (tempDistance < currentDistance)
+//                        currentDistance = tempDistance;
+//
+//                    tempDistance = getDistance(x, y, temp.getX2(), temp.getY2());
+//                    if (tempDistance < currentDistance)
+//                        currentDistance = tempDistance;
+//
+//                    tempDistance =  getDistance(x, y, temp.getX3(), temp.getY3());
+//                    if (tempDistance < currentDistance)
+//                        currentDistance = tempDistance;
+//
+//                    tempDistance =  getDistance(x, y, temp.getX4(), temp.getY4());
+//                    if (tempDistance < currentDistance)
+//                        currentDistance = tempDistance;
+//                }
+//                //This is the location has all four points are the same
+//                else{
+//                    currentDistance = getDistance(x, y, temp.getX1(), temp.getY1());
+//                }
+                currentDistance = getDistance(currentLocation, temp.getCenterPoint());
 
                 if( currentDistance < smallestDistance ) {
                     smallestDistance = currentDistance;
@@ -786,10 +810,15 @@ public class RoutesDAO {
     }
 
 
-    private static double getDistance(double x1, double y1, double x2, double y2){
-        double dx = x1 - x2;
-        double dy = y1 - y2;
-        return Math.sqrt( (dx*dx) + (dy*dy) );
+//    private static double getDistance(double x1, double y1, double x2, double y2){
+//        double dx = x1 - x2;
+//        double dy = y1 - y2;
+//        return Math.sqrt( (dx*dx) + (dy*dy) );
+//    }
+
+    private static double getDistance(ParseGeoPoint currentLocation, LatLng subRoutePoint) {
+        ParseGeoPoint toLocation = new ParseGeoPoint(subRoutePoint.latitude, subRoutePoint.longitude);
+        return currentLocation.distanceInMilesTo(toLocation);
     }
 
 
