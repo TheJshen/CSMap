@@ -505,7 +505,7 @@ public class RoutesDAO {
      * Return:
      *      ArrayList<RoutesDAO> routes if any match; else null.
      */
-    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(int destination, double x, double y, double distance, final Activity activity) {
+    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(int destination, double x, double y, double distance, int transport, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
@@ -521,6 +521,7 @@ public class RoutesDAO {
         //Querry for the start location same as destination in the Routes table
         ParseQuery<ParseObject> endLoc =  ParseQuery.getQuery(ParseConstant.ROUTES);
         endLoc.whereEqualTo(ParseConstant.ROUTES_ENDLOC, destination);
+        endLoc.whereEqualTo(ParseConstant.ROUTES_TRANSPORT, transport);
 
         //Querry for the same routeId in the SubRoute within the given location range.
         ParseQuery<ParseObject> endSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
@@ -598,7 +599,7 @@ public class RoutesDAO {
      * Return:
      *      ArrayList<RoutesDAO> routes if any match; else null.
      */
-    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(int destination, double x, double y, double distance, final Activity activity) {
+    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(int destination, double x, double y, double distance, int transport, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
@@ -615,6 +616,7 @@ public class RoutesDAO {
         //Querry for the start location same as destination in the Routes table
         ParseQuery<ParseObject> startLoc =  ParseQuery.getQuery(ParseConstant.ROUTES);
         startLoc.whereEqualTo(ParseConstant.ROUTES_STRLOC, destination);
+        startLoc.whereEqualTo(ParseConstant.ROUTES_TRANSPORT, transport);
 
         //Querry for the same routeId in the SubRoute within the given location range.
         ParseQuery<ParseObject> startSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
@@ -675,7 +677,7 @@ public class RoutesDAO {
         return null;
     }
 
-    /* Name: searchDestination (not tested)
+    /* Name: searchDestinations (not tested)
      * Describe:
      *      it will tell if the given place exists or not
      * Parameter:
@@ -685,7 +687,7 @@ public class RoutesDAO {
      * Return:
      *      true if any match; else false.
      */
-    public static ArrayList<Integer> searchDestination(String endLoc, final Activity activity) {
+    public static ArrayList<Integer> searchDestinations(String endLoc, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<Integer> destinations = null;
@@ -717,6 +719,7 @@ public class RoutesDAO {
 
         return null;
     }
+
 
     /* Name: searchClosestPlace (not tested)
     * Describe:
