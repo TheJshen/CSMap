@@ -293,8 +293,10 @@ public class UserDAO{
             public void done(ParseException e) {
                 if (e == null) {
                     // an email was successfully sent with reset instructions
+                    Messenger.toast("An email has been sent to your email account.", activity);
                 } else {
                     // something went wrong. Look at the ParseException message
+                    Messenger.toast(e.getMessage(), activity);
                 }
             }
         });
