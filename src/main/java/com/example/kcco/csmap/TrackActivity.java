@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
@@ -64,7 +62,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Display map
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_track);
         setUpMapIfNeeded();
 
         GPS = new RouteTracker(this, this);
@@ -225,20 +223,6 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
-
-//    public void switchActivity(int caseNumber) {
-//        if (caseNumber == 1) {
-//            Intent intent = new Intent(TrackActivity.this, DispatchActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            TrackActivity.this.startActivity(intent);
-//        }
-//        else {
-//            Intent intent = new Intent(TrackActivity.this, LoginActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            TrackActivity.this.startActivity(intent);
-//        }
-//    }
-
 
     /*  Button function track
      *  Button name: btnSurrey

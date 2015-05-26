@@ -48,8 +48,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_maps);
-        this.root = (FlyOutContainer) this.getLayoutInflater().inflate(R.layout.activity_map_search, null);
+//        setContentView(R.layout.activity_track);
+        this.root = (FlyOutContainer) this.getLayoutInflater().inflate(R.layout.activity_map_main, null);
         setContentView(root);
         setUpMapIfNeeded();
 
