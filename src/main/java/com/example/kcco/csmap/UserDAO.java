@@ -323,6 +323,7 @@ public class UserDAO{
                 dlg.setMessage("Logging in, please wait.");
                 dlg.show();
                 if (e != null) {
+                    dlg.dismiss();
                     //show the error message
                     Messenger.toast(e.getMessage(), activity);
                 } else {
