@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 
 
-public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
+public class TrackActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
 
     //Constant for distance
     private static final double SEARCH_DISTANCE = 0.01; //in miles
@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent nextScreen = new Intent(MapsActivity.this, RoomAvailOptionsActivity.class);
+                Intent nextScreen = new Intent(TrackActivity.this, RoomAvailOptionsActivity.class);
                 nextScreen.putExtra("BuildingName", marker.getTitle());
                 startActivity(nextScreen);
             }
@@ -226,35 +226,24 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    public void switchActivity(int caseNumber) {
-        if (caseNumber == 1) {
-            Intent intent = new Intent(MapsActivity.this, DispatchActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            MapsActivity.this.startActivity(intent);
-        }
-        else {
-            Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            MapsActivity.this.startActivity(intent);
-        }
-    }
+//    public void switchActivity(int caseNumber) {
+//        if (caseNumber == 1) {
+//            Intent intent = new Intent(TrackActivity.this, DispatchActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            TrackActivity.this.startActivity(intent);
+//        }
+//        else {
+//            Intent intent = new Intent(TrackActivity.this, LoginActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            TrackActivity.this.startActivity(intent);
+//        }
+//    }
 
-    /*  Button function logout
-     *  Button name: btnLogout
-     *  Describe: logout user and direct user into SignUpOrLogin.
+
+    /*  Button function track
+     *  Button name: btnSurrey
+     *  Describe: Begin to track the route.
      */
-    public void logout(View view){
-        if (UserDAO.isUserActive()){
-            Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
-            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " Logout");
-            UserDAO.logOut(MapsActivity.this);
-        }
-        else {
-            UserDAO.logOut(MapsActivity.this);
-            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
-        }
-    }
-
     public void track(View view){
         if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
@@ -269,8 +258,8 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             GPS.stopGPSTrack();
             ((Button)view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
-            RoutesDAO routeInfo = new RoutesDAO(MapsActivity.this);
-            RoutesDAO subRoute = new RoutesDAO(MapsActivity.this);
+            RoutesDAO routeInfo = new RoutesDAO(TrackActivity.this);
+            RoutesDAO subRoute = new RoutesDAO(TrackActivity.this);
 
             //local variables for route information
             int startLocId, endLocId;
@@ -282,7 +271,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             // Makes sure that there is at least two points in the route
             if( latLngRoute.size() > 1 ) {
 
-                // This section assumes it generate info from front end
+                //TODO: This section assumes it generate info from front end
                 startLocId = verifyExistedPlace(latLngRoute.get(0), "Start Location");
                 endLocId = verifyExistedPlace(latLngRoute.get(latLngRoute.size()-1), "End Location");
                 transport = 8;
@@ -304,13 +293,13 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
 
         //search if the given location point is existed in database.
         BuildingDAO existedPlace = BuildingDAO.searchBuilding(point,
-                SEARCH_DISTANCE, MapsActivity.this);
+                SEARCH_DISTANCE, TrackActivity.this);
 
         //the given location point did not exist in database
         if (existedPlace == null) {
-            //the placeName should be the string generate from the front end.
+            //TODO: the placeName should be the string generate from the front end.
             placeName = "Somewhere";
-            existedPlace = new BuildingDAO(MapsActivity.this);
+            existedPlace = new BuildingDAO(TrackActivity.this);
             existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
             placeId = existedPlace.getPlaceId();
             existedPlace.sendBuildingInfo();
@@ -318,7 +307,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         //the given location point did exist in database
         else {
             placeName = existedPlace.getName();
-            //Assume front end prompt current place name, and then user change it.
+            //TODO: Assume front end prompt current place name, and then user change it.
             placeName = "Somewhere2";
             placeId = existedPlace.getPlaceId();
             existedPlace.setName(placeName);
@@ -327,10 +316,15 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         return placeId;
     }
 
+
+    /*  Button function goToMainActivity
+     *  Button name: btnMain
+     *  Describe: Direct User to MapMainActivity
+     */
     public void goToMainActivity(View view){
-        Intent intent = new Intent(MapsActivity.this, MapMainActivity.class);
+        Intent intent = new Intent(TrackActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapsActivity.this.startActivity(intent);
+        TrackActivity.this.startActivity(intent);
     }
 
 

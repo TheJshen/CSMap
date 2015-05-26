@@ -85,7 +85,7 @@ public class LoginActivity extends Activity {
 
     public void switchActivity(int caseNumber) {
         if (caseNumber == MAIN) {
-            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MapMainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             LoginActivity.this.startActivity(intent);
         }

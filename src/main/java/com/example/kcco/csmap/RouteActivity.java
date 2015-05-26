@@ -109,8 +109,8 @@ public class RouteActivity extends ActionBarActivity {
     }
 
     public void goToMainActivity(View view){
-        //TODO: not sure what activity should go to, temporary MapsActivity
-        Intent intent = new Intent(RouteActivity.this, MapsActivity.class);
+        //TODO: not sure what activity should go to, temporary TrackActivity
+        Intent intent = new Intent(RouteActivity.this, TrackActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         //add more information into intent before start different activity
         intent.putExtra("destination", destination);

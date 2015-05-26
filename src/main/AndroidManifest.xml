@@ -52,10 +52,10 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".RetrievePasswordActivity"/>
-        <activity android:name=".MapsActivity" />
+        <activity android:name=".TrackActivity" />
         <!--
         <activity
-            android:name=".MapsActivity"
+            android:name=".TrackActivity"
             android:label="@string/title_activity_maps" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,10 +67,10 @@
         <activity
             android:name=".RoomAvailOptionsActivity"
             android:label="@string/title_activity_classroom_info"
-            android:parentActivityName=".MapsActivity" >
+            android:parentActivityName=".TrackActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.kcco.csmap.MapsActivity" />
+                android:value=".TrackActivity" />
         </activity>
         <activity
             android:name=".RoomAvailInfoActivity"

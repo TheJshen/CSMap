@@ -209,7 +209,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     public void goToTrackActivity(View view){
         toggleMenu(view);
-        Intent intent = new Intent(MapMainActivity.this, MapsActivity.class);
+        Intent intent = new Intent(MapMainActivity.this, TrackActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         MapMainActivity.this.startActivity(intent);
     }
@@ -232,12 +232,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         toggleMenu(view);
         if (UserDAO.isUserActive()){
             Toast.makeText(MapMainActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
-            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " Logout");
+            Log.d("TrackActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " Logout");
             UserDAO.logOut(MapMainActivity.this);
         }
         else {
             UserDAO.logOut(MapMainActivity.this);
-            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
+            Log.d("TrackActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
         }
     }
 
