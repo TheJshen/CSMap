@@ -7,8 +7,10 @@
 
 
 <com.example.kcco.csmap.FlyOutContainer xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity">
 
 <!-- Menu layout -->
 <HorizontalScrollView
@@ -19,30 +21,32 @@ android:layout_height="match_parent" >
         <Button
             android:id="@+id/mapMenuUserLogIn"
             style="@style/MainTheme.Button"
-
-            android:onClick="toggleMenu"
-            android:text="User Log In" />
+            android:onClick="goToRouteActivity"
+            android:text="Search" />
 
         <Button
             android:layout_height="match_parent"
             style="@style/MainTheme.Button"
-
             android:onClick="toggleMenu"
             android:text="Bookmark" />
 
         <Button
             android:layout_height="match_parent"
             style="@style/MainTheme.Button"
-
             android:onClick="toggleMenu"
             android:text="History" />
 
         <Button
             android:layout_height="match_parent"
             style="@style/MainTheme.Button"
-
-            android:onClick="toggleMenu"
+            android:onClick="goToTrackActivity"
             android:text="Input Route" />
+
+        <Button
+            android:id="@+id/btnLogout"
+            style="@style/MainTheme.Button"
+            android:onClick="logout"
+            android:text="Logout" />
 
     </LinearLayout>
 
@@ -53,18 +57,29 @@ android:layout_height="match_parent" >
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <SearchView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchView"
+         />
+
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:onClick="toggleMenu"
-        android:text="ToogleMenu" />
+        android:text="ToogleMenu"
+        android:layout_gravity="center_horizontal|top" />
+
     <fragment
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map"
         tools:context=".MapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_gravity="center_horizontal|top" />
+
 </FrameLayout>
 
 </com.example.kcco.csmap.FlyOutContainer>

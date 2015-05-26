@@ -349,7 +349,7 @@ public class UserDAO{
                 if (e != null) {
                     Messenger.toast(e.getMessage(), activity);
                 } else {
-                    ((MapsActivity) activity).switchActivity(1);
+                    ((MapMainActivity) activity).goToLoginActivity();
                 }
             }
         });

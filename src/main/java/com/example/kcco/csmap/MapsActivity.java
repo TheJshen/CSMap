@@ -327,8 +327,8 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         return placeId;
     }
 
-    public void goToSearchActivity(View view){
-        Intent intent = new Intent(MapsActivity.this, MapSearchActivity.class);
+    public void goToMainActivity(View view){
+        Intent intent = new Intent(MapsActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         MapsActivity.this.startActivity(intent);
     }

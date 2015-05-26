@@ -15,9 +15,7 @@
     <uses-permission android:name="com.example.kcco.csmap.map.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
+
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
@@ -82,8 +80,12 @@
                 android:value="com.example.kcco.csmap.RoomAvailOptionsActivity" />
         </activity>
         <activity
-            android:name=".MapSearchActivity"
+            android:name=".MapMainActivity"
             android:label="@string/title_activity_map_search" >
+        </activity>
+        <activity
+            android:name=".RouteActivity"
+            android:label="@string/title_activity_route" >
         </activity>
     </application>
 
