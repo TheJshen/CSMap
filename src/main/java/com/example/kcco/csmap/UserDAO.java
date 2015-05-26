@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.kcco.csmap.DAO.ParseConstant;
 import com.parse.DeleteCallback;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
