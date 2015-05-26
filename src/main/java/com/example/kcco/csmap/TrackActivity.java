@@ -1,11 +1,16 @@
 package com.example.kcco.csmap;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
@@ -24,7 +29,6 @@ import java.util.ArrayList;
 
 /**TODO: Need to get the map to follow the user
  * TODO: Get the navigation layer to show the users location currently
- * TODO: Have a route be able to inputted into the data base
  */
 
 
@@ -34,6 +38,10 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
     //Constant for distance
     private static final double SEARCH_DISTANCE = 0.01; //in miles
     private static final double BUILDING_DISTANCE = 0.01; //in miles
+
+    //popupPrompt Input
+    private String promptInput = "";
+    private boolean getPrompt = false;
 
     private static final int POINTS_PER_AVERAGE = 5;
     public GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -134,6 +142,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         }
     }
 
+/////////////////////////////LocationCallBack Functions ///////////////////////////////////////
     /**
      * This is where we can add markers or lines, add listeners or move the camera.
      * <p/>
@@ -224,6 +233,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+/////////////////////////Component Functions ///////////////////////////////////////
     /*  Button function track
      *  Button name: btnSurrey
      *  Describe: Begin to track the route.
@@ -251,6 +261,14 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
             int userId = UserDAO.getCurrentUserId();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
+            //TODO: testing popupPrompt, not working as expected, need further research.
+            TrackActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    popupPrompt("Testing", "input");
+                }
+            });
+            Log.d("TrackActivity", "Got promptInput: " + promptInput);
+
             //search if the start location of thisRoute is existed
             // Makes sure that there is at least two points in the route
             if( latLngRoute.size() > 1 ) {
@@ -270,7 +288,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         }
     }
 
-    private int verifyExistedPlace(LatLng point, String promptName){
+    private int verifyExistedPlace(LatLng point, String promptTitle){
         String placeName;
         int placeId;
         int userId = UserDAO.getCurrentUserId();
@@ -282,6 +300,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         //the given location point did not exist in database
         if (existedPlace == null) {
             //TODO: the placeName should be the string generate from the front end.
+            popupPrompt(promptTitle, "Place");
             placeName = "Somewhere";
             existedPlace = new BuildingDAO(TrackActivity.this);
             existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
@@ -301,6 +320,40 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
     }
 
 
+
+    //TODO: Not completed, need to figure way to get String value after click Okay. Something to deal with Thread.
+    public void popupPrompt(String promptTitle, String place){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(promptTitle);
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        input.setText(place);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public synchronized void onClick(DialogInterface dialog, int which) {
+                promptInput = input.getText().toString();
+                getPrompt = true;
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+
+    }
+
+
     /*  Button function goToMainActivity
      *  Button name: btnMain
      *  Describe: Direct User to MapMainActivity
@@ -310,6 +363,4 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         TrackActivity.this.startActivity(intent);
     }
-
-
 }
