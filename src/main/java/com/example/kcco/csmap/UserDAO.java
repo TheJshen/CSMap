@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.kcco.csmap.DAO.ParseConstant;
 import com.parse.DeleteCallback;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
@@ -293,8 +294,10 @@ public class UserDAO{
             public void done(ParseException e) {
                 if (e == null) {
                     // an email was successfully sent with reset instructions
+                    Messenger.toast("An email has been sent to your email account.", activity);
                 } else {
                     // something went wrong. Look at the ParseException message
+                    Messenger.toast(e.getMessage(), activity);
                 }
             }
         });
@@ -321,6 +324,7 @@ public class UserDAO{
                 dlg.setMessage("Logging in, please wait.");
                 dlg.show();
                 if (e != null) {
+                    dlg.dismiss();
                     //show the error message
                     Messenger.toast(e.getMessage(), activity);
                 } else {
@@ -349,7 +353,7 @@ public class UserDAO{
                 if (e != null) {
                     Messenger.toast(e.getMessage(), activity);
                 } else {
-                    ((MapsActivity) activity).switchActivity(1);
+                    ((MapMainActivity) activity).goToLoginActivity();
                 }
             }
         });

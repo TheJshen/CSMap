@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 
 /**
  * Created by jason on 5/11/15.
- * This is the MapsActivity. Everything that controls what happens on the map would go here.
+ * This is the TrackActivity. Everything that controls what happens on the map would go here.
  */
 public class RouteTracker implements
         GoogleApiClient.ConnectionCallbacks,
@@ -41,7 +40,7 @@ public class RouteTracker implements
     private LocationCallBack mLocationCallBack; // Callback
     private Context mContext; //
 
-    public static final String TAG = MapsActivity.class.getSimpleName();
+    public static final String TAG = TrackActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final static int POINTS_PER_AVERAGE = 5;
 

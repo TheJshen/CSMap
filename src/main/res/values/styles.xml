@@ -13,6 +13,8 @@
     <style name="LayoutContainerTheme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
+
+        <item name="android:background">@drawable/background_ucsd</item>
     </style>
 
     <!-- Login Theme -->
@@ -137,7 +139,7 @@
         <item name="android:fillViewport">true</item>
         <item name="android:overScrollMode">never</item>
 
-        <item name="android:background">@drawable/background_ucsd_layered</item>
+        <item name="android:background">@color/main_color</item>
     </style>
 
     <style name="MainTheme.MainScrollContainer">
@@ -160,7 +162,7 @@
         <item name="android:textSize">@dimen/abc_text_size_title_material</item>
         <item name="android:gravity">right</item>
 
-        <item name="android:background">@color/title_color</item>
+        <item name="android:background">@color/banner_color</item>
     </style>
 
 

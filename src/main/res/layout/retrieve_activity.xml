@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    style="@style/LoginRegister.Background" >
+
+    <TextView
+        android:layout_width="317dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Enter the e-mail address associated with your DATWAY account, then click Continue. We&apos;ll email you a link to a page where you can easily create a new password."
+        android:id="@+id/textView"
+        android:textColor="#fff6ffff"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/email"
+        android:hint="@string/register_email"
+        android:layout_gravity="center_horizontal"
+        style="@style/LoginRegister.EditText.Email" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:id="@+id/submit"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ffc9dcff"
+        style="@style/LoginRegister.ActionButton" />
+
+    <Button
+        style="@style/LoginRegister.ActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back to Login"
+        android:id="@+id/login"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.kcco.csmap;
+package com.example.kcco.csmap.Misc;
 
 import android.content.Context;
 import android.util.AttributeSet;

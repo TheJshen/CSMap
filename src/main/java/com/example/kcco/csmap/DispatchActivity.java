@@ -16,7 +16,7 @@ public class DispatchActivity extends Activity {
 
         // Check if already logged in
         if (ParseUser.getCurrentUser() != null) {
-            startActivity(new Intent(this, MapsActivity.class));
+            startActivity(new Intent(this, MapMainActivity.class));
         }
         else {
             startActivity(new Intent(this, LoginActivity.class));

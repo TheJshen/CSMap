@@ -2,6 +2,8 @@ package com.example.kcco.csmap;
 
 import android.app.Application;
 
+import com.example.kcco.csmap.DAO.ParseConstant;
+
 /**
  * Created by gaojieli on 5/14/15.
  */

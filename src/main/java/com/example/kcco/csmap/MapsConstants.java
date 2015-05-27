@@ -1,6 +1,7 @@
 package com.example.kcco.csmap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -58,5 +59,19 @@ public class MapsConstants {
         add(APM); add(ASANT); add(CENTR); add(CICC); add(CPMC); add(CSB); add(EBU1); add(EBU2); add(ERCA); add(GH); add(HSS); add(LEDDN);
         add(LIT); add(MANDE); add(MAYER); add(MCC); add(MCGIL); add(MYR_A); add(NSB); add(OTRSN); add(PCYNH); add(PETER); add(PRICE);
         add(SEQUO); add(SME); add(SOLIS); add(SSB); add(WLH); add(YORK);
+    }};
+
+    public static HashMap<String,String> buildingCodes = new HashMap<String,String>(){{
+        put("Applied Physics and Math Building","APM"); put("Asante Hall","ASANT"); put("Center Hall","CENTR");
+        put("Copley International Conference Center","CICC"); put("Conrad Prebys Music Center","CPMC");
+        put("Cognitive Science Building","CSB"); put("Engineering Bldg Unit 1","EBU1"); put("Engineering Bldg Unit 2","EBU2");
+        put("Eleanor Roosevelt College Administration Building","ERCA"); put("Galbraith Hall","GH");
+        put("Humanities and Social Sciences Building","HSS"); put("Ledden Auditorium","LEDDN");
+        put("Literature Building","LIT"); put("Mandeville Center","MANDE"); put("Mayer Hall","MAYER");
+        put("Media Center and Communications","MCC"); put("McGill Hall","MCGIL"); put("Mayer Hall - Addition","MYR-A");
+        put("Natural Sciences Building","NSB"); put("Otterson Hall","OTRSN"); put("Pepper Canyon Hall","PCYNH");
+        put("Peterson Hall","PETER"); put("Price Center Theater","PRICE"); put("Sequoyah Hall","SEQUO");
+        put("Structural and Materials Engineering Building","SME"); put("Solis Hall","SOLIS");
+        put("Social Sciences Building","SSB"); put("Warren Lecture Hall","WLH"); put("York Hall","YORK");
     }};
 }

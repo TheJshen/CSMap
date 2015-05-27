@@ -12,6 +12,10 @@ import android.widget.Toast;
 public class LoginActivity extends Activity {
     private EditText usernameView;
     private EditText passwordView;
+    public static final int MAIN = 1;
+    public static final int RESET = 2;
+    private static final String TAG = "tag";
+
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -61,25 +65,15 @@ public class LoginActivity extends Activity {
 
                 UserDAO user = new UserDAO(LoginActivity.this);
                 user.logIn(username, password, LoginActivity.this);
+            }
+        });
 
-
-                /* Login with the original test database
-                ParseUser.logInInBackground(usernameView.getText().toString(),
-                        passwordView.getText().toString(), new LogInCallback() {
-                            @Override
-                            public void done(ParseUser parseUser, ParseException e) {
-                                dlg.dismiss();
-                                if (e != null) {
-                                    //show the error message
-                                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                                } else {
-                                    Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                }
-                            }
-                        });
-                */
+        findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginActivity.this.startActivity(new Intent(LoginActivity.this, RetrievePasswordActivity.class));
+                //switchActivity(RESET);
+                //Log.d(TAG,"check button");
             }
         });
     }
@@ -90,13 +84,14 @@ public class LoginActivity extends Activity {
     }
 
     public void switchActivity(int caseNumber) {
-        if (caseNumber == 1) {
-            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+        if (caseNumber == MAIN) {
+            Intent intent = new Intent(LoginActivity.this, MapMainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            Bundle user = new Bundle();
-            user.putString("username",usernameView.getText().toString());
-            user.putString("password", passwordView.getText().toString());
-            intent.putExtras(user);
+            LoginActivity.this.startActivity(intent);
+        }
+        else if (caseNumber == RESET) {
+            Intent intent = new Intent(LoginActivity.this, RetrievePasswordActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             LoginActivity.this.startActivity(intent);
         }
         else {

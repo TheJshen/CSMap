@@ -1,12 +1,16 @@
 package com.example.kcco.csmap;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
@@ -24,29 +28,18 @@ import com.google.android.gms.maps.model.Polyline;
 import java.util.ArrayList;
 
 
-/**TODO: Need to get the map to follow the user
- * TODO: Get the navigation layer to show the users location currently
- * TODO: Have a route be able to inputted into the data base
- */
-
-
-
-public class MapsActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
+public class MapMainActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
 
     //Constant for distance
     private static final double SEARCH_DISTANCE = 0.01; //in miles
     private static final double BUILDING_DISTANCE = 0.01; //in miles
 
-    private static final int POINTS_PER_AVERAGE = 5;
-    public GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    //popupPrompt Input
+    private String promptInput = "";
 
-    // Used for testing the route lines
-    private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
-    private static final LatLng GEISEL = new LatLng(32.881132, -117.237639);
-    private static final LatLng RIMAC = new LatLng(32.887298, -117.239616);
 
-    // Used for testing to create route based on ArrayList
-    //private ArrayList<LatLng> route = new ArrayList<>();
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+
 
     // For averaging points
     private int pointUpdateCounter = 0;
@@ -54,18 +47,25 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
     // Route object
     private Route routeToDisplay;
     private Polyline currentDisplayed; // Polyline displayed on the map
+    
+    // Used for testing the route lines
+    private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
+    private static final LatLng GEISEL = new LatLng(32.881132, -117.237639);
+    private static final LatLng RIMAC = new LatLng(32.887298, -117.239616);
 
     // Used to set camera position
     private static CameraPosition cameraPosition;
 
     private static RouteTracker GPS;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Display map
-        setContentView(R.layout.activity_maps);
+//        setContentView(R.layout.activity_track);
+        setContentView(R.layout.activity_map_main);
         setUpMapIfNeeded();
+
 
         GPS = new RouteTracker(this, this);
 
@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent nextScreen = new Intent(MapsActivity.this, RoomAvailOptionsActivity.class);
+                Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
                 nextScreen.putExtra("BuildingName", marker.getTitle());
                 startActivity(nextScreen);
             }
@@ -89,8 +89,10 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             );
         }
 
+
     }
 
+/////////////////////////////////Overriding Activity Functions//////////////////////////////////////
     // When app resumes from pause
     @Override
     protected void onResume() {
@@ -136,29 +138,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         }
     }
 
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-    private void setUpMap() {
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UCSD, 19));
-        //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            /*TODORouteTracker tmep = new RouteTracker(this, this);
-            Location myLocation =  tmep.getPreviousLocation();
-            LatLng firstLoc = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-            */
-        //LatLng first = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
-        // Sets the camera position to cameraPosition
-        cameraPosition = new CameraPosition.Builder()
-                .target(UCSD)      // Sets the center of the map to Mountain View
-                .zoom(15)                   // Sets the zoom
-                .bearing(0)                // Sets the orientation of the camera to North
-                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
+/////////////////////////////////Overriding LocationCallBack Functions//////////////////////////////
 
     @Override
     public void handleNewLocation(Location location) {
@@ -215,6 +195,23 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         }
     }
 
+
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p/>
+     * This should only be called once and when we are sure that {@link #mMap} is not null.
+     */
+    private void setUpMap() {
+        cameraPosition = new CameraPosition.Builder()
+                .target(UCSD)      // Sets the center of the map to Mountain View
+                .zoom(15)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
     // This method is used to center on current location
     public void dropPinAndCenterCamera(LatLng pointToCenterOn) {
         cameraPosition = new CameraPosition.Builder()
@@ -226,35 +223,45 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    public void switchActivity(int caseNumber) {
-        if (caseNumber == 1) {
-            Intent intent = new Intent(MapsActivity.this, DispatchActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            MapsActivity.this.startActivity(intent);
-        }
-        else {
-            Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            MapsActivity.this.startActivity(intent);
-        }
+/////////////////////////////Component functions//////////////////////////////////////////////////
+
+    public void toggleMenu(View view) {
+        Log.d("MapMainActivity", "Do nothing because Menu always there");
     }
 
-    /*  Button function logout
-     *  Button name: btnLogout
-     *  Describe: logout user and direct user into SignUpOrLogin.
-     */
+
+
+    public void goToRouteActivity(View view){
+        toggleMenu(view);
+        Intent intent = new Intent(MapMainActivity.this, RouteActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);
+
+    }
+
+    public void goToLoginActivity(){
+        Intent intent = new Intent(MapMainActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);
+    }
+
     public void logout(View view){
+        toggleMenu(view);
         if (UserDAO.isUserActive()){
-            Toast.makeText(MapsActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
-            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " Logout");
-            UserDAO.logOut(MapsActivity.this);
+            Toast.makeText(MapMainActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
+            Log.d("TrackActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " Logout");
+            UserDAO.logOut(MapMainActivity.this);
         }
         else {
-            UserDAO.logOut(MapsActivity.this);
-            Log.d("MapsActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
+            UserDAO.logOut(MapMainActivity.this);
+            Log.d("TrackActivity", "User " + Integer.toString(UserDAO.getCurrentUserId()) + " should not show up");
         }
     }
 
+    /*  Button function track
+     *  Button name: btnSurrey
+     *  Describe: Begin to track the route.
+     */
     public void track(View view){
         if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
@@ -269,8 +276,8 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             GPS.stopGPSTrack();
             ((Button)view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
-            RoutesDAO routeInfo = new RoutesDAO(MapsActivity.this);
-            RoutesDAO subRoute = new RoutesDAO(MapsActivity.this);
+            RoutesDAO routeInfo = new RoutesDAO(MapMainActivity.this);
+            RoutesDAO subRoute = new RoutesDAO(MapMainActivity.this);
 
             //local variables for route information
             int startLocId, endLocId;
@@ -278,11 +285,19 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
             int userId = UserDAO.getCurrentUserId();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
+            //TODO: testing popupPrompt, not working as expected, need further research.
+            MapMainActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    popupPrompt("Testing", "input");
+                }
+            });
+            Log.d("MapMainActivity", "Got promptInput: " + promptInput);
+
             //search if the start location of thisRoute is existed
             // Makes sure that there is at least two points in the route
             if( latLngRoute.size() > 1 ) {
 
-                // This section assumes it generate info from front end
+                //TODO: This section assumes it generate info from front end
                 startLocId = verifyExistedPlace(latLngRoute.get(0), "Start Location");
                 endLocId = verifyExistedPlace(latLngRoute.get(latLngRoute.size()-1), "End Location");
                 transport = 8;
@@ -297,20 +312,21 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         }
     }
 
-    private int verifyExistedPlace(LatLng point, String promptName){
+    private int verifyExistedPlace(LatLng point, String promptTitle){
         String placeName;
         int placeId;
         int userId = UserDAO.getCurrentUserId();
 
         //search if the given location point is existed in database.
         BuildingDAO existedPlace = BuildingDAO.searchBuilding(point,
-                SEARCH_DISTANCE, MapsActivity.this);
+                SEARCH_DISTANCE, MapMainActivity.this);
 
         //the given location point did not exist in database
         if (existedPlace == null) {
-            //the placeName should be the string generate from the front end.
+            //TODO: the placeName should be the string generate from the front end.
+            popupPrompt(promptTitle, "Place");
             placeName = "Somewhere";
-            existedPlace = new BuildingDAO(MapsActivity.this);
+            existedPlace = new BuildingDAO(MapMainActivity.this);
             existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
             placeId = existedPlace.getPlaceId();
             existedPlace.sendBuildingInfo();
@@ -318,7 +334,7 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         //the given location point did exist in database
         else {
             placeName = existedPlace.getName();
-            //Assume front end prompt current place name, and then user change it.
+            //TODO: Assume front end prompt current place name, and then user change it.
             placeName = "Somewhere2";
             placeId = existedPlace.getPlaceId();
             existedPlace.setName(placeName);
@@ -327,10 +343,37 @@ public class MapsActivity extends FragmentActivity implements RouteTracker.Locat
         return placeId;
     }
 
-    public void goToSearchActivity(View view){
-        Intent intent = new Intent(MapsActivity.this, MapSearchActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapsActivity.this.startActivity(intent);
+
+
+    //TODO: Not completed, need to figure way to get String value after click Okay. Something to deal with Thread.
+    public void popupPrompt(String promptTitle, String place){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(promptTitle);
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        input.setText(place);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public synchronized void onClick(DialogInterface dialog, int which) {
+                promptInput = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+
     }
 
 

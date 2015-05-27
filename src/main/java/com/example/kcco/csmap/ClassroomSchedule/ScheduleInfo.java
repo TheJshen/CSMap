@@ -23,6 +23,17 @@ public class ScheduleInfo implements Parcelable {
         this.timePeriod = in.readString();
         this.className = in.readString();
     }
+    public String getDayOfWeek() {
+        return this.dayOfWeek;
+    }
+
+    public String getTimePeriod() {
+        return this.timePeriod;
+    }
+
+    public String getClassName() {
+        return this.className;
+    }
 
     public String getPrintable() {
         String strOut = dayOfWeek + " " + timePeriod + " " + className;
