@@ -32,7 +32,7 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
         //Set title to the name of the building
         ((TextView) findViewById(R.id.room_avail_options_title)).setText(buildingName);
 
-        //Get info from parse
+        //Get info from parse and put the information into a holder object
         final UCSDBuilding thisBuilding = new UCSDBuilding(buildingName);
         ArrayList<ClassroomDAO> cls = ClassroomDAO.query(MapsConstants.buildingCodes.get(buildingName));
         for(ClassroomDAO cl : cls) {
@@ -58,21 +58,25 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
 
             // Position the new Button
             RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.FILL_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT
             );
             rlParams.addRule(RelativeLayout.BELOW, id - 1); // id = 1 (0) is not a valid ID so it gets put in default location
 
             // Add the Listener for the Button
-            final String building = buildingName;
-            final String classroomName = classroomNames.get(i);
+            final String thisBuildingName = buildingName;
+            final String thisClassroomName = classroomNames.get(i);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent nextScreen = new Intent(RoomAvailOptionsActivity.this, RoomAvailInfoActivity.class);
-                    nextScreen.putExtra("BuildingName", building);
-                    nextScreen.putExtra("ClassroomName", classroomName);
-                    nextScreen.putParcelableArrayListExtra("ClassroomInfo", thisBuilding.getClassroomByNumber(classroomName).scheduleToParcelableList());
+
+                    // Add information to parse onto the next activity
+                    nextScreen.putExtra("BuildingName", thisBuildingName);
+                    nextScreen.putExtra("ClassroomName", thisClassroomName);
+                    nextScreen.putParcelableArrayListExtra("ClassroomInfo", thisBuilding.getClassroomByNumber(thisClassroomName).scheduleToParcelableList());
+
+                    // Start the activity
                     startActivity(nextScreen);
                 }
             });

@@ -1,6 +1,10 @@
-package com.example.kcco.csmap.DAO;
+/**
+ * Data Access Object for a UCSD class. Provides methods to access and retrieve data
+ * from the database.
+ * @author David Luu
+ */
 
-import android.util.Log;
+package com.example.kcco.csmap.DAO;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -17,14 +21,29 @@ public class ClassroomDAO {
 
     private ParseObject thisClass;
 
+
+    /**
+     * Constructor for new UCSDClass_DAO objects. Initializes thisClass as a
+     * new ParseObject.
+     */
     public ClassroomDAO() {
         thisClass = new ParseObject("UCSDClass");
     }
 
+
+    /**
+     * Constructor for existing UCSDClass_DAO objects. This constructor is intended
+     * to be used in query to encapsulate the ParseObject(s) returned.
+     * @param obj The ParseObject to encapsulate
+     */
     public ClassroomDAO(ParseObject obj) {
         thisClass = obj;
     }
 
+
+    /**
+     * Saves the current parse object in the database.
+     */
     public void save() {
         try {
             thisClass.save();
@@ -34,11 +53,19 @@ public class ClassroomDAO {
         }
     }
 
+
+    /**
+     * Queries the database for classes within the inputted building.
+     * @param buildingName The building to return classes for - buildings are stored
+     *                     by building codes.
+     * @return An arraylist of ClassroomDAOs where each DAO represents a single
+     * class
+     */
     public static ArrayList<ClassroomDAO> query(String buildingName) {
         ArrayList<ClassroomDAO> results = new ArrayList<ClassroomDAO>();
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UCSDClass");
-        query.setLimit(QUERY_LIMIT);
+        query.setLimit(QUERY_LIMIT); //Bypass default limit of 100
         query.whereEqualTo("BuildingName", buildingName);
 
         try {

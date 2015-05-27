@@ -21,16 +21,19 @@ public class RoomAvailInfoActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_avail_info);
 
-        //TODO Dynamically create text views and populate main area/Remove room_avail_info_main_text
-        String title = ((String) getIntent().getExtras().get("BuildingName")) + " " + ((String) getIntent().getExtras().get("ClassroomName"));
+        // Set the title bar for the activity
+        String title = getIntent().getExtras().get("BuildingName") + " " + getIntent().getExtras().get("ClassroomName");
         ((TextView) findViewById(R.id.room_avail_info_title)).setText(title);
 
+        // Loop through list of classes passed through from RoomAvailOptionsActivity, print out relevant information
         ArrayList<ScheduleInfo> infoList = getIntent().getParcelableArrayListExtra("ClassroomInfo");
         for(int i = 0, id = 1; i < infoList.size(); ++i, ++id) {
+            // The current class to print out info for
             ScheduleInfo info = infoList.get(i);
 
             TextView newText = new TextView(this);
 
+            // Apply UI design
             newText.setId(id);
             newText.setText(info.getTimePeriod() + " " + info.getClassName());
             newText.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
@@ -43,50 +46,15 @@ public class RoomAvailInfoActivity extends ActionBarActivity {
             newText.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main_default, null));
 
             RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT
             );
-            // i = 1 (0) is not a valid ID so it gets put in default location
+            // id = 1 (0) is not a valid ID so it gets put in default location
             rlParams.addRule(RelativeLayout.BELOW, id - 1);
 
             // Add new TextView to RelativeLayout
             ((RelativeLayout) findViewById(R.id.room_avail_info_main)).addView(newText,rlParams);
         }
-    }
-
-    /* TEST ADD TEXT */
-    /*
-    for(int i = 1; i <= 100; i++) {
-        TextView newText = new TextView(this);
-
-        newText.setId(i);
-        newText.setText("This is Working! " + i);
-        newText.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
-        newText.setTextColor(getResources().getColor(R.color.text_color));
-
-        RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        // i = 1 (0) is not a valid ID so it gets put in default location
-        rlParams.addRule(RelativeLayout.BELOW, i - 1);
-
-        // Add new TextView to RelativeLayout
-        ((RelativeLayout) findViewById(R.id.classroom_info_main)).addView(newText,rlParams);
-    }
-    */
-    /* END TEST ADD TEXT */
-
-    public String turnToDisplayString(String timeString) {
-        String startTime = timeString.substring(0, timeString.indexOf('-'));
-        if(startTime.length() == 5)
-            startTime = '0' + startTime;
-
-        String endTime = timeString.substring(timeString.indexOf('-') + 1);
-        if(endTime.length() == 5)
-            endTime = '0' + endTime;
-
-        return (startTime + "-\n" + endTime);
     }
 
     @Override
