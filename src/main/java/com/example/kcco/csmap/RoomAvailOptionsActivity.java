@@ -134,30 +134,7 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
         thisBuilding.addClass("119", "CSE 140L - Digital Systems Laboratory", "F", "5:00p-5:50p");
         thisBuilding.addClass("214", "CSE 141 - Intro/Computer Architecture", "MWF", "1:00p-1:50p");
 
-        /* TEST ADD TEXT */
-        /*
-        for(int i = 1; i <= 100; i++) {
-            TextView newText = new TextView(this);
-
-            newText.setId(i);
-            newText.setText("This is Working! " + i);
-            newText.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
-            newText.setTextColor(getResources().getColor(R.color.text_color));
-
-            RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
-            );
-            // i = 1 (0) is not a valid ID so it gets put in default location
-            rlParams.addRule(RelativeLayout.BELOW, i - 1);
-
-            // Add new TextView to RelativeLayout
-            ((RelativeLayout) findViewById(R.id.classroom_info_main)).addView(newText,rlParams);
-        }
-        */
-        /* END TEST ADD TEXT */
-
-        /* TEST ADD BUTTONS */
+        /* Add buttons from UCSDBuilding object */
         ArrayList<String> classroomNames = thisBuilding.listClassrooms();
         for(int i = 0, id = 1; i < classroomNames.size(); i++, id++) {
             Button newButton = new Button(this); // Instantiate New Button
@@ -191,7 +168,6 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
             // Add new Layout to RelativeLayout
             ((RelativeLayout) findViewById(R.id.room_avail_options_main)).addView(newButton,rlParams);
         }
-        /* END TEST ADD BUTTONS*/
     }
 
     @Override
