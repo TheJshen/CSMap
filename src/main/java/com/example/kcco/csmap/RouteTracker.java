@@ -14,7 +14,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
 
 
 /**
@@ -31,7 +30,6 @@ public class RouteTracker implements
     // Interface for to do callback from RouteTracker ie updating gps points
     public interface LocationCallBack {
         void handleNewLocation(Location location);
-        void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng);
         void updateRoutePts(Location location);
     }
 
@@ -118,10 +116,11 @@ public class RouteTracker implements
     }
 
     public void onPause() {
+        /*
         if(mGoogleApiClient.isConnected()) {
             //LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
             //mGoogleApiClient.disconnect(); // Do not disconnect so it will keep tracking the background
-        }
+        }*/
     }
 
     // Starts receiving location updates
@@ -139,7 +138,6 @@ public class RouteTracker implements
         }
         /* When finished with tracking add in time and other misc. info. to be stored in route */
 
-        //mLocationCallBack.plotNewRoute(trackedLocLat, trackedLocLng);
     }
 
     // Takes the points from location updates and add them to a list to be passed into route.
@@ -168,22 +166,4 @@ public class RouteTracker implements
     public Route returnCompletedRoute() {
         return currentTrackingRoute;
     }
-
-
-    /*
-    public Location getPreviousLocation()
-    {
-
-        Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if( loc == null ) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
-        }
-        else
-        {
-            return loc;
-        }
-
-
-        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    }*/
 }

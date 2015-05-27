@@ -163,15 +163,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.addMarker(options);*/
     }
 
-    @Override
-    public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
-        /*
-        for(int i = 0; i < Lat.size(); ++i) {
-            route.add(new LatLng(Lat.get(i), Lng.get(i)));
+    // This method will be used to plot a line to the map.
+    // First it removes a polyline from the map if there is one
+    // Then it creates a route object and add it to the map
+    //
+    public void displayARoute(ArrayList<Double> lat, ArrayList<Double> lng) {
+        if( currentDisplayed != null ) {
+            currentDisplayed.remove();
         }
-        newRoute = new Route(route);
-        mMap.addPolyline(newRoute.drawRoute());
-        */
+        Route toDisplay = new Route(lat, lng);
+        currentDisplayed = mMap.addPolyline(toDisplay.drawRoute());
     }
 
     public void plottingRecommendations(ArrayList<Integer> inputIDs)
