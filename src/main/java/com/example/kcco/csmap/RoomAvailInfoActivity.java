@@ -22,7 +22,8 @@ public class RoomAvailInfoActivity extends ActionBarActivity {
         setContentView(R.layout.activity_room_avail_info);
 
         //TODO Dynamically create text views and populate main area/Remove room_avail_info_main_text
-        ((TextView) findViewById(R.id.room_avail_info_title)).setText((String) getIntent().getExtras().get("ClassroomName"));
+        String title = ((String) getIntent().getExtras().get("BuildingName")) + " " + ((String) getIntent().getExtras().get("ClassroomName"));
+        ((TextView) findViewById(R.id.room_avail_info_title)).setText(title);
 
         ArrayList<ScheduleInfo> infoList = getIntent().getParcelableArrayListExtra("ClassroomInfo");
         for(int i = 0, id = 1; i < infoList.size(); ++i, ++id) {
