@@ -52,11 +52,6 @@ public class RouteTracker implements
     public RouteTracker(Context context, LocationCallBack callback) {
         mContext = context;
         mLocationCallBack = callback;
-        mGoogleApiClient = new GoogleApiClient.Builder( context )
-                .addConnectionCallbacks( this )
-                .addOnConnectionFailedListener( this )
-                .addApi(LocationServices.API)
-                .build();
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -64,6 +59,11 @@ public class RouteTracker implements
                 .setFastestInterval( 25  ) // in milliseconds
                 .setMaxWaitTime( 75 );
                 //.setSmallestDisplacement(3); // minimum 3 meters per update
+        mGoogleApiClient = new GoogleApiClient.Builder( context )
+                .addConnectionCallbacks( this )
+                .addOnConnectionFailedListener( this )
+                .addApi(LocationServices.API)
+                .build();
 
     }
 
