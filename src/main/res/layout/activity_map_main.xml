@@ -27,7 +27,7 @@
         <Button
             android:id="@+id/mapMenuUserLogIn"
             style="@style/MainTheme.Button"
-            android:onClick="goToRouteActivity"
+            android:onClick="searchRoutePrompt"
             android:text="Search" />
 
         <Button

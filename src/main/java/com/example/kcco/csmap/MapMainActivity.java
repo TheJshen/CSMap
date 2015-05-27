@@ -43,7 +43,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private static final int BIKE_MODE = 10;
     private static final int WALK_MODE = 1;
 
-    //popupPrompt Input
+    //saveRoutePrompt Input
     private String promptInput = "";
 
     //Send Route parameter
@@ -322,7 +322,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if(latLngRoute.size() > 1) {
-                popupPrompt(latLngRoute);
+                saveRoutePrompt(latLngRoute);
             }
 
         }
@@ -350,7 +350,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
     //TODO: Not completed, need to figure way to get String value after click Okay. Something to deal with Thread.
-    public void popupPrompt(final ArrayList<LatLng> thisRoute){
+    public void saveRoutePrompt(final ArrayList<LatLng> thisRoute){
         routeInfo = new RoutesDAO(MapMainActivity.this);
         subRoute = new RoutesDAO(MapMainActivity.this);
 
@@ -462,4 +462,49 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 
+    public void searchRoutePrompt(View view){
+        AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
+        prompt.setTitle("Search");
+
+        // Set up the Layout, EditText, TextView, CheckBox
+        LinearLayout layout = new LinearLayout(MapMainActivity.this);
+        final EditText txtSearchInput = new EditText(MapMainActivity.this);
+        final TextView txtSearch = new TextView(MapMainActivity.this);
+
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtSearchInput.setLayoutParams(lparams);
+        txtSearchInput.setHint("Destination");
+
+        txtSearch.setLayoutParams(lparams);
+        txtSearch.setText("Destination");
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        layout.addView(txtSearch);
+        layout.addView(txtSearchInput);
+        prompt.setView(layout);
+
+        // Set up the buttons
+        prompt.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //TODO: add function dropMarker() here
+                Log.d("MapMainActivity", "All data should be saved");
+            }
+        });
+        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        prompt.show();
+
+    }
 }
