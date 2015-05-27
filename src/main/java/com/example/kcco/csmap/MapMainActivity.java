@@ -10,7 +10,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
@@ -34,8 +37,25 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private static final double SEARCH_DISTANCE = 0.01; //in miles
     private static final double BUILDING_DISTANCE = 0.01; //in miles
 
-    //popupPrompt Input
+    //Transport Constant
+    private static final int CAR_MODE = 1000;
+    private static final int SKATE_MODE = 100;
+    private static final int BIKE_MODE = 10;
+    private static final int WALK_MODE = 1;
+
+    //saveRoutePrompt Input
     private String promptInput = "";
+
+    //Send Route parameter
+    private BuildingDAO startLoc;
+    private BuildingDAO endLoc;
+    private RoutesDAO subRoute;
+    private RoutesDAO routeInfo;
+    private int startLocId;
+    private int endLocId;
+    private int timeSpent;
+    private int transport;
+    private int userId;
 
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -57,6 +77,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private static CameraPosition cameraPosition;
 
     private static RouteTracker GPS;
+
+    // User to store all building markers
+    private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
 
 
     @Override
@@ -80,13 +103,14 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         });
 
         for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
-            mMap.addMarker(new MarkerOptions()
+            allMarkers.add(mMap.addMarker(new MarkerOptions()
                             //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
                             .position(building.getPosition())
                             .title(building.getTitle())
                             .snippet(building.getSnippet())
-            );
+                            .visible(false)
+            ));
         }
 
 
@@ -227,6 +251,26 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
 
+    final String[] buildingMarkerStatus = {"Show Markers", "Hide Markers"};
+    public void toggleBuildingMarkers(View view) {
+        Button thisButton = (Button) findViewById(R.id.mapMenuToggleBuildingMarker);
+
+        // Markers are not shown, show markers
+        if(thisButton.getText().equals(buildingMarkerStatus[0])) {
+            for (Marker currMarker : allMarkers) {
+                currMarker.setVisible(true);
+            }
+            thisButton.setText(buildingMarkerStatus[1]);
+        }
+        // Markers are shown, hide markers
+        else {
+            for (Marker currMarker : allMarkers) {
+                currMarker.setVisible(false);
+            }
+            thisButton.setText(buildingMarkerStatus[0]);
+        }
+    }
+
     public void toggleMenu(View view) {
         Log.d("MapMainActivity", "Do nothing because Menu always there");
     }
@@ -278,56 +322,19 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.stopGPSTrack();
             ((Button)view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
-            RoutesDAO routeInfo = new RoutesDAO(MapMainActivity.this);
-            RoutesDAO subRoute = new RoutesDAO(MapMainActivity.this);
-
-            //local variables for route information
-            int startLocId, endLocId;
-            int transport, timeSpent;
-            int userId = UserDAO.getCurrentUserId();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
-
-            //TODO: testing popupPrompt, not working as expected, need further research.
-            MapMainActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    popupPrompt("Testing", "input");
-                }
-            });
-            Log.d("MapMainActivity", "Got promptInput: " + promptInput);
-
-            //search if the start location of thisRoute is existed
-            // Makes sure that there is at least two points in the route
-            if( latLngRoute.size() > 1 ) {
-
-                //TODO: This section assumes it generate info from front end
-                startLocId = verifyExistedPlace(latLngRoute.get(0), "Start Location");
-                endLocId = verifyExistedPlace(latLngRoute.get(latLngRoute.size()-1), "End Location");
-                transport = 8;
-                timeSpent = 9382; // in second
-
-                int routeId = routeInfo.createRoute(startLocId, endLocId, userId, transport, timeSpent);
-                routeInfo.sendRouteInfo();
-                subRoute.createSubRoute(routeId, latLngRoute);
-                subRoute.sendSubRouteInfo();
+            if(latLngRoute.size() > 1) {
+                saveRoutePrompt(latLngRoute);
             }
 
         }
     }
 
-    private int verifyExistedPlace(LatLng point, String promptTitle){
-        String placeName;
+    private int verifyExistedPlace(BuildingDAO existedPlace, LatLng point, String placeName){
         int placeId;
-        int userId = UserDAO.getCurrentUserId();
-
-        //search if the given location point is existed in database.
-        BuildingDAO existedPlace = BuildingDAO.searchBuilding(point,
-                SEARCH_DISTANCE, MapMainActivity.this);
 
         //the given location point did not exist in database
         if (existedPlace == null) {
-            //TODO: the placeName should be the string generate from the front end.
-            popupPrompt(promptTitle, "Place");
-            placeName = "Somewhere";
             existedPlace = new BuildingDAO(MapMainActivity.this);
             existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
             placeId = existedPlace.getPlaceId();
@@ -335,9 +342,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
         //the given location point did exist in database
         else {
-            placeName = existedPlace.getName();
-            //TODO: Assume front end prompt current place name, and then user change it.
-            placeName = "Somewhere2";
             placeId = existedPlace.getPlaceId();
             existedPlace.setName(placeName);
             existedPlace.sendBuildingInfo();
@@ -348,35 +352,161 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
     //TODO: Not completed, need to figure way to get String value after click Okay. Something to deal with Thread.
-    public void popupPrompt(String promptTitle, String place){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(promptTitle);
+    public void saveRoutePrompt(final ArrayList<LatLng> thisRoute){
+        routeInfo = new RoutesDAO(MapMainActivity.this);
+        subRoute = new RoutesDAO(MapMainActivity.this);
 
-        // Set up the input
-        final EditText input = new EditText(this);
+        startLoc = BuildingDAO.searchBuilding(thisRoute.get(0),
+                SEARCH_DISTANCE, MapMainActivity.this);
+        endLoc = BuildingDAO.searchBuilding(thisRoute.get(thisRoute.size()-1),
+                SEARCH_DISTANCE, MapMainActivity.this);
+
+        //Building for popupDialog
+        AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
+        prompt.setTitle("User Input");
+
+        // Set up the Layout, EditText, TextView, CheckBox
+        LinearLayout layout = new LinearLayout(MapMainActivity.this);
+        final EditText txtFromInput = new EditText(MapMainActivity.this);
+        final EditText txtToInput = new EditText(MapMainActivity.this);
+        final TextView txtFromLoc = new TextView(MapMainActivity.this);
+        final TextView txtToLoc = new TextView(MapMainActivity.this);
+        final TextView txtTransport = new TextView(MapMainActivity.this);
+        final CheckBox boxWalk = new CheckBox(MapMainActivity.this);
+        final CheckBox boxCar = new CheckBox(MapMainActivity.this);
+        final CheckBox boxBike = new CheckBox(MapMainActivity.this);
+        final CheckBox boxSkate = new CheckBox(MapMainActivity.this);
+
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-        input.setText(place);
-        builder.setView(input);
+        txtFromInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtFromInput.setLayoutParams(lparams);
+        if(startLoc == null) {
+            txtFromInput.setHint("From Location");
+        }
+        else{
+            txtFromInput.setText(startLoc.getName());
+        }
+
+        txtToInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtToInput.setLayoutParams(lparams);
+        if(endLoc == null) {
+            txtToInput.setHint("To Location");
+        }
+        else{
+            txtToInput.setText(endLoc.getName());
+        }
+
+        txtFromLoc.setLayoutParams(lparams);
+        txtFromLoc.setText("From Location");
+        txtToLoc.setLayoutParams(lparams);
+        txtToLoc.setText("To Location");
+        txtTransport.setLayoutParams(lparams);
+        txtTransport.setText("Transport");
+
+        boxWalk.setLayoutParams(lparams);
+        boxWalk.setText("Walk");
+        boxBike.setLayoutParams(lparams);
+        boxBike.setText("Bike");
+        boxSkate.setLayoutParams(lparams);
+        boxSkate.setText("Skate");
+        boxCar.setLayoutParams(lparams);
+        boxCar.setText("Car");
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        layout.addView(txtFromLoc);
+        layout.addView(txtFromInput);
+        layout.addView(txtToLoc);
+        layout.addView(txtToInput);
+        layout.addView(boxWalk);
+        layout.addView(boxBike);
+        layout.addView(boxSkate);
+        layout.addView(boxCar);
+        prompt.setView(layout);
 
         // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        prompt.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             @Override
-            public synchronized void onClick(DialogInterface dialog, int which) {
-                promptInput = input.getText().toString();
+            public void onClick(DialogInterface dialog, int which) {
+                startLocId = verifyExistedPlace(startLoc, thisRoute.get(0), txtFromInput.getText().toString());
+                endLocId = verifyExistedPlace(endLoc, thisRoute.get(thisRoute.size() - 1), txtToInput.getText().toString());
+                //TODO: Timer give out the time here
+                timeSpent = 9382; // in second
+                transport = 0;
+                if (boxWalk.isChecked())
+                    transport += WALK_MODE;
+                if (boxBike.isChecked())
+                    transport += BIKE_MODE;
+                if (boxSkate.isChecked())
+                    transport += SKATE_MODE;
+                if (boxCar.isChecked())
+                    transport += CAR_MODE;
+
+                int routeId = routeInfo.createRoute(startLocId, endLocId, userId, transport, timeSpent);
+                routeInfo.sendRouteInfo();
+                subRoute.createSubRoute(routeId, thisRoute);
+                subRoute.sendSubRouteInfo();
+
+                Log.d("MapMainActivity", "All data should be saved");
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
 
-        builder.show();
-
-
+        prompt.show();
     }
 
 
+    public void searchRoutePrompt(View view){
+        AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
+        prompt.setTitle("Search");
+
+        // Set up the Layout, EditText, TextView, CheckBox
+        LinearLayout layout = new LinearLayout(MapMainActivity.this);
+        final EditText txtSearchInput = new EditText(MapMainActivity.this);
+        final TextView txtSearch = new TextView(MapMainActivity.this);
+
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtSearchInput.setLayoutParams(lparams);
+        txtSearchInput.setHint("Destination");
+
+        txtSearch.setLayoutParams(lparams);
+        txtSearch.setText("Destination");
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        layout.addView(txtSearch);
+        layout.addView(txtSearchInput);
+        prompt.setView(layout);
+
+        // Set up the buttons
+        prompt.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //TODO: add function dropMarker() here
+                Log.d("MapMainActivity", "All data should be saved");
+            }
+        });
+        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        prompt.show();
+
+    }
 }
