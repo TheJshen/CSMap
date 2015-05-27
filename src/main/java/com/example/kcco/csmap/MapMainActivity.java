@@ -78,6 +78,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     private static RouteTracker GPS;
 
+    // User to store all building markers
+    private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,13 +103,14 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         });
 
         for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
-            mMap.addMarker(new MarkerOptions()
+            allMarkers.add(mMap.addMarker(new MarkerOptions()
                             //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
                             .position(building.getPosition())
                             .title(building.getTitle())
                             .snippet(building.getSnippet())
-            );
+                            .visible(false)
+            ));
         }
 
 
@@ -244,6 +248,26 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
+
+    final String[] buildingMarkerStatus = {"Show Markers", "Hide Markers"};
+    public void toggleBuildingMarkers(View view) {
+        Button thisButton = (Button) findViewById(R.id.mapMenuToggleBuildingMarker);
+
+        // Markers are not shown, show markers
+        if(thisButton.getText().equals(buildingMarkerStatus[0])) {
+            for (Marker currMarker : allMarkers) {
+                currMarker.setVisible(true);
+            }
+            thisButton.setText(buildingMarkerStatus[1]);
+        }
+        // Markers are shown, hide markers
+        else {
+            for (Marker currMarker : allMarkers) {
+                currMarker.setVisible(false);
+            }
+            thisButton.setText(buildingMarkerStatus[0]);
+        }
+    }
 
     public void toggleMenu(View view) {
         Log.d("MapMainActivity", "Do nothing because Menu always there");
