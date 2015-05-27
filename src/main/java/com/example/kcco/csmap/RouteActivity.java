@@ -18,7 +18,7 @@ public class RouteActivity extends ActionBarActivity {
     private static final int WALK_MODE = 1;
 
     private int transport = 0;
-    private String destination = "";
+    private int destination = 0;
     private double latitude = 0.0;
     private double longitude = 0.0;
 

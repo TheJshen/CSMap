@@ -174,14 +174,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         */
     }
 
-    public void plottingRecommendations(ArrayList<Integer> inputIDs)
+    public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
-        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(inputIDs, this);
+        /* must have the inputIds converted into destination IDs and transport ID*/
+        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
         for( int index = 0 ; index < bestRoutes.size() ; index++)
         {
             mMap.addPolyline(bestRoutes.get(index).drawRoute());
         }
     }
+
 
 
     // This method updates the route plot on the map as the GPS is tracking a new route
