@@ -20,6 +20,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -75,7 +76,34 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
 
         GPS = new RouteTracker(this, this);
 
+        /*time to check to see what activity we are supposed to do*/
+        Intent intent = getIntent();
+        if( intent.hasExtra("destination") )
+        {
+            /*means we are to print out the destinations*/
+
+            double lat = intent.getDoubleExtra("latitude", 0.0);
+            double longt = intent.getDoubleExtra("longitude",0.0);
+            LatLng currLocation;
+            if ( lat != 0.0 && longt != 0.0)
+                currLocation = new LatLng(lat, longt );
+            else
+                currLocation = null;
+
+            int destID = intent.getIntExtra("destination", 0);
+            int transID = intent.getIntExtra("transport", 0);
+            if ( destID!= 0 && transID!=0 && currLocation!=null)
+                plottingRecommendations(currLocation, destID,transID);
+            else
+                classRoomAvailability();
+
+        }
         // Set up building markers
+        classRoomAvailability();
+
+    }
+
+    private void classRoomAvailability() {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -94,7 +122,6 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
                             .snippet(building.getSnippet())
             );
         }
-
     }
 
     // When app resumes from pause
@@ -200,9 +227,10 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         */
     }
 
-    public void plottingRecommendations(ArrayList<Integer> inputIDs)
+    public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
-        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(inputIDs, this);
+        /* must have the inputIds converted into destination IDs and transport ID*/
+        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
         for( int index = 0 ; index < bestRoutes.size() ; index++)
         {
             mMap.addPolyline(bestRoutes.get(index).drawRoute());
