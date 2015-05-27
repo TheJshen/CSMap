@@ -1,5 +1,7 @@
 package com.example.kcco.csmap.DAO;
 
+import android.util.Log;
+
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
  * Created by David on 5/26/2015.
  */
 public class ClassroomDAO {
+
+    public static final int QUERY_LIMIT = 9000;
 
     private ParseObject thisClass;
 
@@ -34,6 +38,7 @@ public class ClassroomDAO {
         ArrayList<ClassroomDAO> results = new ArrayList<ClassroomDAO>();
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UCSDClass");
+        query.setLimit(QUERY_LIMIT);
         query.whereEqualTo("BuildingName", buildingName);
 
         try {
