@@ -62,6 +62,14 @@
             android:onClick="logout"
             android:text="Logout" />
 
+        <Chronometer
+            android:id ="@+id/chronometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:format="%s"
+            android:textSize="80px"
+            android:textColor="#00FF00" />
+
     </LinearLayout>
 
 </HorizontalScrollView>

@@ -1,17 +1,18 @@
 package com.example.kcco.csmap;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,6 +55,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
     private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
 
+    // used in timer
+    private Chronometer timer;
+
+    private TextView timerValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,22 +319,41 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      *  Button name: btnSurrey
      *  Describe: Begin to track the route.
      */
-    public void track(View view){
-        if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
+    public void track(View view) {
+        timer = (Chronometer)this.findViewById(R.id.chronometer);
+
+
+        if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
+            //reset timer
+            timer.setBase(SystemClock.elapsedRealtime());
+            //start timer
+            timer.start();
+
+            /********************************* TIMER START ***********************************/
+            //timerValue = (TextView) findViewById(R.id.timer_text);
+            //startTime = SystemClock.uptimeMillis();
+            //timerValue.postDelayed(updateTimerThread, 0);
+            /**************************** TIMER START END**********************************/
+
             ((Button) view).setText("Stop");
-            if(currentDisplayed != null) {
+            if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
                 currentDisplayed.remove();
                 currentDisplayed = null; // get rid of currentDispalyed
             }
-        }
-        else {
+        } else {
             GPS.stopGPSTrack();
+            //stop timer
+            timer.stop();
+            /******************************* TIMER STOP ******************************/
+            //timeSwapBuff += timeInMilliseconds;
+            //customHandler.removeCallbacks(updateTimerThread);
+            /************************** TIMER STOP END *****************************/
             ((Button) view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
-            if(latLngRoute.size() > 1) {
+            if (latLngRoute.size() > 1) {
                 RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
@@ -415,4 +439,5 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
     }
+
 }
