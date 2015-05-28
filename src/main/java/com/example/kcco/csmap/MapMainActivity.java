@@ -108,7 +108,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 }
                 else{
                     //TODO: after marker is clicked.
-                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG);
+                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
                 }
             }
         });
