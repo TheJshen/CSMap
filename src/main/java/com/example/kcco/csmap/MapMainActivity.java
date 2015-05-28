@@ -35,31 +35,6 @@ import java.util.ArrayList;
 
 public class MapMainActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
 
-    //Constant for distance
-    private static final double SEARCH_DISTANCE = 0.01; //in miles
-    private static final double BUILDING_DISTANCE = 0.01; //in miles
-
-    //Transport Constant
-    private static final int CAR_MODE = 1000;
-    private static final int SKATE_MODE = 100;
-    private static final int BIKE_MODE = 10;
-    private static final int WALK_MODE = 1;
-
-    //saveRoutePrompt Input
-    private String promptInput = "";
-
-    //Send Route parameter
-    private BuildingDAO startLoc;
-    private BuildingDAO endLoc;
-    private RoutesDAO subRoute;
-    private RoutesDAO routeInfo;
-    private int startLocId;
-    private int endLocId;
-    private int timeSpent;
-    private int transport;
-    private int userId;
-
-
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     // Route object
@@ -110,7 +85,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 else{
                     //TODO: after marker is clicked.
                     for( int i = 0; i < locations.size(); i++){
-                        //Compare saved Marker in location and currect clicked Marker
+                        //Compare saved Marker in location and current clicked Marker
                         if( locations.get(i).first.getId().equals(marker.getId()) ){
                             /*TODO: Assume there is a way to get user current location,
                                     now is using UCSD
@@ -141,8 +116,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .visible(false)
             ));
         }
-
-
     }
 
 /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -364,11 +337,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-
-
-
-
-
+    //Let user enter searchTerm for the destination and drop Marker in the map if any match
     public void searchRoutePrompt(View view){
         AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
         prompt.setTitle("Search");
@@ -410,9 +379,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 dialog.cancel();
             }
         });
-
         prompt.show();
-
     }
 
 /////////////////////////////Helper functions//////////////////////////////////////////////////
