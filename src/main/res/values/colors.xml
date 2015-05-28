@@ -4,7 +4,8 @@
 
     <color name="clear">#00ffffff</color>
 
-    <color name="text_color">#FFFFFF</color>
+    <color name="text_color_important">#FFFFFF</color>
+    <color name="text_color_normal">#B3FFFFFF</color>
     <color name="text_color_hint">#FFFFFF</color>
 
     <color name="banner_color">#ff2a2a2a</color>

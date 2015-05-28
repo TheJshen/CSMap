@@ -217,7 +217,6 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
         mMap.addMarker(options);*/
     }
 
-    @Override
     public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
         /*
         for(int i = 0; i < Lat.size(); ++i) {

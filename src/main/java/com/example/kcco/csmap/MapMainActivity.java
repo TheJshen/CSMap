@@ -185,33 +185,19 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
-        /*cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
-                .zoom(13)                   // Sets the zoom
-                .bearing(0)                // Sets the orientation of the camera to North
-                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        */
-        /*MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("You are here!");
-
-        mMap.addMarker(options);*/
     }
 
-    @Override
-    public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
-        /*
-        for(int i = 0; i < Lat.size(); ++i) {
-            route.add(new LatLng(Lat.get(i), Lng.get(i)));
+    // This method will be used to plot a line to the map.
+    // First it removes a polyline from the map if there is one
+    // Then it creates a route object and add it to the map
+    //
+    public void displayARoute(ArrayList<Double> lat, ArrayList<Double> lng) {
+        if( currentDisplayed != null ) {
+            currentDisplayed.remove();
         }
-        newRoute = new Route(route);
-        mMap.addPolyline(newRoute.drawRoute());
-        */
+        Route toDisplay = new Route(lat, lng);
+        currentDisplayed = mMap.addPolyline(toDisplay.drawRoute());
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)

@@ -46,6 +46,7 @@ public class Route {
         routeTime = routeT;
     }*/
 
+    // Route constructor
     public Route( ArrayList<Double> lat, ArrayList<Double> lng ) {
         routePoints = new ArrayList<LatLng>();
         for(int i = 0; i < lat.size(); i++ ) {
@@ -69,11 +70,14 @@ public class Route {
     }
 
     // Appends another point onto the route. Used for live tracking
+    // This is only for adding points to a route that is already drawn
+    // on the map
     public void addToRoute(Polyline route, LatLng lastPoint) {
         routePoints.add(lastPoint); // append a point to the route already displayed
         route.setPoints(routePoints); //
     }
 
+    // Getter method
     public ArrayList<LatLng> getLatLngArray() {
         return routePoints;
     }

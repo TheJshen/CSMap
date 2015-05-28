@@ -1,9 +1,10 @@
 package com.example.kcco.csmap;
 
+import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
@@ -27,23 +28,54 @@ public class RoomAvailInfoActivity extends ActionBarActivity {
 
         // Loop through list of classes passed through from RoomAvailOptionsActivity, print out relevant information
         ArrayList<ScheduleInfo> infoList = getIntent().getParcelableArrayListExtra("ClassroomInfo");
+        String currentDay = "";
         for(int i = 0, id = 1; i < infoList.size(); ++i, ++id) {
             // The current class to print out info for
             ScheduleInfo info = infoList.get(i);
+
+            if(currentDay.equals("") || !currentDay.equals(info.getDayOfWeek())) {
+                TextView newText = new TextView(this);
+
+                // Apply UI design
+                newText.setId(id);
+                newText.setText(currentDay = info.getDayOfWeek());
+                newText.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
+                newText.setTextColor(getResources().getColor(R.color.text_color_important));
+                newText.setTypeface(null, Typeface.BOLD);
+                newText.setGravity(Gravity.CENTER);
+
+                int hPadding = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
+                int vPadding = getResources().getDimensionPixelOffset(R.dimen.activity_vertical_margin);
+                newText.setPadding(hPadding, vPadding, hPadding, 0);
+
+                newText.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.text_main_important, null));
+
+                RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.MATCH_PARENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT
+                );
+                // id = 1 (0) is not a valid ID so it gets put in default location
+                rlParams.addRule(RelativeLayout.BELOW, id - 1);
+
+                // Add new TextView to RelativeLayout
+                ((RelativeLayout) findViewById(R.id.room_avail_info_main)).addView(newText,rlParams);
+
+                id++;
+            }
 
             TextView newText = new TextView(this);
 
             // Apply UI design
             newText.setId(id);
-            newText.setText(info.getTimePeriod() + " " + info.getClassName());
+            newText.setText(info.getTimePeriod() + ": " + info.getClassName());
             newText.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
-            newText.setTextColor(getResources().getColor(R.color.text_color));
+            newText.setTextColor(getResources().getColor(R.color.text_color_normal));
 
             int hPadding = getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
             int vPadding = getResources().getDimensionPixelOffset(R.dimen.activity_vertical_margin);
             newText.setPadding(hPadding, vPadding, hPadding, 0);
 
-            newText.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main_default, null));
+            newText.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.text_main_normal, null));
 
             RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
