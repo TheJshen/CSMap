@@ -531,6 +531,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     private void createLocationMarker(String searchTerm){
+        //Clean any previous Marker if it has any,
+        for (Marker location: locations)
+            location.remove();
+
+        //Create new Marker
         locations = new ArrayList<Marker>();
         ArrayList<Pair<LatLng,String>> destinations = RouteProcessing.findLocations(searchTerm, MapMainActivity.this);
 
