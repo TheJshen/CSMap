@@ -64,6 +64,15 @@ public class Route {
                 .color(Color.BLUE);
     }
 
+    // Draws route on map with a specific color.
+    // Color is 32-bit ARGB
+    public PolylineOptions drawRoute(int color) {
+        return new PolylineOptions()
+                .addAll(routePoints)
+                .width(LINE_WIDTH)
+                .color(color);
+    }
+
 
     public void addToRoute(LatLng lastPoint) {
         routePoints.add(lastPoint); // append a point to the array

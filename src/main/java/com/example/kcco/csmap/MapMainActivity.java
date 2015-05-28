@@ -60,10 +60,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
-
-    // For averaging points
-    private int pointUpdateCounter = 0;
-    private double latAvg=0, lngAvg=0;
     // Route object
     private Route routeToDisplay;
     private Polyline currentDisplayed; // Polyline displayed on the map
