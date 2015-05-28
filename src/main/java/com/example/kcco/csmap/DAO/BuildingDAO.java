@@ -43,14 +43,6 @@ public class BuildingDAO {
     public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name); }
     public void setPlaceId( int placeId ) { current.put(ParseConstant.PLACES_PLACE_ID, placeId); }
     public void setCratedBy( int createdBy ) { current.put(ParseConstant.PLACES_CREATED_BY, createdBy); }
-//    public void setX1( double x1) { current.put(ParseConstant.PLACES_X1, x1); }
-//    public void setY1( double y1) { current.put(ParseConstant.PLACES_Y1, y1); }
-//    public void setX2( double x2) { current.put(ParseConstant.PLACES_X2, x2); }
-//    public void setY2( double y2) { current.put(ParseConstant.PLACES_Y2, y2); }
-//    public void setX3( double x3) { current.put(ParseConstant.PLACES_X3, x3); }
-//    public void setY3( double y3) { current.put(ParseConstant.PLACES_Y3, y3); }
-//    public void setX4( double x4) { current.put(ParseConstant.PLACES_X4, x4); }
-//    public void setY4( double y4) { current.put(ParseConstant.PLACES_Y4, y4); }
     public void setCenterPoint( LatLng point ) {
         ParseGeoPoint newPoint = new ParseGeoPoint(point.latitude, point.longitude);
         current.put(ParseConstant.PLACES_CENTER_POINT, newPoint);
@@ -77,14 +69,6 @@ public class BuildingDAO {
     public String getName() { return current.getString(ParseConstant.PLACES_NAME); }
     public int getPlaceId() { return current.getInt(ParseConstant.PLACES_PLACE_ID); }
     public int getCratedBy() { return current.getInt(ParseConstant.PLACES_CREATED_BY); }
-//    public double getX1() { return current.getDouble(ParseConstant.PLACES_X1); }
-//    public double getY1() { return current.getDouble(ParseConstant.PLACES_Y1); }
-//    public double getX2() { return current.getDouble(ParseConstant.PLACES_X2); }
-//    public double getY2() { return current.getDouble(ParseConstant.PLACES_Y2); }
-//    public double getX3() { return current.getDouble(ParseConstant.PLACES_X3); }
-//    public double getY3() { return current.getDouble(ParseConstant.PLACES_Y3); }
-//    public double getX4() { return current.getDouble(ParseConstant.PLACES_X4); }
-//    public double getY4() { return current.getDouble(ParseConstant.PLACES_Y4); }
     public LatLng getCenterPoint() {
         ParseGeoPoint thisPoint = current.getParseGeoPoint(ParseConstant.PLACES_CENTER_POINT);
         return new LatLng(thisPoint.getLatitude(), thisPoint.getLongitude());
@@ -456,20 +440,20 @@ public class BuildingDAO {
         * Describe:
         *      it will search a place that contains the given subString
         * Parameter:
-        *      String building: location contains the search parameters.
+        *      String searchTerm: location contains the search parameters.
         *      double distance: the search parameter in miles
         *      Activity activity: the activity calls this function, needed for exception
         * Return:
         *      ArrayList<BuildingDAO> building if any match; else null.
         */
-    public static ArrayList<BuildingDAO> searchAllBuildings(String subString, final Activity activity) {
+    public static ArrayList<BuildingDAO> searchAllBuildings(String searchTerm, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<BuildingDAO> buildings;
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereContains(ParseConstant.PLACES_NAME, subString);
+        query.whereContains(ParseConstant.PLACES_NAME, searchTerm);
 
         try {
             results = (ArrayList<ParseObject>) query.find();
