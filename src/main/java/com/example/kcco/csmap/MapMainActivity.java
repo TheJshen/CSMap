@@ -255,6 +255,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
+    //TODO: Should be deleted after it is done
+    public void goToAddPlaceActivity(View view){
+        Intent intent = new Intent(MapMainActivity.this, AddPlaceActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);
+    }
 
     final String[] buildingMarkerStatus = {"Show Markers", "Hide Markers"};
     public void toggleBuildingMarkers(View view) {
@@ -296,7 +302,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         MapMainActivity.this.startActivity(intent);
     }
 
-    public void logout(View view){
+    public void logout(View view) {
         toggleMenu(view);
         if (UserDAO.isUserActive()){
             Toast.makeText(MapMainActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
@@ -316,7 +322,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void track(View view){
         if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
-            ((Button)view).setText("Stop");
+            ((Button) view).setText("Stop");
             if(currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
                 currentDisplayed.remove();
@@ -325,7 +331,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
         else {
             GPS.stopGPSTrack();
-            ((Button)view).setText("Track");
+            ((Button) view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if(latLngRoute.size() > 1) {

@@ -40,7 +40,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
     private static final double SEARCH_DISTANCE = 0.01; //in miles
     private static final double BUILDING_DISTANCE = 0.01; //in miles
 
-    //popupPrompt Input
+    //saveRoutePrompt Input
     private String promptInput = "";
     private boolean getPrompt = false;
 
@@ -288,7 +288,7 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
             int userId = UserDAO.getCurrentUserId();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
-            //TODO: testing popupPrompt, not working as expected, need further research.
+            //TODO: testing saveRoutePrompt, not working as expected, need further research.
             TrackActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     popupPrompt("Testing", "input");
