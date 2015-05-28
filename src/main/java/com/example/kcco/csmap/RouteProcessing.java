@@ -235,13 +235,16 @@ public class RouteProcessing {
     public static ArrayList<Pair<LatLng,String>> findLocations( String searchTerm, Activity activity)
     {
         ArrayList<BuildingDAO> buildings = BuildingDAO.searchAllBuildings(searchTerm, activity);
-        ArrayList<Pair<LatLng, String>> toReturn = new ArrayList<>();
-        for ( int i = 0; i < buildings.size(); i++)
-        {
-            toReturn.add(new Pair( buildings.get(i).getCenterPoint(), buildings.get(i).getName()));
+        if(buildings != null) {
+            ArrayList<Pair<LatLng, String>> toReturn = new ArrayList<>();
+            for (int i = 0; i < buildings.size(); i++) {
+                toReturn.add(new Pair(buildings.get(i).getCenterPoint(), buildings.get(i).getName()));
+            }
+
+            return toReturn;
         }
 
-        return toReturn;
+        return null;
     }
 
 

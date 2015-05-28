@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -377,7 +378,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                //TODO: add function dropMarker() here
+                createLocationMarker(txtSearchInput.getText().toString());
                 Log.d("MapMainActivity", "All data should be saved");
             }
         });
@@ -525,7 +526,25 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         return placeId;
     }
 
-//    private void createLocationMarker(String searchTerm){
-//
-//    }
+    private void createLocationMarker(String searchTerm){
+        locations = new ArrayList<Marker>();
+        ArrayList<Pair<LatLng,String>> destinations = RouteProcessing.findLocations(searchTerm, MapMainActivity.this);
+
+        if(destinations != null) {
+            for (Pair<LatLng, String> destination : destinations) {
+                locations.add(mMap.addMarker(new MarkerOptions()
+                                //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_d))
+                                .position(destination.first)
+                                .title(destination.second)
+                                .snippet("Click here to get routes")
+                                .visible(true)
+                ));
+            }
+        }
+        else{
+            Messenger.error(searchTerm + " is invalid name", MapMainActivity.this);
+        }
+
+    }
 }
