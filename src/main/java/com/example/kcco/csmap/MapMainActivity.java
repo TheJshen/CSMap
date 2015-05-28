@@ -12,14 +12,13 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
-import com.example.kcco.csmap.DAO.RoutesDAO;
+import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -71,22 +70,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             @Override
             public void onInfoWindowClick(Marker marker) {
                 boolean isGaryMaker = false;
-                for( int i = 0; i < allMarkers.size(); i++){
-                    if( allMarkers.get(i).getId().equals(marker.getId())){
+                for (int i = 0; i < allMarkers.size(); i++) {
+                    if (allMarkers.get(i).getId().equals(marker.getId())) {
                         isGaryMaker = true;
                         break;
                     }
                 }
-                if( isGaryMaker ) {
+                if (isGaryMaker) {
                     Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
                     nextScreen.putExtra("BuildingName", marker.getTitle());
                     startActivity(nextScreen);
-                }
-                else{
+                } else {
                     //TODO: after marker is clicked.
-                    for( int i = 0; i < locations.size(); i++){
+                    for (int i = 0; i < locations.size(); i++) {
                         //Compare saved Marker in location and current clicked Marker
-                        if( locations.get(i).first.getId().equals(marker.getId()) ){
+                        if (locations.get(i).first.getId().equals(marker.getId())) {
                             /*TODO: Assume there is a way to get user current location,
                                     now is using UCSD
                              */
@@ -97,6 +95,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             nextScreen.putExtra("latitude", currentLocation.latitude);
                             nextScreen.putExtra("longitude", currentLocation.longitude);
                             startActivity(nextScreen);
+                            break;
 
                         }
                     }

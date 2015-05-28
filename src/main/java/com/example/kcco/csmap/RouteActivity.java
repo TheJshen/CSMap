@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+
+import com.example.kcco.csmap.DAO.BuildingDAO;
 
 
 public class RouteActivity extends ActionBarActivity {
@@ -18,7 +21,9 @@ public class RouteActivity extends ActionBarActivity {
     private static final int WALK_MODE = 1;
 
     private int transport = 0;
-    private int destination = 0;
+    private int destinationId = 0;
+
+    //latitude and longitude are for either current location or start location
     private double latitude = 0.0;
     private double longitude = 0.0;
 
@@ -26,6 +31,13 @@ public class RouteActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
+
+        getIntentData(savedInstanceState);
+
+        BuildingDAO destination = BuildingDAO.searchBuilding(destinationId, RouteActivity.this);
+        ((EditText)findViewById(R.id.txtToInput)).setText(destination.getName());
+
+
     }
 
     @Override
@@ -50,6 +62,9 @@ public class RouteActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
+/////////////////////////////Component functions//////////////////////////////////////////////////
     public void selectTransport(View view){
         String tagString = (String)view.getTag();
         int tag = new Integer(tagString).intValue();
@@ -109,14 +124,26 @@ public class RouteActivity extends ActionBarActivity {
     }
 
     public void goToMainActivity(View view){
+        //TODO: should have function to handle from location if any change
         //TODO: not sure what activity should go to, temporary TrackActivity
         Intent intent = new Intent(RouteActivity.this, TrackActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         //add more information into intent before start different activity
-        intent.putExtra("destination", destination);
+        intent.putExtra("destinationId", destinationId);
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         intent.putExtra("transport", transport);
         RouteActivity.this.startActivity(intent);
+    }
+
+
+/////////////////////////////Helper functions//////////////////////////////////////////////////
+    public void getIntentData(Bundle savedInstanceState){
+        destinationId = getIntent().getExtras().getInt("destinationPlaceId");
+        latitude = getIntent().getDoubleExtra("latitude", 0);
+        longitude = getIntent().getDoubleExtra("longitude", 0);
+        Log.d("RouteActivity", "destinationId: " + Integer.toString(destinationId));
+        Log.d("RouteActivity", "latitude: " + Double.toString(latitude));
+        Log.d("RouteActivity", "longitude: " + Double.toString(longitude));
     }
 }
