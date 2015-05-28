@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +52,7 @@ public class RoomAvailOptionsActivity extends ActionBarActivity {
             newButton.setId(id);
             newButton.setText(buildingName + " " + classroomNames.get(i));
             newButton.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
-            newButton.setTextColor(getResources().getColor(R.color.text_color));
+            newButton.setTextColor(getResources().getColor(R.color.text_color_important));
             newButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main, null));
 
             // Position the new Button

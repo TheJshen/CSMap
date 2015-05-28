@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,6 +30,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -76,6 +82,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     // User to store all building markers
     private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
+    private ArrayList<Marker> locations = new ArrayList<Marker>();
 
 
     @Override
@@ -92,9 +99,18 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
-                nextScreen.putExtra("BuildingName", marker.getTitle());
-                startActivity(nextScreen);
+                boolean isGaryMaker = false;
+                for( int i = 0; i < allMarkers.size(); i++){
+                    if( allMarkers.get(i).getId().equals(marker.getId())){
+                        isGaryMaker = true;
+                        break;
+                    }
+                }
+                if( isGaryMaker ) {
+                    Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
+                    nextScreen.putExtra("BuildingName", marker.getTitle());
+                    startActivity(nextScreen);
+                }
             }
         });
 
@@ -312,28 +328,66 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    private int verifyExistedPlace(BuildingDAO existedPlace, LatLng point, String placeName){
-        int placeId;
 
-        //the given location point did not exist in database
-        if (existedPlace == null) {
-            existedPlace = new BuildingDAO(MapMainActivity.this);
-            existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
-            placeId = existedPlace.getPlaceId();
-            existedPlace.sendBuildingInfo();
-        }
-        //the given location point did exist in database
-        else {
-            placeId = existedPlace.getPlaceId();
-            existedPlace.setName(placeName);
-            existedPlace.sendBuildingInfo();
-        }
-        return placeId;
+
+
+
+
+    public void searchRoutePrompt(View view){
+        AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
+        prompt.setTitle("Search");
+
+        // Set up the Layout, EditText, TextView, CheckBox
+        LinearLayout layout = new LinearLayout(MapMainActivity.this);
+        final EditText txtSearchInput = new EditText(MapMainActivity.this);
+        final TextView txtSearch = new TextView(MapMainActivity.this);
+
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtSearchInput.setLayoutParams(lparams);
+        txtSearchInput.setHint("Destination");
+
+        txtSearch.setLayoutParams(lparams);
+        txtSearch.setText("Destination");
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        layout.addView(txtSearch);
+        layout.addView(txtSearchInput);
+        prompt.setView(layout);
+
+        // Set up the buttons
+        prompt.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //TODO: add function dropMarker() here
+                Log.d("MapMainActivity", "All data should be saved");
+
+                if(writeToSD(txtSearchInput.getText().toString())){
+                    Log.d("MapMainActivity", "write to file sucess");
+                }
+                else
+                    Log.d("MapMainActivity", "write to file failure");
+            }
+        });
+        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        prompt.show();
+
     }
 
+/////////////////////////////Helper functions//////////////////////////////////////////////////
 
 
-    //TODO: Not completed, need to figure way to get String value after click Okay. Something to deal with Thread.
     public void saveRoutePrompt(final ArrayList<LatLng> thisRoute){
         routeInfo = new RoutesDAO(MapMainActivity.this);
         subRoute = new RoutesDAO(MapMainActivity.this);
@@ -445,50 +499,54 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         prompt.show();
     }
 
+    private int verifyExistedPlace(BuildingDAO existedPlace, LatLng point, String placeName){
+        int placeId;
 
-    public void searchRoutePrompt(View view){
-        AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
-        prompt.setTitle("Search");
+        //the given location point did not exist in database
+        if (existedPlace == null) {
+            existedPlace = new BuildingDAO(MapMainActivity.this);
+            existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
+            placeId = existedPlace.getPlaceId();
+            existedPlace.sendBuildingInfo();
+        }
+        //the given location point did exist in database
+        else {
+            placeId = existedPlace.getPlaceId();
+            existedPlace.setName(placeName);
+            existedPlace.sendBuildingInfo();
+        }
+        return placeId;
+    }
 
-        // Set up the Layout, EditText, TextView, CheckBox
-        LinearLayout layout = new LinearLayout(MapMainActivity.this);
-        final EditText txtSearchInput = new EditText(MapMainActivity.this);
-        final TextView txtSearch = new TextView(MapMainActivity.this);
+//    private void createLocationMarker(String searchTerm){
+//        ArrayList<Pair<LatLng,String>>
+//
+//    }
 
-        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    public Boolean writeToSD(String text){
+        Boolean write_successful = false;
+        File root=null;
+        try {
+            // <span id="IL_AD8" class="IL_AD">check for</span> SDcard
+            root = Environment.getExternalStorageDirectory();
+            Log.i("writeToSD","path.." +root.getAbsolutePath());
 
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-        txtSearchInput.setLayoutParams(lparams);
-        txtSearchInput.setHint("Destination");
+            //check sdcard permission
+            if (root.canWrite()){
+                File fileDir = new File(root.getAbsolutePath());
+                fileDir.mkdirs();
 
-        txtSearch.setLayoutParams(lparams);
-        txtSearch.setText("Destination");
-
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-
-        layout.addView(txtSearch);
-        layout.addView(txtSearchInput);
-        prompt.setView(layout);
-
-        // Set up the buttons
-        prompt.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                //TODO: add function dropMarker() here
-                Log.d("MapMainActivity", "All data should be saved");
+                File file= new File(fileDir, "samplefile.txt");
+                FileWriter filewriter = new FileWriter(file);
+                BufferedWriter out = new BufferedWriter(filewriter);
+                out.write(text);
+                out.close();
+                write_successful = true;
             }
-        });
-        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        prompt.show();
-
+        } catch (IOException e) {
+            Log.e("ERROR:---", "Could not write file to SDCard" + e.getMessage());
+            write_successful = false;
+        }
+        return write_successful;
     }
 }
