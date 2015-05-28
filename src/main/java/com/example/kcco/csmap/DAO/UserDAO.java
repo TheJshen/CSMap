@@ -227,12 +227,12 @@ public class UserDAO{
                 if ( e == null) {
                     //sign up successfully
                     String success = "Success, Welcome!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 }
                 else{
-                    // Sign up didn't succeed. pass exception to Messager
+                    // Sign up didn't succeed. pass exception to Messenger
                     String errorMessage = "Parse Error: userSignUp(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -330,11 +330,11 @@ public class UserDAO{
                 if (e == null) {
                     //bookmark is saved successfully
                     String success = "Bookmrak is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: saveBookmarkInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -353,11 +353,11 @@ public class UserDAO{
                 if (e == null) {
                     //history is saved successfully
                     String success = "History is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //history did not saved.
                     String errorMessage = "Parse Error: saveHistoryInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -903,11 +903,11 @@ public class UserDAO{
                 if (e == null) {
                     //bookmark is removed
                     String success = "Bookmark " + objectId + " is deleted!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteABookmark: " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -929,11 +929,11 @@ public class UserDAO{
                 if (e == null) {
                     //bookmark is removed
                     String success = "all Bookmarks are deleted!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteAllBookmark: " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -954,11 +954,11 @@ public class UserDAO{
                 if (e == null) {
                     //history is removed
                     String success = "History " + objectId + " is deleted!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteAHistory: " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -980,11 +980,11 @@ public class UserDAO{
                 if (e == null) {
                     //bookmark is removed
                     String success = "all Histories are deleted!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteAllHistories: " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });

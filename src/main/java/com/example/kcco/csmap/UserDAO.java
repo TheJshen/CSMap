@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.kcco.csmap.DAO.Messenger;
 import com.example.kcco.csmap.DAO.ParseConstant;
 import com.parse.DeleteCallback;
 import com.parse.LogInCallback;
@@ -17,6 +18,8 @@ import com.parse.RequestPasswordResetCallback;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -241,7 +244,8 @@ public class UserDAO{
                     // Sign up didn't succeed. pass exception to Messenger
                     String errorMessage = "Parse Error: userSignUp(): " + e.getMessage();
                     dlg.dismiss();
-                    Messenger.toast(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "userSignUp");
                     //((SignUpActivity) activity).switchActivity(0);
                 }
             }
@@ -297,7 +301,8 @@ public class UserDAO{
                     Messenger.toast("An email has been sent to your email account.", activity);
                 } else {
                     // something went wrong. Look at the ParseException message
-                    Messenger.toast(e.getMessage(), activity);
+                    Messenger.error("ParseError: " + e.getMessage(), activity);
+                    Messenger.logException(e, "UserDAO", "resetPassword");
                 }
             }
         });
@@ -326,7 +331,8 @@ public class UserDAO{
                 if (e != null) {
                     dlg.dismiss();
                     //show the error message
-                    Messenger.toast(e.getMessage(), activity);
+                    Messenger.error("ParseError: " + e.getMessage(), activity);
+                    Messenger.logException(e, "UserDAO", "logIn");
                 } else {
                     dlg.dismiss();
                     ((LoginActivity) activity).switchActivity(1);
@@ -351,7 +357,8 @@ public class UserDAO{
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Messenger.toast(e.getMessage(), activity);
+                    Messenger.error("ParseError: " + e.getMessage(), activity);
+                    Messenger.logException(e, "UserDAO", "logOut");
                 } else {
                     ((MapMainActivity) activity).goToLoginActivity();
                 }
@@ -378,6 +385,7 @@ public class UserDAO{
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: saveBookmarkInfo(): " + e.getMessage();
                     Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "sendBookmarkInfo");
                 }
             }
         });
@@ -401,6 +409,7 @@ public class UserDAO{
                     //history did not saved.
                     String errorMessage = "Parse Error: saveHistoryInfo(): " + e.getMessage();
                     Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "sendHistoryInfo");
                 }
             }
         });
@@ -459,7 +468,8 @@ public class UserDAO{
             results = (ArrayList<ParseUser>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchUser");
         }
 
         //There has match cases in User table.
@@ -498,7 +508,8 @@ public class UserDAO{
             results = (ArrayList<ParseUser>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchUser");
         }
 
         //There has match cases in User table.
@@ -539,7 +550,8 @@ public class UserDAO{
             results = (ArrayList<ParseUser>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchUsername");
         }
 
         //There has match cases in User table.
@@ -580,7 +592,8 @@ public class UserDAO{
             results = (ArrayList<ParseUser>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchUsername");
         }
 
         //There has match cases in User table.
@@ -621,7 +634,8 @@ public class UserDAO{
             results = (ArrayList<ParseUser>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchEmail");
         }
 
         //There has match cases in User table.
@@ -662,7 +676,8 @@ public class UserDAO{
             results = (ArrayList<ParseUser>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchEmail");
         }
 
         //There has match cases in User table.
@@ -730,7 +745,8 @@ public class UserDAO{
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchABookmark");
         }
 
         //There has match cases in User table.
@@ -769,7 +785,8 @@ public class UserDAO{
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchAllBookmark");
         }
 
         //There has match cases in User table.
@@ -810,7 +827,8 @@ public class UserDAO{
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchBookmarkRoutes");
         }
 
         //There has match cases in User table.
@@ -855,7 +873,8 @@ public class UserDAO{
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchAHistory");
         }
 
         //There has match cases in User table.
@@ -894,7 +913,8 @@ public class UserDAO{
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchAllHistory");
         }
 
         //There has match cases in User table.
@@ -935,7 +955,8 @@ public class UserDAO{
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "UserDAO", "searchHistoryRoutes");
         }
 
         //There has match cases in User table.
@@ -980,6 +1001,7 @@ public class UserDAO{
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteABookmark: " + e.getMessage();
                     Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "deleteABookmark");
                 }
             }
         });
@@ -1006,6 +1028,7 @@ public class UserDAO{
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteAllBookmark: " + e.getMessage();
                     Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "deleteAllBookmark");
                 }
             }
         });
@@ -1031,6 +1054,7 @@ public class UserDAO{
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteAHistory: " + e.getMessage();
                     Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "deleteAHistory");
                 }
             }
         });
@@ -1057,6 +1081,7 @@ public class UserDAO{
                     // bookmark did not removed
                     String errorMessage = "Parse Error: deleteAllHistories: " + e.getMessage();
                     Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "UserDAO", "deleteAllHistories");
                 }
             }
         });

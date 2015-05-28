@@ -12,7 +12,6 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by KaChan on 5/16/2015.
@@ -47,8 +46,6 @@ public class RoutesDAO {
     //following are SubRoute table
     public void setSubRouteId( int routeId ) { current.put(ParseConstant.SUBROUTE_ROUTE_ID, routeId); }
     public void setSubRouteIndex( int index ) { current.put(ParseConstant.SUBROUTE_NUM_INDEX, index); }
-//    public void setSubRouteX( double x ) { current.put(ParseConstant.SUBROUTE_NUM_X, x); }
-//    public void setSubRouteY( double y ) { current.put(ParseConstant.SUBROUTE_NUM_Y, y); }
     public void setSubRoutePoint( LatLng point ) {
         ParseGeoPoint newPoint = new ParseGeoPoint(point.latitude, point.longitude);
         current.put(ParseConstant.SUBROUTE_POINT, newPoint);
@@ -79,8 +76,6 @@ public class RoutesDAO {
     //following are SubRoute table
     public int getSubRouteId() { return current.getInt(ParseConstant.SUBROUTE_ROUTE_ID); }
     public int getSubRouteIndex() { return current.getInt(ParseConstant.SUBROUTE_NUM_INDEX); }
-//    public double getSubRouteX() { return current.getDouble(ParseConstant.SUBROUTE_NUM_X); }
-//    public double getSubRouteY() { return current.getDouble(ParseConstant.SUBROUTE_NUM_Y); }
     public LatLng getSubRoutePoint() {
         ParseGeoPoint thisPoint = current.getParseGeoPoint(ParseConstant.SUBROUTE_POINT);
         return new LatLng(thisPoint.getLatitude(), thisPoint.getLongitude());
@@ -137,32 +132,6 @@ public class RoutesDAO {
      */
     public int createRoute(int startLoc, int endLoc, int createdBy, int transport){
         return createRoute(startLoc, endLoc, createdBy, transport, 0);
-    }
-
-    /* Name: createSubRoute (not tested)
-     * Describe:
-     *      This function is gathering all required data locally before it is
-     *      sent to Parse server. This can ensure all required data is filled
-     *      properly. All data should be VALID before pass to this function.
-     * Parameter:
-     *      int routeId: data required for column routeId
-     *      ArrayList<double> x: data required for column x
-     *      ArrayList<double> y: data required for column y
-     * Return:
-     *      int routeId: it is the next empty routeId
-     */
-    public void createSubRoute(int routeId, ArrayList<Double> x, ArrayList<Double> y){
-        subRoutes = new ArrayList<ParseObject>();
-        for( int i = 0; i < x.size(); i++ ){
-            current = new ParseObject(ParseConstant.SUBROUTE);
-            setSubRouteId(routeId);
-            setSubRouteIndex(i);
-//            setSubRouteX(x.get(i));
-//            setSubRouteY(y.get(i));
-            setSubRoutePoint(new LatLng(x.get(i), y.get(i)));
-
-            subRoutes.add(current);
-        }
     }
 
     /* Name: createSubRoute (not tested)
@@ -235,11 +204,12 @@ public class RoutesDAO {
                 if (e == null) {
                     //route is saved successfully
                     String success = "Route is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //route did not saved.
                     String errorMessage = "Parse Error: sendRouteInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "RoutesDAO", "sendRouteInfo");
                 }
             }
         });
@@ -258,11 +228,12 @@ public class RoutesDAO {
                 if (e == null) {
                     //subRoute is saved successfully
                     String success = "SubRoute is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //subRoute did not saved.
                     String errorMessage = "Parse Error: sendSubRouteInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "RoutesDAO", "sendSubRouteInfo");
                 }
             }
         });
@@ -281,11 +252,11 @@ public class RoutesDAO {
                 if (e == null) {
                     //subRoute is saved successfully
                     String success = "SubRoute is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //subRoute did not saved.
                     String errorMessage = "Parse Error: sendSubRouteInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
                 }
             }
         });
@@ -315,7 +286,8 @@ public class RoutesDAO {
             count = query.count();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchNextEmptyRouteId");
         }
 
         //This part is debug purpose to show all results.
@@ -356,7 +328,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchSubRoutes");
         }
 
         //There has match cases in User table.
@@ -428,7 +401,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchARoute");
         }
 
         //There has match cases in User table.
@@ -469,7 +443,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchAllRoutes");
         }
 
         //There has match cases in User table.
@@ -538,7 +513,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) endSubRoute.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchCloseRouteAsce");
         }
 
         //There has match cases in Routes and SubRoute Tables
@@ -633,7 +609,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) startSubRoute.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchCloseRouteDesc");
         }
 
         //There has match cases in Routes and SubRoute Tables
@@ -700,7 +677,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchDestinations");
         }
 
         //There has match cases in User table.
@@ -765,7 +743,8 @@ public class RoutesDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "RoutesDAO", "searchClosestPlace");
         }
 
         //There has match cases in User table.

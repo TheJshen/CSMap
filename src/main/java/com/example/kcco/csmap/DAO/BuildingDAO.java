@@ -231,11 +231,12 @@ public class BuildingDAO {
                 if (e == null) {
                     //places is saved successfully
                     String success = "Places is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: sendBuildingInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "BuildingDAO", "sendBuildingInfo");
                 }
             }
         });
@@ -254,11 +255,12 @@ public class BuildingDAO {
                 if (e == null) {
                     //places is saved successfully
                     String success = "Classroom is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: sendClassroomInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "BuildingDAO", "sendClassroomInfo");
                 }
             }
         });
@@ -277,11 +279,12 @@ public class BuildingDAO {
                 if (e == null) {
                     //places is saved successfully
                     String success = "Event is saved!";
-                    Messager.toast(success, activity);
+                    Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: sendEventInfo(): " + e.getMessage();
-                    Messager.error(errorMessage, activity);
+                    Messenger.error(errorMessage, activity);
+                    Messenger.logException(e, "BuildingDAO", "sendEventInfo");
                 }
             }
         });
@@ -308,6 +311,8 @@ public class BuildingDAO {
         }
         catch(ParseException e) {
             Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchNextEmptyPlaceId");
         }
 
         //This part is debug purpose to show all results.
@@ -338,7 +343,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchBuilding");
         }
 
         //There has match cases in User table.
@@ -377,7 +383,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchBuilding");
         }
 
         //There has match cases in User table.
@@ -419,7 +426,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchBuilding");
         }
 
         //There has match cases in User table.
@@ -459,7 +467,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchAllBuildings");
         }
 
         //There has match cases in User table.
@@ -503,7 +512,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchClassrooms");
         }
 
         //There has match cases in User table.
@@ -542,7 +552,8 @@ public class BuildingDAO {
             count = query.count();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchNextEmptyEventId");
         }
 
         //This part is debug purpose to show all results.
@@ -573,7 +584,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchEvent");
         }
 
         //There has match cases in User table.
@@ -615,7 +627,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchAvailable");
         }
 
         //There has match cases in User table.
@@ -657,7 +670,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchCurrentEvent");
         }
 
         //There has match cases in User table.
@@ -705,7 +719,8 @@ public class BuildingDAO {
             results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
-            Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Messenger.error("Parse Error: " + e.getMessage(), activity);
+            Messenger.logException(e, "BuildingDAO", "searchTodayEvent");
         }
 
         //There has match cases in User table.
