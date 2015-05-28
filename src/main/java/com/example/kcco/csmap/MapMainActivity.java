@@ -1,5 +1,6 @@
 package com.example.kcco.csmap;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -77,7 +78,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     // User to store all building markers
     private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
-    private ArrayList<Marker> locations = new ArrayList<Marker>();
+    private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
 
 
     @Override
@@ -108,6 +109,23 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 }
                 else{
                     //TODO: after marker is clicked.
+                    for( int i = 0; i < locations.size(); i++){
+                        //Compare saved Marker in location and currect clicked Marker
+                        if( locations.get(i).first.getId().equals(marker.getId()) ){
+                            /*TODO: Assume there is a way to get user current location,
+                                    now is using UCSD
+                             */
+                            LatLng currentLocation = new LatLng(32.881132, -117.237639);
+
+                            Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
+                            nextScreen.putExtra("destinationPlaceId", locations.get(i).second.getPlaceId());
+                            nextScreen.putExtra("latitude", currentLocation.latitude);
+                            nextScreen.putExtra("longitude", currentLocation.longitude);
+                            startActivity(nextScreen);
+
+                        }
+                    }
+
                     Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
                 }
             }
@@ -340,7 +358,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if(latLngRoute.size() > 1) {
-                saveRoutePrompt(latLngRoute);
+                RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
         }
@@ -399,158 +417,33 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
-
-    public void saveRoutePrompt(final ArrayList<LatLng> thisRoute){
-        routeInfo = new RoutesDAO(MapMainActivity.this);
-        subRoute = new RoutesDAO(MapMainActivity.this);
-
-        startLoc = BuildingDAO.searchBuilding(thisRoute.get(0),
-                SEARCH_DISTANCE, MapMainActivity.this);
-        endLoc = BuildingDAO.searchBuilding(thisRoute.get(thisRoute.size()-1),
-                SEARCH_DISTANCE, MapMainActivity.this);
-
-        //Building for popupDialog
-        AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
-        prompt.setTitle("User Input");
-
-        // Set up the Layout, EditText, TextView, CheckBox
-        LinearLayout layout = new LinearLayout(MapMainActivity.this);
-        final EditText txtFromInput = new EditText(MapMainActivity.this);
-        final EditText txtToInput = new EditText(MapMainActivity.this);
-        final TextView txtFromLoc = new TextView(MapMainActivity.this);
-        final TextView txtToLoc = new TextView(MapMainActivity.this);
-        final TextView txtTransport = new TextView(MapMainActivity.this);
-        final CheckBox boxWalk = new CheckBox(MapMainActivity.this);
-        final CheckBox boxCar = new CheckBox(MapMainActivity.this);
-        final CheckBox boxBike = new CheckBox(MapMainActivity.this);
-        final CheckBox boxSkate = new CheckBox(MapMainActivity.this);
-
-        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        txtFromInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-        txtFromInput.setLayoutParams(lparams);
-        if(startLoc == null) {
-            txtFromInput.setHint("From Location");
-        }
-        else{
-            txtFromInput.setText(startLoc.getName());
-        }
-
-        txtToInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-        txtToInput.setLayoutParams(lparams);
-        if(endLoc == null) {
-            txtToInput.setHint("To Location");
-        }
-        else{
-            txtToInput.setText(endLoc.getName());
-        }
-
-        txtFromLoc.setLayoutParams(lparams);
-        txtFromLoc.setText("From Location");
-        txtToLoc.setLayoutParams(lparams);
-        txtToLoc.setText("To Location");
-        txtTransport.setLayoutParams(lparams);
-        txtTransport.setText("Transport");
-
-        boxWalk.setLayoutParams(lparams);
-        boxWalk.setText("Walk");
-        boxBike.setLayoutParams(lparams);
-        boxBike.setText("Bike");
-        boxSkate.setLayoutParams(lparams);
-        boxSkate.setText("Skate");
-        boxCar.setLayoutParams(lparams);
-        boxCar.setText("Car");
-
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-
-        layout.addView(txtFromLoc);
-        layout.addView(txtFromInput);
-        layout.addView(txtToLoc);
-        layout.addView(txtToInput);
-        layout.addView(boxWalk);
-        layout.addView(boxBike);
-        layout.addView(boxSkate);
-        layout.addView(boxCar);
-        prompt.setView(layout);
-
-        // Set up the buttons
-        prompt.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startLocId = verifyExistedPlace(startLoc, thisRoute.get(0), txtFromInput.getText().toString());
-                endLocId = verifyExistedPlace(endLoc, thisRoute.get(thisRoute.size() - 1), txtToInput.getText().toString());
-                //TODO: Timer give out the time here
-                timeSpent = 9382; // in second
-                transport = 0;
-                if (boxWalk.isChecked())
-                    transport += WALK_MODE;
-                if (boxBike.isChecked())
-                    transport += BIKE_MODE;
-                if (boxSkate.isChecked())
-                    transport += SKATE_MODE;
-                if (boxCar.isChecked())
-                    transport += CAR_MODE;
-
-                int routeId = routeInfo.createRoute(startLocId, endLocId, userId, transport, timeSpent);
-                routeInfo.sendRouteInfo();
-                subRoute.createSubRoute(routeId, thisRoute);
-                subRoute.sendSubRouteInfo();
-
-                Log.d("MapMainActivity", "All data should be saved");
-            }
-        });
-        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        prompt.show();
-    }
-
-    private int verifyExistedPlace(BuildingDAO existedPlace, LatLng point, String placeName){
-        int placeId;
-
-        //the given location point did not exist in database
-        if (existedPlace == null) {
-            existedPlace = new BuildingDAO(MapMainActivity.this);
-            existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
-            placeId = existedPlace.getPlaceId();
-            existedPlace.sendBuildingInfo();
-        }
-        //the given location point did exist in database
-        else {
-            placeId = existedPlace.getPlaceId();
-            existedPlace.setName(placeName);
-            existedPlace.sendBuildingInfo();
-        }
-        return placeId;
-    }
-
     private void createLocationMarker(String searchTerm){
         //Clean any previous Marker if it has any,
-        for (Marker location: locations)
-            location.remove();
+        for (Pair<Marker, BuildingDAO> location: locations)
+            location.first.remove();
 
-        //Create new Marker
-        locations = new ArrayList<Marker>();
-        ArrayList<Pair<LatLng,String>> destinations = RouteProcessing.findLocations(searchTerm, MapMainActivity.this);
+        //Create new Pair Marker and BiildingDAO
+        locations = new ArrayList<Pair<Marker,BuildingDAO>>();
 
+        //Generate a list of destionations if there are any match with searchTerm
+        ArrayList<BuildingDAO> destinations = BuildingDAO.searchAllBuildings(searchTerm, MapMainActivity.this);
+//        ArrayList<Pair<LatLng,String>> destinations = RouteProcessing.findLocations(searchTerm, MapMainActivity.this);
+
+        //destinations is not null means there are some match from database
         if(destinations != null) {
-            for (Pair<LatLng, String> destination : destinations) {
-                locations.add(mMap.addMarker(new MarkerOptions()
+            for (BuildingDAO destination : destinations) {
+                Marker newLocation = mMap.addMarker(new MarkerOptions()
                                 //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_d))
-                                .position(destination.first)
-                                .title(destination.second)
+                                .position(destination.getCenterPoint())
+                                .title(destination.getName())
                                 .snippet("Click here to get routes")
                                 .visible(true)
-                ));
+                );
+                locations.add(new Pair<Marker, BuildingDAO>(newLocation, destination));
             }
         }
+        //destinations is null means no match in database
         else{
             Messenger.error(searchTerm + " is invalid name", MapMainActivity.this);
         }

@@ -2,8 +2,16 @@ package com.example.kcco.csmap;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Location;
+import android.text.InputType;
+import android.util.Log;
 import android.util.Pair;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.google.android.gms.maps.model.LatLng;
@@ -22,6 +30,20 @@ public class RouteProcessing {
     //Constant for distance
     private static final double SEARCH_DISTANCE = 0.01; //in miles
     private static final double BUILDING_DISTANCE = 0.01; //in miles
+
+    //Transport Constant
+    private static final int CAR_MODE = 1000;
+    private static final int SKATE_MODE = 100;
+    private static final int BIKE_MODE = 10;
+    private static final int WALK_MODE = 1;
+
+    //Send Route parameter
+    private static BuildingDAO startLoc;
+    private static BuildingDAO endLoc;
+    private static int startLocId;
+    private static int endLocId;
+    private static int timeSpent;
+    private static int transport;
 
     /**
      * This should calculate the distance travelled by the different routeID's and
@@ -152,25 +174,17 @@ public class RouteProcessing {
      * Might need a helper method to identify similar routes and not duplicate
      *
      */
-    public static void uploadRoute(Route thisRoute, Activity activity) {
+    public static void uploadRoute(Route thisRoute, int transport, int timeSpent, int startLocId, int endLocId, Activity activity) {
         RoutesDAO routeInfo = new RoutesDAO(activity);
         RoutesDAO subRoute = new RoutesDAO(activity);
 
         //local variables for route information
-        int startLocId, endLocId;
-        int transport, timeSpent;
         int userId = UserDAO.getCurrentUserId();
         ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
         //search if the start location of thisRoute is existed
         // Makes sure that there is at least two points in the route
         if( latLngRoute.size() > 1 ) {
-
-            // This section assumes it generate info from front end
-            startLocId = verifyExistedPlace(latLngRoute.get(0), "Start Location", activity);
-            endLocId = verifyExistedPlace(latLngRoute.get(latLngRoute.size()-1), "End Location", activity);
-            transport = 8; // will need to call a getter here TODO
-            timeSpent = 9382; // in second TODO the time fucntion
 
             int routeId = routeInfo.createRoute(startLocId, endLocId, userId, transport, timeSpent);
             routeInfo.sendRouteInfo();
@@ -179,21 +193,15 @@ public class RouteProcessing {
         }
     }
 
-
-
-    public static int verifyExistedPlace(LatLng point, String promptName, Activity activity){
-        String placeName;
+    //This function either create new place into database
+    //or extract place info from database to update with place name
+    //No matter which way, corresponding placeId should be returned by this function
+    public static int verifyExistedPlace(BuildingDAO existedPlace, LatLng point, String placeName, Activity activity){
         int placeId;
         int userId = UserDAO.getCurrentUserId();
 
-        //search if the given location point is existed in database.
-        BuildingDAO existedPlace = BuildingDAO.searchBuilding(point,
-                SEARCH_DISTANCE, activity);
-
         //the given location point did not exist in database
         if (existedPlace == null) {
-            //the placeName should be the string generate from the front end.
-            placeName = "Somewhere"; //TODO getting place names
             existedPlace = new BuildingDAO(activity);
             existedPlace.createBuilding(placeName, userId, point, BUILDING_DISTANCE);
             placeId = existedPlace.getPlaceId();
@@ -201,14 +209,122 @@ public class RouteProcessing {
         }
         //the given location point did exist in database
         else {
-            placeName = existedPlace.getName();
-            //Assume front end prompt current place name, and then user change it.
-            placeName = "Somewhere2";
             placeId = existedPlace.getPlaceId();
             existedPlace.setName(placeName);
             existedPlace.sendBuildingInfo();
         }
         return placeId;
+    }
+
+
+    //Create a popup Prompt to ask user input name for start and end locations
+    //Also, user can choose the transportation that he/she sed for the route.
+    //At the end, the info for start and end location and route are saved into Parse.
+    public static void saveRoutePrompt(final Route thisRoute, final Activity activity){
+        final ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
+
+        startLoc = BuildingDAO.searchBuilding(latLngRoute.get(0),
+                SEARCH_DISTANCE, activity);
+        endLoc = BuildingDAO.searchBuilding(latLngRoute.get(latLngRoute.size()-1),
+                SEARCH_DISTANCE, activity);
+
+        //Building for popupDialog
+        AlertDialog.Builder prompt = new AlertDialog.Builder(activity);
+        prompt.setTitle("User Input");
+
+        // Set up the Layout, EditText, TextView, CheckBox
+        LinearLayout layout = new LinearLayout(activity);
+        final EditText txtFromInput = new EditText(activity);
+        final EditText txtToInput = new EditText(activity);
+        final TextView txtFromLoc = new TextView(activity);
+        final TextView txtToLoc = new TextView(activity);
+        final TextView txtTransport = new TextView(activity);
+        final CheckBox boxWalk = new CheckBox(activity);
+        final CheckBox boxCar = new CheckBox(activity);
+        final CheckBox boxBike = new CheckBox(activity);
+        final CheckBox boxSkate = new CheckBox(activity);
+
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        txtFromInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtFromInput.setLayoutParams(lparams);
+        if(startLoc == null) {
+            txtFromInput.setHint("From Location");
+        }
+        else{
+            txtFromInput.setText(startLoc.getName());
+        }
+
+        txtToInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        txtToInput.setLayoutParams(lparams);
+        if(endLoc == null) {
+            txtToInput.setHint("To Location");
+        }
+        else{
+            txtToInput.setText(endLoc.getName());
+        }
+
+        txtFromLoc.setLayoutParams(lparams);
+        txtFromLoc.setText("From Location");
+        txtToLoc.setLayoutParams(lparams);
+        txtToLoc.setText("To Location");
+        txtTransport.setLayoutParams(lparams);
+        txtTransport.setText("Transport");
+
+        boxWalk.setLayoutParams(lparams);
+        boxWalk.setText("Walk");
+        boxBike.setLayoutParams(lparams);
+        boxBike.setText("Bike");
+        boxSkate.setLayoutParams(lparams);
+        boxSkate.setText("Skate");
+        boxCar.setLayoutParams(lparams);
+        boxCar.setText("Car");
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        layout.addView(txtFromLoc);
+        layout.addView(txtFromInput);
+        layout.addView(txtToLoc);
+        layout.addView(txtToInput);
+        layout.addView(boxWalk);
+        layout.addView(boxBike);
+        layout.addView(boxSkate);
+        layout.addView(boxCar);
+        prompt.setView(layout);
+
+        // Set up the buttons
+        prompt.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startLocId = RouteProcessing.verifyExistedPlace(startLoc, latLngRoute.get(0), txtFromInput.getText().toString(), activity);
+                endLocId = RouteProcessing.verifyExistedPlace(endLoc, latLngRoute.get(latLngRoute.size() - 1), txtToInput.getText().toString(), activity);
+                //TODO: Timer give out the time here
+                timeSpent = 9382; // in second
+                transport = 0;
+                if (boxWalk.isChecked())
+                    transport += WALK_MODE;
+                if (boxBike.isChecked())
+                    transport += BIKE_MODE;
+                if (boxSkate.isChecked())
+                    transport += SKATE_MODE;
+                if (boxCar.isChecked())
+                    transport += CAR_MODE;
+
+                RouteProcessing.uploadRoute(thisRoute, transport, timeSpent, startLocId, endLocId, activity);
+
+                Log.d("MapMainActivity", "All data should be saved");
+            }
+        });
+        prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        prompt.show();
     }
 
 
