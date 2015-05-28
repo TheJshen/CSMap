@@ -5,11 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,10 +28,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -181,19 +175,32 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
+        /*cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
+                .zoom(13)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        */
+        /*MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("You are here!");
+
+        mMap.addMarker(options);*/
     }
 
-    // This method will be used to plot a line to the map.
-    // First it removes a polyline from the map if there is one
-    // Then it creates a route object and add it to the map
-    //
-    public void displayARoute(ArrayList<Double> lat, ArrayList<Double> lng) {
-        if( currentDisplayed != null ) {
-            currentDisplayed.remove();
+    public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
+        /*
+        for(int i = 0; i < Lat.size(); ++i) {
+            route.add(new LatLng(Lat.get(i), Lng.get(i)));
         }
-        Route toDisplay = new Route(lat, lng);
-        currentDisplayed = mMap.addPolyline(toDisplay.drawRoute());
+        newRoute = new Route(route);
+        mMap.addPolyline(newRoute.drawRoute());
+        */
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
@@ -366,12 +373,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
                 //TODO: add function dropMarker() here
                 Log.d("MapMainActivity", "All data should be saved");
-
-                if(writeToSD(txtSearchInput.getText().toString())){
-                    Log.d("MapMainActivity", "write to file sucess");
-                }
-                else
-                    Log.d("MapMainActivity", "write to file failure");
             }
         });
         prompt.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -519,34 +520,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 //    private void createLocationMarker(String searchTerm){
-//        ArrayList<Pair<LatLng,String>>
 //
 //    }
-
-    public Boolean writeToSD(String text){
-        Boolean write_successful = false;
-        File root=null;
-        try {
-            // <span id="IL_AD8" class="IL_AD">check for</span> SDcard
-            root = Environment.getExternalStorageDirectory();
-            Log.i("writeToSD","path.." +root.getAbsolutePath());
-
-            //check sdcard permission
-            if (root.canWrite()){
-                File fileDir = new File(root.getAbsolutePath());
-                fileDir.mkdirs();
-
-                File file= new File(fileDir, "samplefile.txt");
-                FileWriter filewriter = new FileWriter(file);
-                BufferedWriter out = new BufferedWriter(filewriter);
-                out.write(text);
-                out.close();
-                write_successful = true;
-            }
-        } catch (IOException e) {
-            Log.e("ERROR:---", "Could not write file to SDCard" + e.getMessage());
-            write_successful = false;
-        }
-        return write_successful;
-    }
 }
