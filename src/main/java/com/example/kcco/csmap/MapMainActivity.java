@@ -66,6 +66,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setUpMapIfNeeded();
 
 
+        timer = (Chronometer)this.findViewById(R.id.chronometer);
+        timer.setVisibility(View.GONE);
         GPS = new RouteTracker(this, this);
 
         // Set up building markers
@@ -318,9 +320,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      *  Describe: Begin to track the route.
      */
     public void track(View view) {
-        timer = (Chronometer)this.findViewById(R.id.chronometer);
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
+            // show timer
+            timer.setVisibility(View.VISIBLE);
             // reset timer
             timer.setBase(SystemClock.elapsedRealtime());
             // timer start
@@ -341,6 +344,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.stopGPSTrack();
             //stop timer
             timer.stop();
+            //hide timer;
+            timer.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
             ((Button) view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
