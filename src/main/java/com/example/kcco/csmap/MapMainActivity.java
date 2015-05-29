@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +58,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
     private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
 
-    //timer
+    // Save all buttons in menu
+    private ArrayList<Button> menuButtons = new ArrayList<Button>();
+
+    //Timer
     private Chronometer timer;
     private TextView timerLabel;
 
@@ -68,7 +72,15 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setContentView(R.layout.activity_map_main);
         setUpMapIfNeeded();
 
+        // Get all buttons in menu
+        LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
+        for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
+            if(thisButtonScroller.getChildAt(i) instanceof Button) {
+                menuButtons.add((Button) thisButtonScroller.getChildAt(i));
+            }
+        }
 
+        // Get Timer and TimerLabel Objects
         timer = (Chronometer)this.findViewById(R.id.chronometer);
         timer.setVisibility(View.GONE);
         timerLabel = (TextView)this.findViewById(R.id.chronometer_label);
@@ -271,6 +283,29 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         MapMainActivity.this.startActivity(intent);
     }
 
+
+    final String[] menuStatus = {"Hide Menu", "Show Menu"};
+    public void toggleMenu(View view) {
+        //Log.d("MapMainActivity", "Do nothing because Menu always there");
+
+        Button thisButton = (Button) findViewById(R.id.toggleMapMenu);
+
+        // Menu is shown, hide menu
+        if(thisButton.getText().equals(menuStatus[0])) {
+            for(Button button : menuButtons) {
+                button.setVisibility(View.GONE);
+            }
+            thisButton.setText(menuStatus[1]);
+        }
+        // Menu is hidden, show menu
+        else {
+            for(Button button : menuButtons) {
+                button.setVisibility(View.VISIBLE);
+            }
+            thisButton.setText(menuStatus[0]);
+        }
+    }
+
     final String[] buildingMarkerStatus = {"Show Markers", "Hide Markers"};
     public void toggleBuildingMarkers(View view) {
         Button thisButton = (Button) findViewById(R.id.mapMenuToggleBuildingMarker);
@@ -290,11 +325,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             thisButton.setText(buildingMarkerStatus[0]);
         }
     }
-
-    public void toggleMenu(View view) {
-        Log.d("MapMainActivity", "Do nothing because Menu always there");
-    }
-
 
 
     public void goToRouteActivity(View view){
