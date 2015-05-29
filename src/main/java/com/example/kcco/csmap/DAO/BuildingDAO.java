@@ -307,6 +307,7 @@ public class BuildingDAO {
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
         query.addDescendingOrder(ParseConstant.PLACES_PLACE_ID);
+        query.setLimit(3);
 
         try {
             results = (ArrayList<ParseObject>) query.find();
