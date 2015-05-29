@@ -12,60 +12,60 @@
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
 
-<!-- Menu layout -->
-<HorizontalScrollView
-    android:id="@+id/main_button"
-    style="@style/MainTheme.ButtonScroller">
-    <LinearLayout
-        style="@style/MainTheme.ButtonContainer.Right">
+    <!-- Menu layout -->
+    <HorizontalScrollView
+        android:id="@+id/main_button"
+        style="@style/MainTheme.ButtonScroller">
+        <LinearLayout
+            style="@style/MainTheme.ButtonContainer.Right">
 
-        <!--TODO: this is temporary button, will be delete soon-->
-        <Button
-            style="@style/MainTheme.Button"
-            android:onClick="goToAddPlaceActivity"
-            android:text="Add Place" />
-
-
-        <Button
-            android:id="@+id/mapMenuToggleBuildingMarker"
-            style="@style/MainTheme.Button"
-            android:onClick="toggleBuildingMarkers"
-            android:text="Show Markers"/>
-
-        <Button
-            android:id="@+id/mapMenuUserLogIn"
-            style="@style/MainTheme.Button"
-            android:onClick="searchRoutePrompt"
-            android:text="Search" />
-
-        <Button
-            android:layout_height="match_parent"
-            style="@style/MainTheme.Button"
-            android:onClick="toggleMenu"
-            android:text="Bookmark" />
-
-        <Button
-            android:layout_height="match_parent"
-            style="@style/MainTheme.Button"
-            android:onClick="toggleMenu"
-            android:text="History" />
-
-        <Button
-            android:layout_height="match_parent"
-            style="@style/MainTheme.Button"
-            android:onClick="track"
-            android:text="Input Route" />
-
-        <Button
-            android:id="@+id/btnLogout"
-            style="@style/MainTheme.Button"
-            android:onClick="logout"
-            android:text="Logout" />
+            <!--TODO: this is temporary button, will be delete soon-->
+            <Button
+                style="@style/MainTheme.Button"
+                android:onClick="goToAddPlaceActivity"
+                android:text="Add Place" />
 
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/mapMenuToggleBuildingMarker"
+                style="@style/MainTheme.Button"
+                android:onClick="toggleBuildingMarkers"
+                android:text="Show Markers"/>
 
-</HorizontalScrollView>
+            <Button
+                android:id="@+id/mapMenuUserLogIn"
+                style="@style/MainTheme.Button"
+                android:onClick="searchRoutePrompt"
+                android:text="Search" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="toggleMenu"
+                android:text="Bookmark" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="toggleMenu"
+                android:text="History" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="track"
+                android:text="Input Route" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                style="@style/MainTheme.Button"
+                android:onClick="logout"
+                android:text="Logout" />
+
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <fragment
         android:id="@+id/map"
@@ -74,14 +74,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
-    <Chronometer
-        android:id ="@+id/chronometer"
-        android:layout_width="wrap_content"
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/main_button"
-        android:layout_marginLeft="150dp"
-        android:format="%s"
-        android:textSize="80px"
-        android:textColor="#000000" />
+        android:gravity="center"
+        android:background="@color/button_color">
+
+        <TextView
+            android:id="@+id/chronometer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color_important"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:text="time"/>
+
+        <Chronometer
+            android:id ="@+id/chronometer"
+            android:layout_below="@+id/chronometer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:format="%s"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:textColor="@color/text_color_important"
+            android:paddingBottom="@dimen/activity_vertical_margin" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -58,6 +58,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     //timer
     private Chronometer timer;
+    private TextView timerLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         timer = (Chronometer)this.findViewById(R.id.chronometer);
         timer.setVisibility(View.GONE);
+        timerLabel = (TextView)this.findViewById(R.id.chronometer_label);
+        timerLabel.setVisibility(View.GONE);
+
         GPS = new RouteTracker(this, this);
 
         // Set up building markers
@@ -324,6 +328,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.startGPSTrack();
             // show timer
             timer.setVisibility(View.VISIBLE);
+            timerLabel.setVisibility(View.VISIBLE);
             // reset timer
             timer.setBase(SystemClock.elapsedRealtime());
             // timer start
@@ -346,6 +351,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             timer.stop();
             //hide timer;
             timer.setVisibility(View.GONE);
+            timerLabel.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
             ((Button) view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();

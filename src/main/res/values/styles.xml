@@ -95,7 +95,7 @@
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
 
-        <item name="android:gravity">center_left</item>
+        <item name="android:gravity">left|center</item>
 
         <item name="android:layout_marginTop">16dp</item>
 
@@ -195,7 +195,7 @@
         <item name="android:textSize">@dimen/abc_text_size_title_material</item>
         <item name="android:text">@string/title_default</item>
 
-        <item name="android:background">@color/button_color</item>
+        <item name="android:background">@color/title_color</item>
     </style>
 
 
