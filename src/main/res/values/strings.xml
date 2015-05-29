@@ -20,12 +20,7 @@
     <string name="login_register">Register</string>
     <string name="login_login">Login</string>
     <string name="register_sign_up">Sign Up</string>
-
-    <string name="button1">Button1</string>
-    <string name="button2">Button2</string>
-    <string name="button3">Button3</string>
-    <string name="button4">Button4</string>
-    <string name="button5">Button5</string>
+    <string name="login_forgot_password">Forgot Password?</string>
 
     <string name="title_activity_room_avail_info">RoomAvailInfoActivity</string>
     <string name="title_activity_map_search">MapSearchActivity</string>
