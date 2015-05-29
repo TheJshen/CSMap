@@ -55,10 +55,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
     private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
 
-    // used in timer
+    //timer
     private Chronometer timer;
-
-    private TextView timerValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,15 +319,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      */
     public void track(View view) {
         timer = (Chronometer)this.findViewById(R.id.chronometer);
-
-
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
-            //reset timer
+            // reset timer
             timer.setBase(SystemClock.elapsedRealtime());
-            //start timer
+            // timer start
             timer.start();
-
             /********************************* TIMER START ***********************************/
             //timerValue = (TextView) findViewById(R.id.timer_text);
             //startTime = SystemClock.uptimeMillis();
@@ -347,9 +342,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //stop timer
             timer.stop();
             /******************************* TIMER STOP ******************************/
-            //timeSwapBuff += timeInMilliseconds;
-            //customHandler.removeCallbacks(updateTimerThread);
-            /************************** TIMER STOP END *****************************/
             ((Button) view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
@@ -439,5 +431,4 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
     }
-
 }
