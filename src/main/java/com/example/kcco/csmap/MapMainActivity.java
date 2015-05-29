@@ -1,17 +1,18 @@
 package com.example.kcco.csmap;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,6 +56,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
     private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
 
+    //timer
+    private Chronometer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +89,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     for (int i = 0; i < locations.size(); i++) {
                         //Compare saved Marker in location and current clicked Marker
                         if (locations.get(i).first.getId().equals(marker.getId())) {
-                            /*TODO: Assume there is a way to get user current location,
-                                    now is using UCSD
-                             */
                             LatLng currentLocation = new LatLng(32.881132, -117.237639);
 
                             Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
@@ -101,7 +101,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         }
                     }
 
-                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -116,6 +116,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .visible(false)
             ));
         }
+
+        //TODO: finish this function for search routes
+        fromRouteActivity();
     }
 
 /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -316,22 +319,35 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      *  Button name: btnSurrey
      *  Describe: Begin to track the route.
      */
-    public void track(View view){
-        if(GPS.tracking == false) {// using the instance variable tracking to keep track of button
+    public void track(View view) {
+        timer = (Chronometer)this.findViewById(R.id.chronometer);
+        if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
+            // reset timer
+            timer.setBase(SystemClock.elapsedRealtime());
+            // timer start
+            timer.start();
+            /********************************* TIMER START ***********************************/
+            //timerValue = (TextView) findViewById(R.id.timer_text);
+            //startTime = SystemClock.uptimeMillis();
+            //timerValue.postDelayed(updateTimerThread, 0);
+            /**************************** TIMER START END**********************************/
+
             ((Button) view).setText("Stop");
-            if(currentDisplayed != null) {
+            if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
                 currentDisplayed.remove();
                 currentDisplayed = null; // get rid of currentDispalyed
             }
-        }
-        else {
+        } else {
             GPS.stopGPSTrack();
+            //stop timer
+            timer.stop();
+            /******************************* TIMER STOP ******************************/
             ((Button) view).setText("Track");
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
-            if(latLngRoute.size() > 1) {
+            if (latLngRoute.size() > 1) {
                 RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
@@ -415,6 +431,23 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         else{
             Messenger.error(searchTerm + " is invalid name", MapMainActivity.this);
         }
+
+    }
+
+    public void fromRouteActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
+            Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
+
+            int destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
+            double latitude = getIntent().getDoubleExtra("latitude", 0);
+            double longitude = getIntent().getDoubleExtra("longitude", 0);
+            LatLng startLocation = new LatLng(latitude, longitude);
+
+        }
+
+
 
     }
 

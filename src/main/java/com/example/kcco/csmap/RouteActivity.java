@@ -1,5 +1,6 @@
 package com.example.kcco.csmap;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.Messenger;
+import com.google.android.gms.maps.model.LatLng;
 
 
 public class RouteActivity extends ActionBarActivity {
@@ -22,20 +25,26 @@ public class RouteActivity extends ActionBarActivity {
 
     private int transport = 0;
     private int destinationId = 0;
+    private String destinationName = "";
 
     //latitude and longitude are for either current location or start location
-    private double latitude = 0.0;
-    private double longitude = 0.0;
+    private LatLng startLocation;
+    private LatLng currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        getIntentData(savedInstanceState);
-
+        getIntentData();
         BuildingDAO destination = BuildingDAO.searchBuilding(destinationId, RouteActivity.this);
-        ((EditText)findViewById(R.id.txtToInput)).setText(destination.getName());
+
+        //destination should not be null because it is from Marker, but just do it in case
+        if( destination != null)
+            destinationName = destination.getName();
+
+        ((EditText)findViewById(R.id.txtToInput)).setText(destinationName);
+
 
 
     }
@@ -124,26 +133,62 @@ public class RouteActivity extends ActionBarActivity {
     }
 
     public void goToMainActivity(View view){
-        //TODO: should have function to handle from location if any change
-        //TODO: not sure what activity should go to, temporary TrackActivity
-        Intent intent = new Intent(RouteActivity.this, TrackActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //add more information into intent before start different activity
-        intent.putExtra("destinationId", destinationId);
-        intent.putExtra("latitude", latitude);
-        intent.putExtra("longitude", longitude);
-        intent.putExtra("transport", transport);
-        RouteActivity.this.startActivity(intent);
+        String startPlaceName = ((EditText)findViewById(R.id.txtFromInput)).getText().toString();
+        boolean validStartPlace = processStartPlace(startPlaceName, RouteActivity.this);
+
+        if( !validStartPlace ) {
+            Messenger.error("This is not an invalid place name", RouteActivity.this);
+        }
+        else{
+
+            Intent intent = new Intent(RouteActivity.this, MapMainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            //add more information into intent before start different activity
+            intent.putExtra("destinationId", destinationId);
+            intent.putExtra("latitude", startLocation.latitude);
+            intent.putExtra("longitude", startLocation.longitude);
+            intent.putExtra("transport", transport);
+            intent.putExtra("activity", "RouteActivity");
+            RouteActivity.this.startActivity(intent);
+        }
+
     }
 
 
 /////////////////////////////Helper functions//////////////////////////////////////////////////
-    public void getIntentData(Bundle savedInstanceState){
-        destinationId = getIntent().getExtras().getInt("destinationPlaceId");
-        latitude = getIntent().getDoubleExtra("latitude", 0);
-        longitude = getIntent().getDoubleExtra("longitude", 0);
+    public void getIntentData(){
+        destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
+        double latitude = getIntent().getDoubleExtra("latitude", 0);
+        double longitude = getIntent().getDoubleExtra("longitude", 0);
+        currentLocation = new LatLng(latitude, longitude);
+        startLocation = new LatLng(latitude, longitude);
+
+        //This is debug testing here.
         Log.d("RouteActivity", "destinationId: " + Integer.toString(destinationId));
         Log.d("RouteActivity", "latitude: " + Double.toString(latitude));
         Log.d("RouteActivity", "longitude: " + Double.toString(longitude));
     }
+
+    public boolean processStartPlace(String startPlaceName, Activity activity){
+
+        //There are input for start place name, so it is not current location anymore.
+        if( ! startPlaceName.equals("") ){
+            Log.d("RoutesActivity", "processStartPlace(): startPlaceName is not empty: "+ startPlaceName+".");
+            BuildingDAO startPlace = BuildingDAO.searchBuilding(startPlaceName, activity);
+
+            //startPlace is null means no match result can be found from database.
+            if( startPlace == null )
+                return false;
+
+            //The startLocation is changed to different location.
+            startLocation = startPlace.getCenterPoint();
+        }
+        //There are no input for start place name, so it should be current location.
+        else {
+            startLocation = currentLocation;
+        }
+        return true;
+    }
+
+
 }
