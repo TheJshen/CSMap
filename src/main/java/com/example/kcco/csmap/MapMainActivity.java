@@ -23,6 +23,7 @@ import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -72,6 +73,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         timer.setVisibility(View.GONE);
         timerLabel = (TextView)this.findViewById(R.id.chronometer_label);
         timerLabel.setVisibility(View.GONE);
+
+        //Disable buttons blocking menu
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         GPS = new RouteTracker(this, this);
 
