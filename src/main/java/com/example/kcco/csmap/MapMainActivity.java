@@ -88,9 +88,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     for (int i = 0; i < locations.size(); i++) {
                         //Compare saved Marker in location and current clicked Marker
                         if (locations.get(i).first.getId().equals(marker.getId())) {
-                            /*TODO: Assume there is a way to get user current location,
-                                    now is using UCSD
-                             */
                             LatLng currentLocation = new LatLng(32.881132, -117.237639);
 
                             Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
@@ -103,7 +100,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         }
                     }
 
-                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -118,6 +115,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .visible(false)
             ));
         }
+
+        //TODO: finish this function for search routes
+        fromRouteActivity();
     }
 
 /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -429,6 +429,23 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         else{
             Messenger.error(searchTerm + " is invalid name", MapMainActivity.this);
         }
+
+    }
+
+    public void fromRouteActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
+            Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
+
+            int destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
+            double latitude = getIntent().getDoubleExtra("latitude", 0);
+            double longitude = getIntent().getDoubleExtra("longitude", 0);
+            LatLng startLocation = new LatLng(latitude, longitude);
+
+        }
+
+
 
     }
 }
