@@ -302,12 +302,14 @@ public class BuildingDAO {
     private int searchNextEmptyPlaceId() {
         //define local variable(s) here
         int count = 0;
+        ArrayList<ParseObject> results = null;
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
+        query.addDescendingOrder(ParseConstant.PLACES_PLACE_ID);
 
         try {
-            count = query.count();
+            results = (ArrayList<ParseObject>) query.find();
         }
         catch(ParseException e) {
             Toast.makeText(activity, "Parse Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -315,8 +317,16 @@ public class BuildingDAO {
             Messenger.logException(e, "BuildingDAO", "searchNextEmptyPlaceId");
         }
 
-        //This part is debug purpose to show all results.
-        Log.d("UserDAO", "getNextEmptyPlaceId() return " + new Integer(count).toString());
+        //There has match cases in User table.
+        if( results.size() != 0) {
+            BuildingDAO building = new BuildingDAO(results.get(0), activity);
+
+            //This part is debug purpose to show all results.
+            //This part is debug purpose to show all results.
+            Log.d("UserDAO", "getNextEmptyPlaceId() return " + new Integer(count).toString());
+
+            count = building.getPlaceId();
+        }
 
         return count+1;
     }

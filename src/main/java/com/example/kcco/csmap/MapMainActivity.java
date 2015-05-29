@@ -87,11 +87,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     nextScreen.putExtra("BuildingName", marker.getTitle());
                     startActivity(nextScreen);
                 } else {
-                    //TODO: after marker is clicked.
                     for (int i = 0; i < locations.size(); i++) {
                         //Compare saved Marker in location and current clicked Marker
                         if (locations.get(i).first.getId().equals(marker.getId())) {
-                            LatLng currentLocation = new LatLng(32.881132, -117.237639);
 
                             Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
                             nextScreen.putExtra("destinationPlaceId", locations.get(i).second.getPlaceId());
