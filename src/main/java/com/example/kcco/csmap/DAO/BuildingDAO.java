@@ -377,7 +377,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereContains(ParseConstant.PLACES_NAME, placeName);
+        query.whereEqualTo(ParseConstant.PLACES_NAME, placeName);
 
         try {
             results = (ArrayList<ParseObject>) query.find();

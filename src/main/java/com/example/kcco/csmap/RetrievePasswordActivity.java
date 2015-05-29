@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.kcco.csmap.DAO.Messenger;
+
 /**
  * Created by gaojieli on 5/24/15.
  */
