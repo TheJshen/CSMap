@@ -32,13 +32,9 @@
             android:text="@string/login_login" />
 
         <Button
-            style="@style/LoginRegister.ActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Forget Password?"
             android:id="@+id/reset_button"
-            android:layout_gravity="center_vertical"
-            android:textSize="10dp" />
+            style="@style/LoginRegister.ForgotButton"
+            android:text="@string/login_forgot_password" />
 
     </LinearLayout>
 

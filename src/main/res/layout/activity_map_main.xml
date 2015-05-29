@@ -5,83 +5,123 @@
     <!--android:layout_height="match_parent" />-->
 
 
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
 
-<!-- Menu layout -->
-<HorizontalScrollView
-    android:id="@+id/main_button"
-    style="@style/MainTheme.ButtonScroller">
-    <LinearLayout
-        style="@style/MainTheme.ButtonContainer.Right">
-
-        <!--TODO: this is temporary button, will be delete soon-->
-        <Button
-            style="@style/MainTheme.Button"
-            android:onClick="goToAddPlaceActivity"
-            android:text="Add Place" />
-
+    <!-- Banner Bar -->
+    <RelativeLayout
+        android:id="@+id/main_banner"
+        style="@style/MainTheme.BannerBar.ToggleMenu" >
 
         <Button
-            android:id="@+id/mapMenuToggleBuildingMarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toggleMapMenu"
             style="@style/MainTheme.Button"
-            android:onClick="toggleBuildingMarkers"
-            android:text="Show Markers"/>
+            android:text="Hide Menu"
+            android:onClick="toggleMenu" />
 
-        <Button
-            android:id="@+id/mapMenuUserLogIn"
-            style="@style/MainTheme.Button"
-            android:onClick="searchRoutePrompt"
-            android:text="Search" />
+    </RelativeLayout>
 
-        <Button
-            android:layout_height="match_parent"
-            style="@style/MainTheme.Button"
-            android:onClick="toggleMenu"
-            android:text="Bookmark" />
-
-        <Button
-            android:layout_height="match_parent"
-            style="@style/MainTheme.Button"
-            android:onClick="toggleMenu"
-            android:text="History" />
-
-        <Button
-            android:layout_height="match_parent"
-            style="@style/MainTheme.Button"
-            android:onClick="track"
-            android:text="Input Route" />
-
-        <Button
-            android:id="@+id/btnLogout"
-            style="@style/MainTheme.Button"
-            android:onClick="logout"
-            android:text="Logout" />
-
-
-    </LinearLayout>
-
-</HorizontalScrollView>
-
+    <!-- The Map -->
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_below="@+id/main_button"
+        android:layout_below="@+id/main_banner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
-    <Chronometer
-        android:id ="@+id/chronometer"
-        android:layout_width="wrap_content"
+
+    <!-- Menu layout -->
+    <HorizontalScrollView
+        android:id="@+id/main_button"
+        style="@style/MainTheme.ButtonScroller"
+        android:layout_below="@+id/main_banner" >
+
+        <LinearLayout
+            android:id="@+id/main_button_holder"
+            style="@style/MainTheme.ButtonContainer.Right">
+
+            <!--TODO: this is temporary button, will be delete soon-->
+            <Button
+                style="@style/MainTheme.Button"
+                android:onClick="goToAddPlaceActivity"
+                android:text="Add Place" />
+
+
+            <Button
+                android:id="@+id/mapMenuToggleBuildingMarker"
+                style="@style/MainTheme.Button"
+                android:onClick="toggleBuildingMarkers"
+                android:text="Show Markers"/>
+
+            <Button
+                android:id="@+id/mapMenuUserLogIn"
+                style="@style/MainTheme.Button"
+                android:onClick="searchRoutePrompt"
+                android:text="Search" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="toggleMenu"
+                android:text="Bookmark" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="toggleMenu"
+                android:text="History" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="track"
+                android:text="Input Route" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                style="@style/MainTheme.Button"
+                android:onClick="logout"
+                android:text="Logout" />
+
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+    <!-- Timer For Tracking Routes -->
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/main_button"
-        android:layout_marginLeft="150dp"
-        android:format="%s"
-        android:textSize="80px"
-        android:textColor="#000000" />
+        android:gravity="center"
+        android:background="@color/button_color">
+
+        <TextView
+            android:id="@+id/chronometer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color_important"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:text="time"/>
+
+        <Chronometer
+            android:id ="@+id/chronometer"
+            android:layout_below="@+id/chronometer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:format="%s"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:textColor="@color/text_color_important"
+            android:paddingBottom="@dimen/activity_vertical_margin" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
