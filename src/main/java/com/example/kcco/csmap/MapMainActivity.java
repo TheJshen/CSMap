@@ -39,6 +39,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     // Route object
     private Route routeToDisplay;
     private Polyline currentDisplayed; // Polyline displayed on the map
+    private static LatLng currentLocation;
     
     // Used for testing the route lines
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
@@ -171,6 +172,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        currentLocation = latLng;
         //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
         /*cameraPosition = new CameraPosition.Builder()
@@ -414,5 +416,13 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Messenger.error(searchTerm + " is invalid name", MapMainActivity.this);
         }
 
+    }
+
+
+    // This method would be used to get the current location of the user.
+    // This will be a static method so you can just call by doing
+    // MapMainActivity.getCurrentLocation
+    public static LatLng getCurrentLocation() {
+        return currentLocation;
     }
 }

@@ -230,7 +230,7 @@ public class UserDAO{
         thisUser.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
-                /*final*/ ProgressDialog dlg = new ProgressDialog(activity);
+                final ProgressDialog dlg = new ProgressDialog(activity);
                 dlg.setTitle("Please wait.");
                 dlg.setMessage("Signing up, please wait.");
                 dlg.show();
@@ -324,7 +324,7 @@ public class UserDAO{
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
-                /*final*/ ProgressDialog dlg = new ProgressDialog(activity);
+                final ProgressDialog dlg = new ProgressDialog(activity);
                 dlg.setTitle("Please wait.");
                 dlg.setMessage("Logging in, please wait.");
                 dlg.show();
