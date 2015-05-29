@@ -26,7 +26,7 @@ public class RetrievePasswordActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if (isEmpty(emailView)) {
-                    Messenger.toast("Please enter an email address.", RetrievePasswordActivity.this);
+                    com.example.kcco.csmap.DAO.Messenger.toast("Please enter an email address.", RetrievePasswordActivity.this);
                 }
                 else {
                     UserDAO.resetPassword(emailView.getText().toString(), RetrievePasswordActivity.this);
