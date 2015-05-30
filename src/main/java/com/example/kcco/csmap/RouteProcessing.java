@@ -44,7 +44,6 @@ public class RouteProcessing {
     private static BuildingDAO endLoc;
     private static int startLocId;
     private static int endLocId;
-    private static int timeSpent;
     private static int transport;
 
     /**
@@ -254,7 +253,7 @@ public class RouteProcessing {
     //Create a popup Prompt to ask user input name for start and end locations
     //Also, user can choose the transportation that he/she sed for the route.
     //At the end, the info for start and end location and route are saved into Parse.
-    public static void saveRoutePrompt(final Route thisRoute, final Activity activity){
+    public static void saveRoutePrompt(final Route thisRoute, final int timeSpent, final Activity activity){
         final ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
         startLoc = BuildingDAO.searchBuilding(latLngRoute.get(0),
@@ -335,7 +334,6 @@ public class RouteProcessing {
                 startLocId = RouteProcessing.verifyExistedPlace(startLoc, latLngRoute.get(0), txtFromInput.getText().toString(), activity);
                 endLocId = RouteProcessing.verifyExistedPlace(endLoc, latLngRoute.get(latLngRoute.size() - 1), txtToInput.getText().toString(), activity);
                 //TODO: Timer give out the time here
-                timeSpent = 9382; // in second
                 transport = 0;
                 if (boxWalk.isChecked())
                     transport += WALK_MODE;
