@@ -397,6 +397,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.stopGPSTrack();
             //stop timer
             timer.stop();
+            long elapsedSecs = ((SystemClock.elapsedRealtime() - timer.getBase() ) / 1000);
+
+
+            Log.d("TIMER time", Long.toString(elapsedSecs));
             //hide timer;
             timer.setVisibility(View.GONE);
             timerLabel.setVisibility(View.GONE);

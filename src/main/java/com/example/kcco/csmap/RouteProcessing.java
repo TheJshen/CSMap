@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.os.PowerManager;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -65,14 +66,20 @@ public class RouteProcessing {
         Log.d("RouteProcessing", "destination: " + Integer.toString(destinationID));
 
 
-        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,100, transportID,  activity);
-        if ( toRoutes == null)
-        {
-            Messenger.toast("No Routes found", activity);
-            return null;
-        }
-        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 100,transportID,  activity);
-        if ( fromRoutes == null)
+        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,100,  activity);
+        if ( toRoutes.get(0) != null)
+            toRoutes = getTransportRoutes(toRoutes, transportID);
+        else
+            Log.d( "EMPTY ASC", "WE HAVE A PROBLEM NONE FOR");
+
+
+        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 100, activity);
+        if ( fromRoutes.get(0) != null)
+            fromRoutes = getTransportRoutes(fromRoutes, transportID);
+        else
+            Log.d( "EMPTY DESC", "WE HAVE A PROBLEM NONE FOR");
+
+        if ( fromRoutes.get(0) == null && toRoutes.get(0) == null)
         {
             Messenger.toast("No Routes found", activity);
             return null;
@@ -156,6 +163,18 @@ public class RouteProcessing {
 
     }
 
+    public static ArrayList<RoutesDAO> getTransportRoutes( ArrayList<RoutesDAO> inputDAOs, int transportID)
+    {
+        ArrayList<RoutesDAO> toReturn = new ArrayList<>();
+        /*time to remove some of the routeDAO's that do not have the transportation that we need*/
+        for ( int i = 0; i < inputDAOs.size(); ++i)
+        {
+           if ( inputDAOs.get(i).getTransport() - transportID > 0 )
+               toReturn.add(inputDAOs.get(i)); // means that our ID is less restrictive than the routes availability
+        }
+
+        return toReturn;
+    }
 
     public static double getDistance( LatLng start, LatLng end )
     {
