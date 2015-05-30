@@ -290,10 +290,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 
+    /**
+     * Toggles visibility of the menu
+     * @param view The current view
+     */
     final String[] menuStatus = {"Hide Menu", "Show Menu"};
     public void toggleMenu(View view) {
-        //Log.d("MapMainActivity", "Do nothing because Menu always there");
-
         Button thisButton = (Button) findViewById(R.id.toggleMapMenu);
 
         // Menu is shown, hide menu
@@ -312,6 +314,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+
+    /**
+     * Toggles visibility of the building markers
+     * @param view The current view
+     */
     final String[] buildingMarkerStatus = {"Show Markers", "Hide Markers"};
     public void toggleBuildingMarkers(View view) {
         Button thisButton = (Button) findViewById(R.id.mapMenuToggleBuildingMarker);
@@ -468,8 +475,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         if(destinations != null) {
             for (BuildingDAO destination : destinations) {
                 Marker newLocation = mMap.addMarker(new MarkerOptions()
-                                //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_d))
+//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_d))
                                 .position(destination.getCenterPoint())
                                 .title(destination.getName())
                                 .snippet("Click here to get routes")

@@ -14,14 +14,17 @@
     <!-- Banner Bar -->
     <RelativeLayout
         android:id="@+id/main_banner"
-        style="@style/MainTheme.BannerBar.ToggleMenu" >
+        style="@style/MainTheme.BannerBar.ToggleMenu"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
             android:id="@+id/toggleMapMenu"
-            style="@style/MainTheme.Button"
-            android:text="Hide Menu"
+            android:background="#00ffffff"
+            android:src="@drawable/button_menu_dropdwn"
             android:onClick="toggleMenu" />
 
     </RelativeLayout>
