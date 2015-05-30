@@ -293,17 +293,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      */
     private boolean menuVisible = true;
     public void toggleMenu(View view) {
+        ImageButton toggleButton = (ImageButton) findViewById(R.id.toggleMapMenu);
+
         // Menu is shown, hide menu
         if(menuVisible) {
             for(Button button : menuButtons) {
                 button.setVisibility(View.GONE);
             }
+            toggleButton.setImageResource(R.drawable.button_menu_pullup);
         }
         // Menu is hidden, show menu
         else {
             for(Button button : menuButtons) {
                 button.setVisibility(View.VISIBLE);
             }
+            toggleButton.setImageResource(R.drawable.button_menu_dropdwn);
         }
 
         menuVisible = !menuVisible;
