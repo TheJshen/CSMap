@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.kcco.csmap.DAO.RoutesDAO;
 import java.util.ArrayList;
@@ -59,9 +60,23 @@ public class RouteProcessing {
         ArrayList<LatLng> toBeRoute;
         ArrayList<Route> toShow = new ArrayList<>();
 
-        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,0.01, transportID,  activity);
-        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 0.01,transportID,  activity);
+        Log.d("RouteProcessing", "latitude: " + Double.toString(currentLoc.latitude));
+        Log.d("RouteProcessing", "longitude: " + Double.toString(currentLoc.longitude));
+        Log.d("RouteProcessing", "destination: " + Integer.toString(destinationID));
 
+
+        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,100, transportID,  activity);
+        if ( toRoutes == null)
+        {
+            Messenger.toast("No Routes found", activity);
+            return null;
+        }
+        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 100,transportID,  activity);
+        if ( fromRoutes == null)
+        {
+            Messenger.toast("No Routes found", activity);
+            return null;
+        }
 
         if ( toRoutes.size() + fromRoutes.size() <= THREE)
         {

@@ -81,7 +81,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
         // Get Timer and TimerLabel Objects
-        timer = (Chronometer)this.findViewById(R.id.chronometer);
+        timer = (Chronometer) this.findViewById(R.id.chronometer);
         timer.setVisibility(View.GONE);
         timerLabel = (TextView)this.findViewById(R.id.chronometer_label);
         timerLabel.setVisibility(View.GONE);
@@ -228,6 +228,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     {
         /* must have the inputIds converted into destination IDs and transport ID*/
         ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
+        if ( bestRoutes == null)
+            return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)
         {
             mMap.addPolyline(bestRoutes.get(index).drawRoute());
@@ -482,12 +484,15 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
         if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
-            Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
+            //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
 
             int destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
+            int transportId = getIntent().getIntExtra("trans", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
+            plottingRecommendations( startLocation, destinationId, transportId );
+
 
         }
 
