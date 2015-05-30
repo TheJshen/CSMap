@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +23,6 @@ import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -388,6 +386,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.stopGPSTrack();
             //stop timer
             timer.stop();
+            int elapsed = (int)(SystemClock.elapsedRealtime() - timer.getBase())/1000;
+            Log.d("Timer: ", Long.toString(elapsed));
+            //com.example.kcco.csmap.DAO.RoutesDAO route = new RoutesDAO(MapMainActivity.this);
+            //route.setTimeSpent(elapsed);
             //hide timer;
             timer.setVisibility(View.GONE);
             timerLabel.setVisibility(View.GONE);
@@ -396,7 +398,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if (latLngRoute.size() > 1) {
-                RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
+                RouteProcessing.saveRoutePrompt(thisRoute, elapsed, MapMainActivity.this);
             }
 
         }
