@@ -25,9 +25,9 @@ public class Route {
 
     private static final int LINE_WIDTH = 10;
     private ArrayList<LatLng> routePoints;
-    private String createdBy;
-    private int routeTime;
-    Date createAt, updatedAt;
+    private int createdBy;
+    private double routeTime;
+    Date createWhen;
 
 
     // No arg constructor. Creates empty route
@@ -73,7 +73,7 @@ public class Route {
                 .color(color);
     }
 
-
+    // Append a point onto a route
     public void addToRoute(LatLng lastPoint) {
         routePoints.add(lastPoint); // append a point to the array
     }
@@ -107,5 +107,29 @@ public class Route {
             toReturn.add(routePoints.get(i).longitude);
         }
         return toReturn;
+    }
+
+    public void setCreatedBy( int userID ) {
+        createdBy = userID;
+    }
+
+    public void setRouteTime( double timeElapsed ) {
+        routeTime = timeElapsed;
+    }
+
+    public void setCreationDate( Date date ) {
+        createWhen = date;
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public double getRouteTime() {
+        return routeTime;
+    }
+
+    public Date getCreationDate() {
+        return createWhen;
     }
 }
