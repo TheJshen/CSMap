@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +24,6 @@ import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -292,24 +291,22 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Toggles visibility of the menu
      * @param view The current view
      */
-    final String[] menuStatus = {"Hide Menu", "Show Menu"};
+    private boolean menuVisible = true;
     public void toggleMenu(View view) {
-        Button thisButton = (Button) findViewById(R.id.toggleMapMenu);
-
         // Menu is shown, hide menu
-        if(thisButton.getText().equals(menuStatus[0])) {
+        if(menuVisible) {
             for(Button button : menuButtons) {
                 button.setVisibility(View.GONE);
             }
-            thisButton.setText(menuStatus[1]);
         }
         // Menu is hidden, show menu
         else {
             for(Button button : menuButtons) {
                 button.setVisibility(View.VISIBLE);
             }
-            thisButton.setText(menuStatus[0]);
         }
+
+        menuVisible = !menuVisible;
     }
 
 
