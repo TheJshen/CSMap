@@ -92,7 +92,6 @@
         android:src="@drawable/bus"
         android:onClick="selectTransport"
         android:layout_alignTop="@+id/btnSkate"
-        android:layout_marginLeft="1dp"
         android:layout_toEndOf="@+id/btnSkate" />
 
 
