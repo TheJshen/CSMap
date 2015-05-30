@@ -340,6 +340,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    public void goToShowBookmarks(View view) {
+        Intent intent = new Intent(this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+        /*Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);*/
+    }
+
 
     public void goToRouteActivity(View view){
         toggleMenu(view);
@@ -398,10 +408,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.stopGPSTrack();
             //stop timer
             timer.stop();
-            long elapsedSecs = ((SystemClock.elapsedRealtime() - timer.getBase() ) / 1000);
-
-
-            Log.d("TIMER time", Long.toString(elapsedSecs));
+            int elapsed = (int)(SystemClock.elapsedRealtime() - timer.getBase())/1000;
+            Log.d("Timer: ", Long.toString(elapsed));
+            //com.example.kcco.csmap.DAO.RoutesDAO route = new RoutesDAO(MapMainActivity.this);
+            //route.setTimeSpent(elapsed);
             //hide timer;
             timer.setVisibility(View.GONE);
             timerLabel.setVisibility(View.GONE);
@@ -410,7 +420,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if (latLngRoute.size() > 1) {
-                RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
+                RouteProcessing.saveRoutePrompt(thisRoute, elapsed, MapMainActivity.this);
             }
 
         }
@@ -512,12 +522,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
         }
-    }
-
-    public void goToShowBookmarks() {
-        Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapMainActivity.this.startActivity(intent);
     }
 
 
