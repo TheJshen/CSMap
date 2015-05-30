@@ -5,6 +5,6 @@
         android:drawable="@color/black_100" />
     <item android:state_focused="false" android:state_pressed="true"
         android:drawable="@color/banner_color" />
-    <item android:drawable="@color/button_color" />
+    <item android:drawable="@drawable/button_main_normal" />
 
 </selector>
