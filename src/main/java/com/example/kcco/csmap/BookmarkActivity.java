@@ -2,10 +2,16 @@ package com.example.kcco.csmap;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.RoutesDAO;
 import com.example.kcco.csmap.R;
+import com.parse.ParseObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Teresa on 5/22/15.
@@ -13,10 +19,36 @@ import com.example.kcco.csmap.R;
 
 public class BookmarkActivity extends ActionBarActivity {
 
+    private int userID;
+    private int[] bookmarks;
+    ArrayList<Pair<String, String>> startEndLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmark);
+
+        // Get current user to find the appropriate bookmarks for
+        userID = UserDAO.getCurrentUserId();
+        // Search for bookmarks
+        bookmarks = UserDAO.searchBookmarkRoutes(userID, this);
+        // loop through bookarmsk
+        for(int routeId: bookmarks){
+            String start;
+            String end;
+
+            // Retrieve the route
+            RoutesDAO route = RoutesDAO.searchARoute(routeId, BookmarkActivity.this);
+            // Get the name of the starting location
+            BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), BookmarkActivity.this);
+            start = place.getName();
+
+            // Get the name of the ending location
+            place = BuildingDAO.searchBuilding(route.getEndLoc(), BookmarkActivity.this);
+            end = place.getName();
+
+            startEndLocation.add(new Pair<String, String>(start, end));
+        }
     }
 
 

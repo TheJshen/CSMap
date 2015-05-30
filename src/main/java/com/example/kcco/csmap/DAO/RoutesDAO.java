@@ -648,7 +648,6 @@ public class RoutesDAO {
      * Describe:
      *      it will tell if the given place exists or not
      * Parameter:
-     *      String strLoc: the search parameter
      *      String endLoc: the search parameter
      *      Activity activity: the activity calls this function, needed for exception
      * Return:
@@ -661,7 +660,7 @@ public class RoutesDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereEqualTo(ParseConstant.PLACES_NAME, endLoc);
+        query.whereEqualTo(ParseConstant.PLACES_NAME, endLoc.toLowerCase());
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -798,6 +797,7 @@ public class RoutesDAO {
         ParseGeoPoint toLocation = new ParseGeoPoint(subRoutePoint.latitude, subRoutePoint.longitude);
         return currentLocation.distanceInMilesTo(toLocation);
     }
+
 
 
 

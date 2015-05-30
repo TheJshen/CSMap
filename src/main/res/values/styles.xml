@@ -217,8 +217,6 @@
         <item name="android:scrollbars">none</item>
         <item name="android:fillViewport">true</item>
         <item name="android:overScrollMode">never</item>
-
-        <item name="android:background">@color/button_color</item>
     </style>
 
     <style name="MainTheme.ButtonContainer">
