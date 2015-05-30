@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +24,6 @@ import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -85,7 +84,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
         // Get Timer and TimerLabel Objects
-        timer = (Chronometer)this.findViewById(R.id.chronometer);
+        timer = (Chronometer) this.findViewById(R.id.chronometer);
         timer.setVisibility(View.GONE);
         timerLabel = (TextView)this.findViewById(R.id.chronometer_label);
         timerLabel.setVisibility(View.GONE);
@@ -232,6 +231,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     {
         /* must have the inputIds converted into destination IDs and transport ID*/
         ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
+        if ( bestRoutes == null)
+            return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)
         {
             mMap.addPolyline(bestRoutes.get(index).drawRoute());
@@ -292,24 +293,26 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Toggles visibility of the menu
      * @param view The current view
      */
-    final String[] menuStatus = {"Hide Menu", "Show Menu"};
+    private boolean menuVisible = true;
     public void toggleMenu(View view) {
-        Button thisButton = (Button) findViewById(R.id.toggleMapMenu);
+        ImageButton toggleButton = (ImageButton) findViewById(R.id.toggleMapMenu);
 
         // Menu is shown, hide menu
-        if(thisButton.getText().equals(menuStatus[0])) {
+        if(menuVisible) {
             for(Button button : menuButtons) {
                 button.setVisibility(View.GONE);
             }
-            thisButton.setText(menuStatus[1]);
+            toggleButton.setImageResource(R.drawable.button_menu_pullup);
         }
         // Menu is hidden, show menu
         else {
             for(Button button : menuButtons) {
                 button.setVisibility(View.VISIBLE);
             }
-            thisButton.setText(menuStatus[0]);
+            toggleButton.setImageResource(R.drawable.button_menu_dropdwn);
         }
+
+        menuVisible = !menuVisible;
     }
 
 
@@ -395,6 +398,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             GPS.stopGPSTrack();
             //stop timer
             timer.stop();
+            long elapsedSecs = ((SystemClock.elapsedRealtime() - timer.getBase() ) / 1000);
+
+
+            Log.d("TIMER time", Long.toString(elapsedSecs));
             //hide timer;
             timer.setVisibility(View.GONE);
             timerLabel.setVisibility(View.GONE);
@@ -494,14 +501,23 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
         if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
-            Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
+            //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
 
             int destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
+            int transportId = getIntent().getIntExtra("trans", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
+            plottingRecommendations( startLocation, destinationId, transportId );
+
 
         }
+    }
+
+    public void goToShowBookmarks() {
+        Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);
     }
 
 
