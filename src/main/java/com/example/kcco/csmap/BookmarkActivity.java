@@ -2,6 +2,7 @@ package com.example.kcco.csmap;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,13 +28,14 @@ public class BookmarkActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmark);
+        startEndLocation = new ArrayList<Pair<String, String>>();
 
         // Get current user to find the appropriate bookmarks for
         userID = UserDAO.getCurrentUserId();
         // Search for bookmarks
         bookmarks = UserDAO.searchBookmarkRoutes(userID, this);
         // loop through bookarmsk
-        for(int routeId: bookmarks){
+        /*for(int routeId: bookmarks){
             String start;
             String end;
 
@@ -48,7 +50,8 @@ public class BookmarkActivity extends ActionBarActivity {
             end = place.getName();
 
             startEndLocation.add(new Pair<String, String>(start, end));
-        }
+        }*/
+
     }
 
 

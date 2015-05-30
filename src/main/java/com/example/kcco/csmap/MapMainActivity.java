@@ -340,6 +340,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    public void goToShowBookmarks(View view) {
+        Intent intent = new Intent(this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+        /*Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);*/
+    }
+
 
     public void goToRouteActivity(View view){
         toggleMenu(view);
@@ -513,12 +523,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
         }
-    }
-
-    public void goToShowBookmarks() {
-        Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapMainActivity.this.startActivity(intent);
     }
 
 
