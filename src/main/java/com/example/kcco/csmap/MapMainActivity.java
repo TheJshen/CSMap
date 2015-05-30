@@ -514,6 +514,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    public void goToShowBookmarks() {
+        Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);
+    }
+
 
     // This method would be used to get the current location of the user.
     // This will be a static method so you can just call by doing

@@ -89,7 +89,7 @@
             <Button
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
-                android:onClick="toggleMenu"
+                android:onClick="goToShowBookmarks"
                 android:text="Bookmark" />
 
             <Button
