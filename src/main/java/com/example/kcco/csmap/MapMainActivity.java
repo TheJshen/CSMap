@@ -422,7 +422,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if (latLngRoute.size() > 1) {
-                RouteProcessing.saveRoutePrompt(thisRoute, elapsed, MapMainActivity.this);
+                RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
         }
