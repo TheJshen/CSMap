@@ -480,7 +480,7 @@ public class RoutesDAO {
      * Return:
      *      ArrayList<RoutesDAO> routes if any match; else null.
      */
-    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(int destination, double x, double y, double distance, int transport, final Activity activity) {
+    public static ArrayList<RoutesDAO> searchCloseRoutesAsce(int destination, double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
@@ -496,15 +496,10 @@ public class RoutesDAO {
         //Querry for the start location same as destination in the Routes table
         ParseQuery<ParseObject> endLoc =  ParseQuery.getQuery(ParseConstant.ROUTES);
         endLoc.whereEqualTo(ParseConstant.ROUTES_ENDLOC, destination);
-        endLoc.whereEqualTo(ParseConstant.ROUTES_TRANSPORT, transport);
 
         //Querry for the same routeId in the SubRoute within the given location range.
         ParseQuery<ParseObject> endSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
         endSubRoute.whereMatchesKeyInQuery(ParseConstant.SUBROUTE_ROUTE_ID, ParseConstant.ROUTES_ROUTE_ID, endLoc);
-//        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
-//        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
-//        endSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
-//        endSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
         endSubRoute.whereWithinMiles(ParseConstant.SUBROUTE_POINT, currentLocation, distance);
         endSubRoute.orderByAscending(ParseConstant.SUBROUTE_NUM_INDEX);
         endSubRoute.setLimit(1000);
@@ -575,7 +570,7 @@ public class RoutesDAO {
      * Return:
      *      ArrayList<RoutesDAO> routes if any match; else null.
      */
-    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(int destination, double x, double y, double distance, int transport, final Activity activity) {
+    public static ArrayList<RoutesDAO> searchCloseRoutesDesc(int destination, double x, double y, double distance, final Activity activity) {
         //define local variable(s) here
         ArrayList<ParseObject> results = null;
         ArrayList<RoutesDAO> routes;
@@ -592,15 +587,10 @@ public class RoutesDAO {
         //Querry for the start location same as destination in the Routes table
         ParseQuery<ParseObject> startLoc =  ParseQuery.getQuery(ParseConstant.ROUTES);
         startLoc.whereEqualTo(ParseConstant.ROUTES_STRLOC, destination);
-        startLoc.whereEqualTo(ParseConstant.ROUTES_TRANSPORT, transport);
 
         //Querry for the same routeId in the SubRoute within the given location range.
         ParseQuery<ParseObject> startSubRoute = ParseQuery.getQuery(ParseConstant.SUBROUTE);
         startSubRoute.whereMatchesKeyInQuery(ParseConstant.SUBROUTE_ROUTE_ID, ParseConstant.ROUTES_ROUTE_ID, startLoc);
-//        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x + distance);
-//        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_X, x - distance);
-//        startSubRoute.whereLessThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y + distance);
-//        startSubRoute.whereGreaterThanOrEqualTo(ParseConstant.SUBROUTE_NUM_Y, y - distance);
         startSubRoute.whereWithinMiles(ParseConstant.SUBROUTE_POINT, currentLocation, distance);
         startSubRoute.orderByDescending(ParseConstant.SUBROUTE_NUM_INDEX);
         startSubRoute.setLimit(1000);

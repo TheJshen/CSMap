@@ -496,9 +496,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             LatLng startLocation = new LatLng(latitude, longitude);
 
         }
-
-
-
     }
 
 
