@@ -423,6 +423,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         // Set up the Layout, EditText, TextView, CheckBox
         LinearLayout layout = new LinearLayout(MapMainActivity.this);
+        layout.setBackgroundColor(0x96000000);
         final EditText txtSearchInput = new EditText(MapMainActivity.this);
         final TextView txtSearch = new TextView(MapMainActivity.this);
 
