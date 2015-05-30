@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
-import android.os.PowerManager;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -15,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
-import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.kcco.csmap.DAO.RoutesDAO;
 import java.util.ArrayList;
@@ -44,6 +42,7 @@ public class RouteProcessing {
     private static BuildingDAO endLoc;
     private static int startLocId;
     private static int endLocId;
+    private static int timeSpent;
     private static int transport;
 
     /**
@@ -60,29 +59,9 @@ public class RouteProcessing {
         ArrayList<LatLng> toBeRoute;
         ArrayList<Route> toShow = new ArrayList<>();
 
-        Log.d("RouteProcessing", "latitude: " + Double.toString(currentLoc.latitude));
-        Log.d("RouteProcessing", "longitude: " + Double.toString(currentLoc.longitude));
-        Log.d("RouteProcessing", "destination: " + Integer.toString(destinationID));
+        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,0.01, activity);
+        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 0.01,  activity);
 
-
-        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,100,  activity);
-        if ( toRoutes.get(0) != null)
-            toRoutes = getTransportRoutes(toRoutes, transportID);
-        else
-            Log.d( "EMPTY ASC", "WE HAVE A PROBLEM NONE FOR");
-
-
-        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 100, activity);
-        if ( fromRoutes.get(0) != null)
-            fromRoutes = getTransportRoutes(fromRoutes, transportID);
-        else
-            Log.d( "EMPTY DESC", "WE HAVE A PROBLEM NONE FOR");
-
-        if ( fromRoutes.get(0) == null && toRoutes.get(0) == null)
-        {
-            Messenger.toast("No Routes found", activity);
-            return null;
-        }
 
         if ( toRoutes.size() + fromRoutes.size() <= THREE)
         {
@@ -162,18 +141,6 @@ public class RouteProcessing {
 
     }
 
-    public static ArrayList<RoutesDAO> getTransportRoutes( ArrayList<RoutesDAO> inputDAOs, int transportID)
-    {
-        ArrayList<RoutesDAO> toReturn = new ArrayList<>();
-        /*time to remove some of the routeDAO's that do not have the transportation that we need*/
-        for ( int i = 0; i < inputDAOs.size(); ++i)
-        {
-           if ( inputDAOs.get(i).getTransport() - transportID > 0 )
-               toReturn.add(inputDAOs.get(i)); // means that our ID is less restrictive than the routes availability
-        }
-
-        return toReturn;
-    }
 
     public static double getDistance( LatLng start, LatLng end )
     {
