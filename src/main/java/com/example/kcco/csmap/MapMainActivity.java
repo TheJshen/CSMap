@@ -66,7 +66,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private TextView timerLabel;
 
     //Search String
-    private String searchInput;
+    private String searchInput = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -418,6 +418,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         txtSearchInput.setLayoutParams(lparams);
         txtSearchInput.setHint("Destination");
+        txtSearchInput.setText(searchInput);
 
         txtSearch.setLayoutParams(lparams);
         txtSearch.setText("Destination");
@@ -478,7 +479,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //destinations is null means no match in database
         else{
             Messenger.toast(searchTerm + " is invalid name", MapMainActivity.this);
-
+            searchRoutePrompt(findViewById(R.id.btnSearch));
         }
 
     }
