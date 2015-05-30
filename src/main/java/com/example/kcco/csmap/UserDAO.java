@@ -18,8 +18,6 @@ import com.parse.RequestPasswordResetCallback;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -242,9 +240,9 @@ public class UserDAO{
                     ((SignUpActivity) activity).switchActivity(1);
                 } else {
                     // Sign up didn't succeed. pass exception to Messenger
-                    String errorMessage = "Parse Error: userSignUp(): " + e.getMessage();
+                    String errorMessage = e.getMessage();
                     dlg.dismiss();
-                    Messenger.error(errorMessage, activity);
+                    Messenger.toast(errorMessage, activity);
                     Messenger.logException(e, "UserDAO", "userSignUp");
                     //((SignUpActivity) activity).switchActivity(0);
                 }
@@ -301,7 +299,7 @@ public class UserDAO{
                     Messenger.toast("An email has been sent to your email account.", activity);
                 } else {
                     // something went wrong. Look at the ParseException message
-                    Messenger.error("ParseError: " + e.getMessage(), activity);
+                    Messenger.toast(e.getMessage(), activity);
                     Messenger.logException(e, "UserDAO", "resetPassword");
                 }
             }
@@ -331,7 +329,7 @@ public class UserDAO{
                 if (e != null) {
                     dlg.dismiss();
                     //show the error message
-                    Messenger.error("ParseError: " + e.getMessage(), activity);
+                    Messenger.toast("Invalid username/password.", activity);
                     Messenger.logException(e, "UserDAO", "logIn");
                 } else {
                     dlg.dismiss();
