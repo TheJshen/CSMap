@@ -59,8 +59,8 @@ public class RouteProcessing {
         ArrayList<LatLng> toBeRoute;
         ArrayList<Route> toShow = new ArrayList<>();
 
-        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,0.01, transportID,  activity);
-        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 0.01,transportID,  activity);
+        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,0.01, activity);
+        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 0.01,  activity);
 
 
         if ( toRoutes.size() + fromRoutes.size() <= THREE)

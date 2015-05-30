@@ -466,8 +466,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         if(destinations != null) {
             for (BuildingDAO destination : destinations) {
                 Marker newLocation = mMap.addMarker(new MarkerOptions()
-                                //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_d))
+//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_d))
                                 .position(destination.getCenterPoint())
                                 .title(destination.getName())
                                 .snippet("Click here to get routes")
