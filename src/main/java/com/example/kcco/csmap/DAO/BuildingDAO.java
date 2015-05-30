@@ -40,7 +40,7 @@ public class BuildingDAO {
      * Return:
      */
     //following are places table
-    public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name); }
+    public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name.toLowerCase()); }
     public void setPlaceId( int placeId ) { current.put(ParseConstant.PLACES_PLACE_ID, placeId); }
     public void setCratedBy( int createdBy ) { current.put(ParseConstant.PLACES_CREATED_BY, createdBy); }
     public void setCenterPoint( LatLng point ) {
@@ -66,7 +66,7 @@ public class BuildingDAO {
      *      Data input for appropriate column
      */
     //Following are places table
-    public String getName() { return current.getString(ParseConstant.PLACES_NAME); }
+    public String getName() { return getUpperCaseName(current.getString(ParseConstant.PLACES_NAME)); }
     public int getPlaceId() { return current.getInt(ParseConstant.PLACES_PLACE_ID); }
     public int getCratedBy() { return current.getInt(ParseConstant.PLACES_CREATED_BY); }
     public LatLng getCenterPoint() {
@@ -388,7 +388,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereEqualTo(ParseConstant.PLACES_NAME, placeName);
+        query.whereEqualTo(ParseConstant.PLACES_NAME, placeName.toLowerCase());
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -472,7 +472,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereContains(ParseConstant.PLACES_NAME, searchTerm);
+        query.whereContains(ParseConstant.PLACES_NAME, searchTerm.toLowerCase());
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -630,7 +630,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.EVENTS);
-        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location );
+        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase() );
         query.whereLessThanOrEqualTo(ParseConstant.EVENTS_START_TIME, now);
         query.whereGreaterThanOrEqualTo(ParseConstant.EVENTS_END_TIME, now);
 
@@ -673,7 +673,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.EVENTS);
-        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location );
+        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase() );
         query.whereLessThanOrEqualTo(ParseConstant.EVENTS_START_TIME, now);
         query.whereGreaterThanOrEqualTo(ParseConstant.EVENTS_END_TIME, now);
 
@@ -722,7 +722,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.EVENTS);
-        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location);
+        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase());
         query.whereGreaterThanOrEqualTo(ParseConstant.EVENTS_END_TIME, begin); //catch the event not end the begin of day
         query.whereLessThanOrEqualTo(ParseConstant.EVENTS_START_TIME, end);   //catch the event begin the end of day
 
@@ -750,5 +750,23 @@ public class BuildingDAO {
         return null;
     }
 
+
+    private static String getUpperCaseName(String original){
+        String newString = "";
+        String[] splited = original.split(" ");
+
+        for( int i = 0; i < splited.length; i++){
+            String processString = splited[i];
+            char[] temp = processString.toCharArray();
+            temp[0] = Character.toUpperCase(temp[0]);
+            processString = new String(temp);
+            newString = newString + processString + " ";
+        }
+
+        newString.trim();
+        return newString;
+
+
+    }
 
 }
