@@ -59,7 +59,7 @@
                 android:text="Show Markers"/>
 
             <Button
-                android:id="@+id/mapMenuUserLogIn"
+                android:id="@+id/btnSearch"
                 style="@style/MainTheme.Button"
                 android:onClick="searchRoutePrompt"
                 android:text="Search" />
