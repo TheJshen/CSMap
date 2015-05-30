@@ -65,12 +65,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private Chronometer timer;
     private TextView timerLabel;
 
+    //Search String
+    private String searchInput;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_track);
         setContentView(R.layout.activity_map_main);
         setUpMapIfNeeded();
+        currentLocation = UCSD;
 
         // Get all buttons in menu
         LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
@@ -429,7 +433,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         prompt.setPositiveButton("Search", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                searchInput = txtSearchInput.getText().toString();
                 createLocationMarker(txtSearchInput.getText().toString());
                 Log.d("MapMainActivity", "All data should be saved");
             }
@@ -473,7 +477,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
         //destinations is null means no match in database
         else{
-            Messenger.error(searchTerm + " is invalid name", MapMainActivity.this);
+            Messenger.toast(searchTerm + " is invalid name", MapMainActivity.this);
+
         }
 
     }
