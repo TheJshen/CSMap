@@ -235,8 +235,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
         /* must have the inputIds converted into destination IDs and transport ID*/
-        int startID = BuildingDAO.searchBuilding(currentLoc,0.05, MapMainActivity.this).getPlaceId();
-        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(startID, buildingId, transportId, this);
+//        int startID = BuildingDAO.searchBuilding(currentLoc,0.05, MapMainActivity.this).getPlaceId();
+//        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(startID, buildingId, transportId, this);
+        ArrayList<Route> bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
         if ( bestRoutes == null)
             return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)

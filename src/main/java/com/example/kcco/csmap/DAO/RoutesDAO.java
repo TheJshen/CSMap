@@ -335,10 +335,15 @@ public class RoutesDAO {
         //There has match cases in User table.
         if( results != null && results.size() != 0){
             list = new ArrayList<LatLng>(results.size());
+            Log.d("RoutesDAO", "searchSubRoute(routeId = " + Integer.toString(routeId) +
+                    ", index = " + Integer.toString(index) + ") return results size " + results.size());
             for( ParseObject obj: results ) {
                 RoutesDAO tempRoute = new RoutesDAO(obj, activity);
 //                list.add(new LatLng(tempRoute.getSubRouteX(), tempRoute.getSubRouteY()));
                 list.add(tempRoute.getSubRoutePoint());
+                Log.d("RouteDAO", "Adding list, routeId = " + Integer.toString(tempRoute.getRouteId())
+                        + " and index = " + Integer.toString(tempRoute.getSubRouteIndex()));
+
             }
 
 
@@ -539,7 +544,8 @@ public class RoutesDAO {
             }
 
             //add the last RoutesDAO with its information.
-            RoutesDAO newRoutes = new RoutesDAO(activity);
+            ParseObject subRoute = new ParseObject(ParseConstant.SUBROUTE);
+            RoutesDAO newRoutes = new RoutesDAO(subRoute, activity);
             newRoutes.setSubRouteIndex(closestIndex);
             newRoutes.setRouteId(currentRouteId);
             routes.add(newRoutes);
@@ -631,7 +637,8 @@ public class RoutesDAO {
             }
 
             //add the last RoutesDAO with its information.
-            RoutesDAO newRoutes = new RoutesDAO(activity);
+            ParseObject subRoute = new ParseObject(ParseConstant.SUBROUTE);
+            RoutesDAO newRoutes = new RoutesDAO(subRoute, activity);
             newRoutes.setSubRouteIndex(closestIndex);
             newRoutes.setRouteId(currentRouteId);
             routes.add(newRoutes);
