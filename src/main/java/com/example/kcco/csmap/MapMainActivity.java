@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -412,7 +413,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             /**************************** TIMER START END**********************************/
 
             //((Button) view).setText("Stop");
-            findViewById(R.id.trackButton).setVisibility(View.GONE);
+            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
             findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
 
             if (currentDisplayed != null) {
@@ -420,7 +421,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 currentDisplayed.remove();
                 currentDisplayed = null; // get rid of currentDispalyed
             }
-        } else {
+        }
+        else {
+            // Short circuit for pressing menu button while it is tracking
+            if(((Button)view).getText().equals("Input Route"))
+                return;
+
             GPS.stopGPSTrack();
             //stop timer
             timer.stop();
@@ -433,7 +439,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             timerLabel.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
             //((Button) view).setText("Track");
-            findViewById(R.id.trackButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
             findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
 
             Route thisRoute = GPS.returnCompletedRoute();
