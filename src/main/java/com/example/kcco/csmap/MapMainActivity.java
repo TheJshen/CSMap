@@ -44,6 +44,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private Route routeToDisplay;
     private Polyline currentDisplayed; // Polyline displayed on the map
     private static LatLng currentLocation;
+    private Marker startMarker, finishMarker; // Used for route tracking
     
     // Used for testing the route lines
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
@@ -275,14 +276,39 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     // This method is used to center on current location
-    public void dropPinAndCenterCamera(LatLng pointToCenterOn) {
+    public void dropPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
         cameraPosition = new CameraPosition.Builder()
                 .target(pointToCenterOn)      // Sets the center of the map to Mountain View
-                .zoom(15)                   // Sets the zoom
+                .zoom(19)                   // Sets the zoom
                 .bearing(0)                // Sets the orientation of the camera to North
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        startMarker = mMap.addMarker(new MarkerOptions()
+                            .position(pointToCenterOn)
+                            .title("Start")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
+
+    public void dropPinAndCenterCameraOnFinish(LatLng pointToCenterOn) {
+        cameraPosition = new CameraPosition.Builder()
+                .target(pointToCenterOn)      // Sets the center of the map to Mountain View
+                .zoom(19)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                            .position(pointToCenterOn)
+                            .title("Finish")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+    }
+
+    public void clearRouteTrackingMarker() {
+        if(startMarker != null)
+            startMarker.remove();
+        if(finishMarker != null)
+            finishMarker.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -399,6 +425,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void track(View view) {
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
+            clearRouteTrackingMarker(); // clears marker if on screen
+            dropPinAndCenterCameraOnStart(currentLocation);
             // show timer
             timer.setVisibility(View.VISIBLE);
             timerLabel.setVisibility(View.VISIBLE);
@@ -428,6 +456,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 return;
 
             GPS.stopGPSTrack();
+            dropPinAndCenterCameraOnFinish(currentLocation);
             //stop timer
             timer.stop();
             int elapsed = (int)(SystemClock.elapsedRealtime() - timer.getBase())/1000;
