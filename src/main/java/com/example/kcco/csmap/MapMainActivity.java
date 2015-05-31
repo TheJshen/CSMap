@@ -75,6 +75,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setUpMapIfNeeded();
         currentLocation = UCSD;
 
+        ((Button) findViewById(R.id.stopTrackButton)).setVisibility(View.GONE);
+
         // Get all buttons in menu
         LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
@@ -398,7 +400,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //timerValue.postDelayed(updateTimerThread, 0);
             /**************************** TIMER START END**********************************/
 
-            ((Button) view).setText("Stop");
+            //((Button) view).setText("Stop");
+            findViewById(R.id.trackButton).setVisibility(View.GONE);
+            findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
+
             if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
                 currentDisplayed.remove();
@@ -416,7 +421,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             timer.setVisibility(View.GONE);
             timerLabel.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
-            ((Button) view).setText("Track");
+            //((Button) view).setText("Track");
+            findViewById(R.id.trackButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if (latLngRoute.size() > 1) {
@@ -426,7 +434,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    //Let user enter searchTerm for the destination and drop Marker in the map if any match
+        //Let user enter searchTerm for the destination and drop Marker in the map if any match
     public void searchRoutePrompt(View view){
         AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
         prompt.setTitle("Search");

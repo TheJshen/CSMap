@@ -93,7 +93,11 @@
         </activity>
         <activity
             android:name=".BookmarkActivity"
-            android:label="@string/title_activity_add_place" >
+            android:label="@string/title_activity_add_place"
+            android:parentActivityName=".TrackActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TrackActivity" />
         </activity>
     </application>
 
