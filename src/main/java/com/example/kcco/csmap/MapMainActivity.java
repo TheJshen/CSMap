@@ -286,7 +286,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     //TODO: Should be deleted after it is done
     public void goToAddPlaceActivity(View view){
         Intent intent = new Intent(MapMainActivity.this, AddPlaceActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         MapMainActivity.this.startActivity(intent);
     }
 
@@ -344,12 +345,20 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     public void goToShowBookmarks(View view) {
         Intent intent = new Intent(this, BookmarkActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
         /*Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         MapMainActivity.this.startActivity(intent);*/
+    }
+
+    public void goToShowHistory(View view) {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 

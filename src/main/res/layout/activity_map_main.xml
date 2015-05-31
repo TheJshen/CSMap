@@ -95,7 +95,7 @@
             <Button
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
-                android:onClick="toggleMenu"
+                android:onClick="goToShowHistory"
                 android:text="History" />
 
             <Button
