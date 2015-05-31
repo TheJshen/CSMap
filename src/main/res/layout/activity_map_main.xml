@@ -99,6 +99,7 @@
                 android:text="History" />
 
             <Button
+                android:id="@+id/trackButton"
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
                 android:onClick="track"
@@ -145,5 +146,17 @@
             android:paddingBottom="@dimen/activity_vertical_margin" />
 
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/stopTrackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="end"
+        android:onClick="track"
+        android:textColor="@color/text_color_important"
+        android:background="@drawable/round_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="25dp"/>
 
 </RelativeLayout>
