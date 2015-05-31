@@ -78,11 +78,9 @@ public class RouteActivity extends ActionBarActivity {
         String tagString = (String)view.getTag();
         int tag = new Integer(tagString).intValue();
 
-        int mode = transport / CAR_MODE;
-        int restMode = transport % CAR_MODE;
-
+        int mode = transport;
         //Car button is clicked
-        if( mode == 1 && tag == CAR_MODE){
+        if( mode / CAR_MODE == 1 && tag == CAR_MODE){
             transport -= CAR_MODE;
             //may change button effect
         }
@@ -91,11 +89,9 @@ public class RouteActivity extends ActionBarActivity {
             //may change button effect
         }
 
-        mode = restMode / SKATE_MODE;
-        restMode = transport % SKATE_MODE;
-
+        mode %= CAR_MODE;
         //Skate button is clicked
-        if( mode == 1 && tag == SKATE_MODE){
+        if( mode / SKATE_MODE == 1 && tag == SKATE_MODE){
             transport -= SKATE_MODE;
             //may change button effect
         }
@@ -104,11 +100,9 @@ public class RouteActivity extends ActionBarActivity {
             //may change button effect
         }
 
-        mode = restMode / BIKE_MODE;
-        restMode = transport % BIKE_MODE;
-
+        mode %= SKATE_MODE;
         //BIKE button is clicked
-        if( mode == 1 && tag == BIKE_MODE){
+        if( mode / BIKE_MODE == 1 && tag == BIKE_MODE){
             transport -= BIKE_MODE;
             //may change button effect
         }
@@ -117,10 +111,9 @@ public class RouteActivity extends ActionBarActivity {
             //may change button effect
         }
 
-        mode = restMode / WALK_MODE;
-
+        mode %= BIKE_MODE;
         //Walk button is clicked
-        if( mode == 1 && tag == WALK_MODE){
+        if( mode / WALK_MODE == 1 && tag == WALK_MODE){
             transport -= WALK_MODE;
             //may change button effect
         }

@@ -63,6 +63,8 @@ public class RouteProcessing {
         ArrayList<Route> toShow = new ArrayList<>();
         ArrayList<RoutesDAO> toRouteDao = new ArrayList<>();
         ArrayList<RoutesDAO> fromRouteDao = new ArrayList<>();
+        Log.d("getBest", "transportID " + Integer.toString(transportID)+ " destinationID " +Integer.toString(destinationID)
+                + " startPoint " + startPoint.toString());
 //        Log.d("getBest", "toRoutes startID " + Integer.toString(startID)+ " destinationID " +Integer.toString(destinationID) );
 //        int[] toRoutes = RoutesDAO.searchAllRoutes(startID, destinationID, activity);
 
@@ -77,8 +79,7 @@ public class RouteProcessing {
 
         else {
             Log.d("getBset", "Before transport filter, toRouteDAO size = " + Integer.toString(toRouteDao.size()));
-            //TODO: fix the filter transport later
-//            toRouteDao = getTransportRoutes(toRouteDao, transportID, activity);
+            toRouteDao = getTransportRoutes(toRouteDao, transportID, activity);
             Log.d("getBset", "After transport filter, toRouteDAO size = " + Integer.toString(toRouteDao.size()));
             getNumOfRoute += toRouteDao.size();
         }
@@ -88,12 +89,10 @@ public class RouteProcessing {
             Log.d( "getBestRoutes", "fromRotues is null");
         else {
             Log.d("getBset", "Before transport filter, fromRouteDAO size = " + Integer.toString(fromRouteDao.size()));
-            //TODO: fix the filter transport later
-//            fromRouteDao = getTransportRoutes(fromRouteDao, transportID, activity);
+            fromRouteDao = getTransportRoutes(fromRouteDao, transportID, activity);
             Log.d("getBset", "After transport filter, fromRouteDAO size = " + Integer.toString(fromRouteDao.size()));
             getNumOfRoute += fromRouteDao.size();
         }
-
 
         //verify if fromRouteDao and toRouteDao are both either null or size 0
         if ( fromRouteDao == null || fromRouteDao.size() == 0) {
@@ -180,7 +179,6 @@ public class RouteProcessing {
                         topValues.remove(topValues.lastEntry().getKey());
                         topValues.put(lengthOfPath, toBeRoute);
                     }
-
                     index++;
                 }
             }
@@ -191,12 +189,8 @@ public class RouteProcessing {
             toShow.add(new Route((ArrayList<LatLng>)topValues.lastEntry().getValue()));
             topValues.remove(topValues.firstEntry().getKey());
             toShow.add(new Route((ArrayList<LatLng>) topValues.firstEntry().getValue()));
-
-
         }
-
         return toShow;
-
     }
 
 
@@ -319,11 +313,61 @@ public class RouteProcessing {
 //        {
 //            allDaos.add(RoutesDAO.searchARoute(inputIDs[j], activity));
 //        }
+
+        boolean carMode = false, skateMode = false, bikeMode = false, walkMode = false;
+
+        int mode = transportID;
+        //check if selected for car
+        if( mode / CAR_MODE == 1 )
+            carMode = true;
+
+        mode %= CAR_MODE;
+        //check if selected for skate
+        if( mode / SKATE_MODE == 1 )
+            skateMode = true;
+
+        mode %= SKATE_MODE;
+        //check if selected for bike
+        if( mode / BIKE_MODE == 1 )
+            bikeMode = true;
+
+        mode %= BIKE_MODE;
+        //check if selected for walk
+        if( mode / WALK_MODE == 1 )
+            walkMode = true;
+
+        Log.d("getTransportRoutes", "carMode = " + Boolean.toString(carMode) + " skateMode = " + Boolean.toString(skateMode)
+                + " bikeMode = " + Boolean.toString(bikeMode) + " walkMode = " + Boolean.toString(walkMode));
+
         /*time to remove some of the routeDAO's that do not have the transportation that we need*/
         for ( int i = 0; i < allDaos.size(); ++i)
         {
-           if ( allDaos.get(i).getTransport() - transportID > 0 )
-               toReturn.add(allDaos.get(i)); // means that our ID is less restrictive than the routes availability
+            int routeMode = RoutesDAO.searchARoute(allDaos.get(i).getRouteId(),activity).getTransport();
+            Log.d("getTransportRoutes", "routeMode = " + Integer.toString(routeMode));
+            if ( carMode && routeMode / CAR_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+
+            routeMode %= CAR_MODE;
+            if ( skateMode && routeMode / SKATE_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+
+            routeMode %= SKATE_MODE;
+            if ( bikeMode && routeMode / BIKE_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+
+            routeMode %= BIKE_MODE;
+            if ( walkMode && routeMode / WALK_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+            Log.d("getTransportRoutes", "no match transport for routeId " + Integer.toString(allDaos.get(i).getRouteId()));
+
         }
 
         return toReturn;
@@ -376,7 +420,7 @@ public class RouteProcessing {
 
     }
 
-    /** TODO: Method that will take an inputted route and use DAO's to get it into the data base
+    /**
      * Might need a helper method to identify similar routes and not duplicate
      *
      */

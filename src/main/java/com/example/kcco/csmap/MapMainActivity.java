@@ -347,15 +347,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         startActivity(intent);
     }
 
-
-    public void goToRouteActivity(View view){
-        toggleMenu(view);
-        Intent intent = new Intent(MapMainActivity.this, RouteActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapMainActivity.this.startActivity(intent);
-
-    }
-
     public void goToLoginActivity(){
         Intent intent = new Intent(MapMainActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -525,7 +516,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
 
             int destinationId = getIntent().getIntExtra("destinationId", 0);
-            int transportId = getIntent().getIntExtra("trans", 1);
+            int transportId = getIntent().getIntExtra("transport", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
