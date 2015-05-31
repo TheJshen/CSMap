@@ -1,11 +1,16 @@
 package com.example.kcco.csmap;
 
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
@@ -29,32 +34,16 @@ public class BookmarkActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmark);
-        startEndLocation = new ArrayList<Pair<String, String>>();
 
         // Get current user to find the appropriate bookmarks for
         userID = UserDAO.getCurrentUserId();
-        // Search for bookmarks
-        bookmarks = UserDAO.searchBookmarkRoutes(userID, this);
-        // loop through bookmarks
-        // Only shows bookmarks if they are available
-        if( bookmarks != null ) {
-            for (int routeId : bookmarks) {
-                String start;
-                String end;
+        // Initialize the array
+        startEndLocation = new ArrayList<>();
+        // Retrieves all the routes from database and poulates the startEndLocation list
+        getStartEndLocation();
+        // Create the view with list of routes
+        populateView();
 
-                // Retrieve the route
-                RoutesDAO route = RoutesDAO.searchARoute(routeId, BookmarkActivity.this);
-                // Get the name of the starting location
-                BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), BookmarkActivity.this);
-                start = place.getName();
-
-                // Get the name of the ending location
-                place = BuildingDAO.searchBuilding(route.getEndLoc(), BookmarkActivity.this);
-                end = place.getName();
-
-                startEndLocation.add(new Pair<String, String>(start, end));
-            }
-        }
     }
 
 
@@ -89,8 +78,70 @@ public class BookmarkActivity extends ActionBarActivity {
 
     }
 
+    public void getStartEndLocation() {
+        bookmarks = UserDAO.searchBookmarkRoutes(userID, this);
+        // loop through bookmarks
+        // Only shows bookmarks if they are available
+        if (bookmarks != null) {
+            for (int routeId : bookmarks) {
+                String start, end;
 
+                // Retrieve the route
+                RoutesDAO route = RoutesDAO.searchARoute(routeId, BookmarkActivity.this);
+                // Get the name of the starting location
+                BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), BookmarkActivity.this);
+                start = place.getName();
 
+                // Get the name of the ending location
+                place = BuildingDAO.searchBuilding(route.getEndLoc(), BookmarkActivity.this);
+                end = place.getName();
 
+                startEndLocation.add(new Pair<>(start, end));
+            }
+        }
+    }
 
+    // Used to format the items in the list: TODO: Change to make it look nicer??
+    private String createBookmarkLabel( Pair<String, String> startEndLocationStrings ) {
+        return new String("From: " + startEndLocationStrings.first + "\n" +
+                          " To: " + startEndLocationStrings.second);
+    }
+
+    // Used to populate the display
+    private void populateView() {
+        //Set the title
+        ((TextView)findViewById(R.id.bookmark_title)).setText("FILLER" /*TODO: fill this in*/);
+
+        // Loop that populates the view
+        for(int i = 0, id = 1; i < startEndLocation.size(); i++, id++) {
+            Button newButton = new Button(this); // Instantiate New Button
+
+            // Apply UI Design
+            newButton.setId(id);
+            newButton.setText( createBookmarkLabel(startEndLocation.get(i)) );
+            newButton.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
+            newButton.setTextColor(getResources().getColor(R.color.text_color_important));
+            newButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main, null));
+
+            // Position the new Button
+            RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            rlParams.addRule(RelativeLayout.BELOW, id - 1); // id = 1 (0) is not a valid ID so it gets put in default location
+
+            // Add the Listener for the Button
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //TODO: fill in the response to the button click
+
+                }
+            });
+
+            // Add new Layout to RelativeLayout
+            ((RelativeLayout) findViewById(R.id.bookmark_main)).addView(newButton,rlParams);
+        }
+    }
 }
