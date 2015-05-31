@@ -33,17 +33,18 @@
 
         </RelativeLayout>
 
-        <!-- Put the icon here -->
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin">
+
                 <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/logo_main_menu" />
+
             </LinearLayout>
 
     </RelativeLayout>
