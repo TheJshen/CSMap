@@ -550,6 +550,7 @@ public class RoutesDAO {
             //Return result for the calling function.
             return routes;
         }
+        Log.d("ROUTESDAO", "FUCKED UP SOMEWEJR");
         return null;
     }
 

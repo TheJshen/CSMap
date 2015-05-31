@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
@@ -232,7 +233,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
         /* must have the inputIds converted into destination IDs and transport ID*/
-        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
+        int startID = BuildingDAO.searchBuilding(currentLoc,0.05, MapMainActivity.this).getPlaceId();
+        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(startID, buildingId, transportId, this);
         if ( bestRoutes == null)
             return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)
@@ -428,7 +430,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if (latLngRoute.size() > 1) {
-                RouteProcessing.saveRoutePrompt(thisRoute, elapsed, MapMainActivity.this);
+                RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
         }
@@ -521,12 +523,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
             //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
 
-            int destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
+            int destinationId = getIntent().getIntExtra("destinationId", 0);
             int transportId = getIntent().getIntExtra("trans", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
-            plottingRecommendations( startLocation, destinationId, transportId );
+            plottingRecommendations(startLocation, destinationId, transportId );
 
 
         }
