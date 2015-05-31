@@ -8,6 +8,16 @@ import android.view.MenuItem;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
+import android.content.Intent;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -17,10 +27,12 @@ public class HistoryActivity extends ActionBarActivity {
     private int userID;
     private int[] history;
     private ArrayList<Pair<String, String>> startEndLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
         startEndLocation = new ArrayList<Pair<String, String>>();
 
         // Get current user to find the appropriate history
@@ -29,7 +41,7 @@ public class HistoryActivity extends ActionBarActivity {
         // loop through history
         // Only shows history if they are available
         if( history != null ) {
-            for (int routeId: history) {
+            for (int routeId : history) {
                 String start, end;
 
                 // Retrieve the route
@@ -44,6 +56,45 @@ public class HistoryActivity extends ActionBarActivity {
 
                 startEndLocation.add(new Pair<String, String>(start, end));
             }
+        }
+
+
+        //Set the title
+        ((TextView)findViewById(R.id.history_title)).setText("FILLER" /*TODO: fill this in*/);
+
+        ArrayList<String> historyObjs = new ArrayList<String>();
+
+        //Get the info here and put it into history Objs
+
+        for(int i = 0, id = 1; i < historyObjs.size(); i++, id++) {
+            Button newButton = new Button(this); // Instantiate New Button
+
+            // Apply UI Design
+            newButton.setId(id);
+            newButton.setText(historyObjs.get(i) /* TODO: Can change how this is done, but set the button text here */);
+            newButton.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
+            newButton.setTextColor(getResources().getColor(R.color.text_color_important));
+            newButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main, null));
+
+            // Position the new Button
+            RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            rlParams.addRule(RelativeLayout.BELOW, id - 1); // id = 1 (0) is not a valid ID so it gets put in default location
+
+            // Add the Listener for the Button
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //TODO: fill in the response to the button click
+
+                }
+            });
+
+            // Add new Layout to RelativeLayout
+            ((RelativeLayout) findViewById(R.id.history_main)).addView(newButton,rlParams);
         }
     }
 

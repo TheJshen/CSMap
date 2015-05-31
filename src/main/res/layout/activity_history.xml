@@ -1,22 +1,33 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.kcco.csmap.HistoryActivity">
+    tools:context="com.example.kcco.csmap.HistoryActivity"
+    style="@style/LayoutContainerTheme" >
 
     <!-- Banner Bar -->
     <TextView
-        android:id="@+id/room_avail_info_banner"
+        android:id="@+id/history_banner"
         style="@style/MainTheme.BannerBar">
     </TextView>
 
     <!-- Title Bar -->
     <TextView
-        android:id="@+id/room_avail_info_title"
-        android:layout_below="@id/room_avail_info_banner"
+        android:id="@+id/history_title"
+        android:layout_below="@id/history_banner"
         style="@style/MainTheme.TitleBar" >
-
     </TextView>
+
+    <!-- Main Display  -->
+    <ScrollView
+        android:layout_below="@+id/history_title"
+        style="@style/MainTheme.MainScrollView">
+
+        <RelativeLayout
+            android:id="@+id/history_main"
+            style="@style/MainTheme.MainScrollContainer">
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
