@@ -99,58 +99,14 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         GPS = new RouteTracker(this, this);
+        setupBuildingMarkers();
 
-        // Set up building markers
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                boolean isGaryMaker = false;
-                for (int i = 0; i < allMarkers.size(); i++) {
-                    if (allMarkers.get(i).getId().equals(marker.getId())) {
-                        isGaryMaker = true;
-                        break;
-                    }
-                }
-                if (isGaryMaker) {
-                    Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
-                    nextScreen.putExtra("BuildingName", marker.getTitle());
-                    startActivity(nextScreen);
-                } else {
-                    for (int i = 0; i < locations.size(); i++) {
-                        //Compare saved Marker in location and current clicked Marker
-                        if (locations.get(i).first.getId().equals(marker.getId())) {
-
-                            Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
-                            nextScreen.putExtra("destinationPlaceId", locations.get(i).second.getPlaceId());
-                            nextScreen.putExtra("latitude", currentLocation.latitude);
-                            nextScreen.putExtra("longitude", currentLocation.longitude);
-                            startActivity(nextScreen);
-                            break;
-
-                        }
-                    }
-
-//                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
-            allMarkers.add(mMap.addMarker(new MarkerOptions()
-                            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
-                            .position(building.getPosition())
-                            .title(building.getTitle())
-                            .snippet(building.getSnippet())
-                            .visible(false)
-            ));
-        }
 
         //TODO: finish this function for search routes
         fromRouteActivity();
     }
 
-/////////////////////////////////Overriding Activity Functions//////////////////////////////////////
+    /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
     // When app resumes from pause
     @Override
     protected void onResume() {
@@ -573,7 +529,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
-            plottingRecommendations(startLocation, destinationId, transportId );
+            plottingRecommendations(startLocation, destinationId, transportId);
 
 
         }
@@ -586,4 +542,52 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public static LatLng getCurrentLocation() {
         return currentLocation;
     }
+
+
+    private void setupBuildingMarkers() {
+        // Set up building markers
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                boolean isGaryMaker = false;
+                for (int i = 0; i < allMarkers.size(); i++) {
+                    if (allMarkers.get(i).getId().equals(marker.getId())) {
+                        isGaryMaker = true;
+                        break;
+                    }
+                }
+                if (isGaryMaker) {
+                    Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
+                    nextScreen.putExtra("BuildingName", marker.getTitle());
+                    startActivity(nextScreen);
+                } else {
+                    for (int i = 0; i < locations.size(); i++) {
+                        //Compare saved Marker in location and current clicked Marker
+                        if (locations.get(i).first.getId().equals(marker.getId())) {
+
+                            Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
+                            nextScreen.putExtra("destinationPlaceId", locations.get(i).second.getPlaceId());
+                            nextScreen.putExtra("latitude", currentLocation.latitude);
+                            nextScreen.putExtra("longitude", currentLocation.longitude);
+                            startActivity(nextScreen);
+                            break;
+
+                        }
+                    }
+                }
+            }
+        });
+
+        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
+            allMarkers.add(mMap.addMarker(new MarkerOptions()
+                            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
+                            .position(building.getPosition())
+                            .title(building.getTitle())
+                            .snippet(building.getSnippet())
+                            .visible(false)
+            ));
+        }
+    }
+
 }
