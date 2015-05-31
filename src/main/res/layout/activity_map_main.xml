@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/toggleMapMenu"
                 android:background="#00ffffff"
-                android:src="@drawable/button_menu_dropdwn"
+                android:src="@drawable/button_menu_pullup"
                 android:onClick="toggleMenu" />
 
         </RelativeLayout>

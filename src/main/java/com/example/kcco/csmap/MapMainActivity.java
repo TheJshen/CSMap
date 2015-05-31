@@ -308,14 +308,14 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             for(Button button : menuButtons) {
                 button.setVisibility(View.GONE);
             }
-            toggleButton.setImageResource(R.drawable.button_menu_pullup);
+            toggleButton.setImageResource(R.drawable.button_menu_dropdwn);
         }
         // Menu is hidden, show menu
         else {
             for(Button button : menuButtons) {
                 button.setVisibility(View.VISIBLE);
             }
-            toggleButton.setImageResource(R.drawable.button_menu_dropdwn);
+            toggleButton.setImageResource(R.drawable.button_menu_pullup);
         }
 
         menuVisible = !menuVisible;
