@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -42,6 +44,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private Route routeToDisplay;
     private Polyline currentDisplayed; // Polyline displayed on the map
     private static LatLng currentLocation;
+    private Marker startMarker, finishMarker; // Used for route tracking
     
     // Used for testing the route lines
     private static final LatLng UCSD = new LatLng(32.880114, -117.233981);
@@ -75,6 +78,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setUpMapIfNeeded();
         currentLocation = UCSD;
 
+        ((Button) findViewById(R.id.stopTrackButton)).setVisibility(View.GONE);
+
         // Get all buttons in menu
         LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
@@ -94,58 +99,14 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         GPS = new RouteTracker(this, this);
+        setupBuildingMarkers();
 
-        // Set up building markers
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                boolean isGaryMaker = false;
-                for (int i = 0; i < allMarkers.size(); i++) {
-                    if (allMarkers.get(i).getId().equals(marker.getId())) {
-                        isGaryMaker = true;
-                        break;
-                    }
-                }
-                if (isGaryMaker) {
-                    Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
-                    nextScreen.putExtra("BuildingName", marker.getTitle());
-                    startActivity(nextScreen);
-                } else {
-                    for (int i = 0; i < locations.size(); i++) {
-                        //Compare saved Marker in location and current clicked Marker
-                        if (locations.get(i).first.getId().equals(marker.getId())) {
-
-                            Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
-                            nextScreen.putExtra("destinationPlaceId", locations.get(i).second.getPlaceId());
-                            nextScreen.putExtra("latitude", currentLocation.latitude);
-                            nextScreen.putExtra("longitude", currentLocation.longitude);
-                            startActivity(nextScreen);
-                            break;
-
-                        }
-                    }
-
-//                    Toast.makeText(MapMainActivity.this, "Nothing is happen yet, TODO here", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
-            allMarkers.add(mMap.addMarker(new MarkerOptions()
-                            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
-                            .position(building.getPosition())
-                            .title(building.getTitle())
-                            .snippet(building.getSnippet())
-                            .visible(false)
-            ));
-        }
 
         //TODO: finish this function for search routes
         fromRouteActivity();
     }
 
-/////////////////////////////////Overriding Activity Functions//////////////////////////////////////
+    /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
     // When app resumes from pause
     @Override
     protected void onResume() {
@@ -230,7 +191,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
         /* must have the inputIds converted into destination IDs and transport ID*/
-        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
+//        int startID = BuildingDAO.searchBuilding(currentLoc,0.05, MapMainActivity.this).getPlaceId();
+//        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(startID, buildingId, transportId, this);
+        ArrayList<Route> bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
         if ( bestRoutes == null)
             return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)
@@ -270,21 +233,47 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     // This method is used to center on current location
-    public void dropPinAndCenterCamera(LatLng pointToCenterOn) {
+    public void dropPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
         cameraPosition = new CameraPosition.Builder()
                 .target(pointToCenterOn)      // Sets the center of the map to Mountain View
-                .zoom(15)                   // Sets the zoom
+                .zoom(19)                   // Sets the zoom
                 .bearing(0)                // Sets the orientation of the camera to North
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        startMarker = mMap.addMarker(new MarkerOptions()
+                            .position(pointToCenterOn)
+                            .title("Start")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
+
+    public void dropPinAndCenterCameraOnFinish(LatLng pointToCenterOn) {
+        cameraPosition = new CameraPosition.Builder()
+                .target(pointToCenterOn)      // Sets the center of the map to Mountain View
+                .zoom(19)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                            .position(pointToCenterOn)
+                            .title("Finish")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+    }
+
+    public void clearRouteTrackingMarker() {
+        if(startMarker != null)
+            startMarker.remove();
+        if(finishMarker != null)
+            finishMarker.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
     //TODO: Should be deleted after it is done
     public void goToAddPlaceActivity(View view){
         Intent intent = new Intent(MapMainActivity.this, AddPlaceActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         MapMainActivity.this.startActivity(intent);
     }
 
@@ -302,14 +291,14 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             for(Button button : menuButtons) {
                 button.setVisibility(View.GONE);
             }
-            toggleButton.setImageResource(R.drawable.button_menu_pullup);
+            toggleButton.setImageResource(R.drawable.button_menu_dropdwn);
         }
         // Menu is hidden, show menu
         else {
             for(Button button : menuButtons) {
                 button.setVisibility(View.VISIBLE);
             }
-            toggleButton.setImageResource(R.drawable.button_menu_dropdwn);
+            toggleButton.setImageResource(R.drawable.button_menu_pullup);
         }
 
         menuVisible = !menuVisible;
@@ -342,7 +331,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     public void goToShowBookmarks(View view) {
         Intent intent = new Intent(this, BookmarkActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
         /*Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
@@ -350,13 +340,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         MapMainActivity.this.startActivity(intent);*/
     }
 
-
-    public void goToRouteActivity(View view){
-        toggleMenu(view);
-        Intent intent = new Intent(MapMainActivity.this, RouteActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapMainActivity.this.startActivity(intent);
-
+    public void goToShowHistory(View view) {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     public void goToLoginActivity(){
@@ -385,6 +373,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void track(View view) {
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
+            clearRouteTrackingMarker(); // clears marker if on screen
+            dropPinAndCenterCameraOnStart(currentLocation);
             // show timer
             timer.setVisibility(View.VISIBLE);
             timerLabel.setVisibility(View.VISIBLE);
@@ -398,14 +388,23 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //timerValue.postDelayed(updateTimerThread, 0);
             /**************************** TIMER START END**********************************/
 
-            ((Button) view).setText("Stop");
+            //((Button) view).setText("Stop");
+            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
+            findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
+
             if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
                 currentDisplayed.remove();
                 currentDisplayed = null; // get rid of currentDispalyed
             }
-        } else {
+        }
+        else {
+            // Short circuit for pressing menu button while it is tracking
+            if(((Button)view).getText().equals("Input Route"))
+                return;
+
             GPS.stopGPSTrack();
+            dropPinAndCenterCameraOnFinish(currentLocation);
             //stop timer
             timer.stop();
             int elapsed = (int)(SystemClock.elapsedRealtime() - timer.getBase())/1000;
@@ -416,17 +415,20 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             timer.setVisibility(View.GONE);
             timerLabel.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
-            ((Button) view).setText("Track");
+            //((Button) view).setText("Track");
+            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
+            findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
             if (latLngRoute.size() > 1) {
-                RouteProcessing.saveRoutePrompt(thisRoute, elapsed, MapMainActivity.this);
+                RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
         }
     }
 
-    //Let user enter searchTerm for the destination and drop Marker in the map if any match
+        //Let user enter searchTerm for the destination and drop Marker in the map if any match
     public void searchRoutePrompt(View view){
         AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
         prompt.setTitle("Search");
@@ -514,12 +516,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
             //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
 
-            int destinationId = getIntent().getIntExtra("destinationPlaceId", 0);
-            int transportId = getIntent().getIntExtra("trans", 1);
+            int destinationId = getIntent().getIntExtra("destinationId", 0);
+            int transportId = getIntent().getIntExtra("transport", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
-            plottingRecommendations( startLocation, destinationId, transportId );
+            plottingRecommendations(startLocation, destinationId, transportId);
 
 
         }
@@ -532,4 +534,52 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public static LatLng getCurrentLocation() {
         return currentLocation;
     }
+
+
+    private void setupBuildingMarkers() {
+        // Set up building markers
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                boolean isGaryMaker = false;
+                for (int i = 0; i < allMarkers.size(); i++) {
+                    if (allMarkers.get(i).getId().equals(marker.getId())) {
+                        isGaryMaker = true;
+                        break;
+                    }
+                }
+                if (isGaryMaker) {
+                    Intent nextScreen = new Intent(MapMainActivity.this, RoomAvailOptionsActivity.class);
+                    nextScreen.putExtra("BuildingName", marker.getTitle());
+                    startActivity(nextScreen);
+                } else {
+                    for (int i = 0; i < locations.size(); i++) {
+                        //Compare saved Marker in location and current clicked Marker
+                        if (locations.get(i).first.getId().equals(marker.getId())) {
+
+                            Intent nextScreen = new Intent(MapMainActivity.this, RouteActivity.class);
+                            nextScreen.putExtra("destinationPlaceId", locations.get(i).second.getPlaceId());
+                            nextScreen.putExtra("latitude", currentLocation.latitude);
+                            nextScreen.putExtra("longitude", currentLocation.longitude);
+                            startActivity(nextScreen);
+                            break;
+
+                        }
+                    }
+                }
+            }
+        });
+
+        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
+            allMarkers.add(mMap.addMarker(new MarkerOptions()
+                            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
+                            .position(building.getPosition())
+                            .title(building.getTitle())
+                            .snippet(building.getSnippet())
+                            .visible(false)
+            ));
+        }
+    }
+
 }

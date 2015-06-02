@@ -1,13 +1,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.kcco.csmap.RoomAvailInfoActivity"
-    style="@style/LayoutContainerTheme">
+    tools:context="com.example.kcco.csmap.HistoryActivity"
+    style="@style/LayoutContainerTheme" >
 
     <!-- Banner Bar -->
     <RelativeLayout
-        android:id="@+id/room_avail_info_banner"
-        style="@style/MainTheme.BannerBar.ToggleMenu">
+        android:id="@+id/history_banner"
+        style="@style/MainTheme.BannerBar">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -26,25 +26,26 @@
 
     </RelativeLayout>
 
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/room_avail_info_banner"
+        android:layout_below="@+id/history_banner"
         android:background="@drawable/background_ucsd" >
 
         <!-- Title Bar -->
         <TextView
-            android:id="@+id/room_avail_info_title"
+            android:id="@+id/history_title"
             style="@style/MainTheme.TitleBar" >
         </TextView>
 
         <!-- Main Display  -->
         <ScrollView
-            android:layout_below="@+id/room_avail_info_title"
+            android:layout_below="@+id/history_title"
             style="@style/MainTheme.MainScrollView">
 
             <RelativeLayout
-                android:id="@+id/room_avail_info_main"
+                android:id="@+id/history_main"
                 style="@style/MainTheme.MainScrollContainer">
 
             </RelativeLayout>

@@ -49,50 +49,76 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
+
+
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnWalk"
-        android:tag="1"
-        android:src="@drawable/walking"
-        android:onClick="selectTransport"
-        android:layout_marginTop="16dp"
+        android:rowCount="1"
+        android:columnCount="4"
+        android:id="@+id/imageButtonsLayout"
         android:layout_below="@+id/txtToInput"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnBike"
-        android:tag="10"
-        android:src="@drawable/bicycle"
-        android:onClick="selectTransport"
-        android:layout_alignTop="@+id/btnWalk"
-        android:layout_marginRight="10dp"
-        android:layout_toEndOf="@+id/btnWalk" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnSkate"
-        android:tag="100"
-        android:src="@drawable/skateboarding"
-        android:onClick="selectTransport"
-        android:layout_alignTop="@+id/btnBike"
-        android:layout_marginRight="10dp"
-        android:layout_toEndOf="@+id/btnBike" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnWalk"
+            android:tag="1"
+            android:src="@drawable/walking"
+            android:onClick="selectTransport"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:layout_columnWeight="1" />
+            <!--android:layout_below="@+id/txtToInput"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_alignParentStart="true" />-->
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnCar"
-        android:tag="1000"
-        android:src="@drawable/bus"
-        android:onClick="selectTransport"
-        android:layout_alignTop="@+id/btnSkate"
-        android:layout_toEndOf="@+id/btnSkate" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnBike"
+            android:tag="10"
+            android:src="@drawable/bicycle"
+            android:onClick="selectTransport"
+            android:layout_column="1"
+            android:layout_gravity="center"
+            android:layout_columnWeight="1" />
+            <!--android:layout_alignTop="@+id/btnWalk"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_toEndOf="@+id/btnWalk" />-->
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnSkate"
+            android:tag="100"
+            android:src="@drawable/skateboarding"
+            android:onClick="selectTransport"
+            android:layout_column="2"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center" />
+            <!--android:layout_alignTop="@+id/btnBike"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_toEndOf="@+id/btnBike" />-->
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnCar"
+            android:tag="1000"
+            android:src="@drawable/bus"
+            android:onClick="selectTransport"
+            android:layout_column="3"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center" />
+            <!--android:layout_alignTop="@+id/btnSkate"-->
+            <!--android:layout_toEndOf="@+id/btnSkate" />-->
+
+
+    </GridLayout>
 
 
 </RelativeLayout>

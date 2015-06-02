@@ -1,56 +1,50 @@
 package com.example.kcco.csmap;
 
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.RoutesDAO;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.kcco.csmap.DAO.BuildingDAO;
-import com.example.kcco.csmap.DAO.RoutesDAO;
-import com.example.kcco.csmap.R;
-import com.parse.ParseObject;
-
 import java.util.ArrayList;
 
 /**
- * Created by Teresa on 5/22/15.
+ * Created by Jason on 5/30/15.
  */
-
-// Not tested yet
-public class BookmarkActivity extends ActionBarActivity {
+public class HistoryActivity extends ActionBarActivity {
 
     private int userID;
-    private int[] bookmarks;
+    private int[] history;
     private ArrayList<Pair<String, String>> startEndLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bookmark);
+        setContentView(R.layout.activity_history);
 
-        // Get current user to find the appropriate bookmarks for
+        // Get current user to find the appropriate history
         userID = UserDAO.getCurrentUserId();
         // Initialize the array
         startEndLocation = new ArrayList<>();
-        // Retrieves all the routes from database and poulates the startEndLocation list
+        // Retrieves all the routes from database and populates the startEndLocation list
         getStartEndLocation();
-        // Create the view with list of routes
-        populateView();
+        // Create the view with the list of routes
+        populateView();;
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_bookmark, menu);
+        getMenuInflater().inflate(R.menu.menu_history, menu);
         return true;
     }
 
@@ -68,32 +62,24 @@ public class BookmarkActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    //asumme that we have a routeID, need to fig.out how to get rounteID to pass in first
-    public void addBookmark(int routeID)
-    {
-        UserDAO bookmark=new UserDAO(BookmarkActivity.this);
-        int userID = UserDAO.getCurrentUserId();
-        bookmark.createBookmark(userID,routeID);
-        bookmark.sendBookmarkInfo();
 
-    }
-
-    public void getStartEndLocation() {
-        bookmarks = UserDAO.searchBookmarkRoutes(userID, this);
-        // loop through bookmarks
-        // Only shows bookmarks if they are available
-        if (bookmarks != null) {
-            for (int routeId : bookmarks) {
+    // Method used to retrieve the routes of user from database and add them to the list
+    private void getStartEndLocation() {
+        history = UserDAO.searchHistoryRoutes(userID, this);
+        // loop through history
+        // Only shows history if they are available
+        if( history != null ) {
+            for (int routeId : history) {
                 String start, end;
 
                 // Retrieve the route
-                RoutesDAO route = RoutesDAO.searchARoute(routeId, BookmarkActivity.this);
+                RoutesDAO route = RoutesDAO.searchARoute(routeId, HistoryActivity.this);
                 // Get the name of the starting location
-                BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), BookmarkActivity.this);
+                BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), HistoryActivity.this);
                 start = place.getName();
 
-                // Get the name of the ending location
-                place = BuildingDAO.searchBuilding(route.getEndLoc(), BookmarkActivity.this);
+                //Get the name of the ending location
+                place = BuildingDAO.searchBuilding(route.getStartLoc(), HistoryActivity.this);
                 end = place.getName();
 
                 startEndLocation.add(new Pair<>(start, end));
@@ -101,8 +87,8 @@ public class BookmarkActivity extends ActionBarActivity {
         }
     }
 
-    // Used to format the items in the list: TODO: Change to make it look nicer??
-    private String createBookmarkLabel( Pair<String, String> startEndLocationStrings ) {
+    // Used to format the items in the list TODO: Change to make it look nicer??
+    private String createHistoryLabel( Pair<String, String> startEndLocationStrings ) {
         return new String("From: " + startEndLocationStrings.first + "\n" +
                           " To: " + startEndLocationStrings.second);
     }
@@ -110,7 +96,7 @@ public class BookmarkActivity extends ActionBarActivity {
     // Used to populate the display
     private void populateView() {
         //Set the title
-        ((TextView)findViewById(R.id.bookmark_title)).setText("FILLER" /*TODO: fill this in*/);
+        ((TextView)findViewById(R.id.history_title)).setText("FILLER" /*TODO: fill this in*/);
 
         // Loop that populates the view
         for(int i = 0, id = 1; i < startEndLocation.size(); i++, id++) {
@@ -118,7 +104,7 @@ public class BookmarkActivity extends ActionBarActivity {
 
             // Apply UI Design
             newButton.setId(id);
-            newButton.setText( createBookmarkLabel(startEndLocation.get(i)) );
+            newButton.setText( createHistoryLabel(startEndLocation.get(i)) );
             newButton.setTextSize((int) (getResources().getDimension(R.dimen.abc_text_size_body_1_material) / getResources().getDisplayMetrics().density));
             newButton.setTextColor(getResources().getColor(R.color.text_color_important));
             newButton.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.button_main, null));
@@ -141,7 +127,7 @@ public class BookmarkActivity extends ActionBarActivity {
             });
 
             // Add new Layout to RelativeLayout
-            ((RelativeLayout) findViewById(R.id.bookmark_main)).addView(newButton,rlParams);
+            ((RelativeLayout) findViewById(R.id.history_main)).addView(newButton,rlParams);
         }
     }
 }
