@@ -3,6 +3,7 @@ package com.example.kcco.csmap;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -431,7 +433,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //Let user enter searchTerm for the destination and drop Marker in the map if any match
     public void searchRoutePrompt(View view){
         AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
-        prompt.setTitle("Search");
+        //prompt.setTitle("Search");
 
         // Set up the Layout, EditText, TextView, CheckBox
         LinearLayout layout = new LinearLayout(MapMainActivity.this);
@@ -445,10 +447,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         txtSearchInput.setLayoutParams(lparams);
         txtSearchInput.setHint("Destination");
+        txtSearchInput.setHintTextColor(0x66ffffff);
         txtSearchInput.setText(searchInput);
+        txtSearchInput.setBackgroundColor(0x00000000);
 
         txtSearch.setLayoutParams(lparams);
-        txtSearch.setText("Destination");
+        //txtSearch.setText("Destination");
 
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
@@ -472,7 +476,17 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 dialog.cancel();
             }
         });
-        prompt.show();
+        AlertDialog box = prompt.create();
+        box.show();
+
+        Button bp = box.getButton(DialogInterface.BUTTON_POSITIVE);
+        bp.setBackgroundColor(0xCC000000);
+        bp.setTextColor(0x80ffffff);
+
+
+        Button bn = box.getButton(DialogInterface.BUTTON_NEGATIVE);
+        bn.setBackgroundColor(0xCC000000);
+        bn.setTextColor(0x80ffffff);
     }
 
 /////////////////////////////Helper functions//////////////////////////////////////////////////
