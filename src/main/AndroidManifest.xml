@@ -93,7 +93,18 @@
         </activity>
         <activity
             android:name=".BookmarkActivity"
-            android:label="@string/title_activity_add_place" >
+            android:label="@string/title_activity_bookmarks" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.kcco.csmap.BookmarkActivity" />
+        </activity>
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/title_activity_history"
+            android:parentActivityName=".MapMainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.kcco.csmap.MapMainActivity" />
         </activity>
         <activity
             android:name=".DispatchActivity"

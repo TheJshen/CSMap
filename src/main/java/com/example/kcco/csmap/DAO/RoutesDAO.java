@@ -12,6 +12,8 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Created by KaChan on 5/16/2015.
@@ -335,10 +337,14 @@ public class RoutesDAO {
         //There has match cases in User table.
         if( results != null && results.size() != 0){
             list = new ArrayList<LatLng>(results.size());
+            Log.d("RoutesDAO", "searchSubRoute(routeId = " + Integer.toString(routeId) +
+                    ", index = " + Integer.toString(index) + ") return results size " + results.size());
             for( ParseObject obj: results ) {
                 RoutesDAO tempRoute = new RoutesDAO(obj, activity);
-//                list.add(new LatLng(tempRoute.getSubRouteX(), tempRoute.getSubRouteY()));
                 list.add(tempRoute.getSubRoutePoint());
+//                Log.d("RouteDAO", "Adding list, routeId = " + Integer.toString(tempRoute.getRouteId())
+//                        + " and index = " + Integer.toString(tempRoute.getSubRouteIndex()));
+
             }
 
 
@@ -516,12 +522,15 @@ public class RoutesDAO {
         if( results != null && results.size() != 0){
             routes = new ArrayList<RoutesDAO>();
             currentRouteId = results.get(0).getInt(ParseConstant.SUBROUTE_ROUTE_ID);
+            Set<String> keySet = results.get(0).keySet();
+            Log.d("RoutesDAO", "searchCloseRouteAsce() ParseObject keySet = " + keySet.toString());
+
 
             for( ParseObject obj: results ){
                 RoutesDAO temp = new RoutesDAO(obj, activity);
                 if( currentRouteId != temp.getRouteId() ){
                     //add the previous RoutesDAO info before beginning the next new route.
-                    closestPoint = new RoutesDAO(activity);
+                    closestPoint = new RoutesDAO(obj, activity);
                     closestPoint.setSubRouteIndex(closestIndex);
                     closestPoint.setSubRouteId(currentRouteId);
                     routes.add(closestPoint);
@@ -539,10 +548,10 @@ public class RoutesDAO {
             }
 
             //add the last RoutesDAO with its information.
-            RoutesDAO newRoutes = new RoutesDAO(activity);
-            newRoutes.setSubRouteIndex(closestIndex);
-            newRoutes.setRouteId(currentRouteId);
-            routes.add(newRoutes);
+            RoutesDAO lastRoute = new RoutesDAO(results.get(results.size()-1), activity);
+            lastRoute.setSubRouteIndex(closestIndex);
+            lastRoute.setRouteId(currentRouteId);
+            routes.add(lastRoute);
 
             //This part is debug purpose to show all results.
             Log.d("RoutesDAO", "searchCloseRouteAsce(destination, x, y, distance) return # of RoutesDAO " + routes.size());
@@ -607,12 +616,14 @@ public class RoutesDAO {
         if( results != null && results.size() != 0){
             routes = new ArrayList<RoutesDAO>();
             currentRouteId = results.get(0).getInt(ParseConstant.SUBROUTE_ROUTE_ID);
+            Set<String> keySet = results.get(0).keySet();
+            Log.d("RoutesDAO", "searchCloseRouteAsce() ParseObject keySet = " + keySet.toString());
 
             for( ParseObject obj: results ){
                 RoutesDAO temp = new RoutesDAO(obj, activity);
                 if( currentRouteId != temp.getRouteId() ){
                     //add the previous RoutesDAO info before beginning the next new route.
-                    closestPoint = new RoutesDAO(activity);
+                    closestPoint = new RoutesDAO(obj, activity);
                     closestPoint.setSubRouteIndex(closestIndex);
                     closestPoint.setSubRouteId(currentRouteId);
                     routes.add(closestPoint);
@@ -630,10 +641,10 @@ public class RoutesDAO {
             }
 
             //add the last RoutesDAO with its information.
-            RoutesDAO newRoutes = new RoutesDAO(activity);
-            newRoutes.setSubRouteIndex(closestIndex);
-            newRoutes.setRouteId(currentRouteId);
-            routes.add(newRoutes);
+            RoutesDAO lastRoute = new RoutesDAO(results.get(results.size()-1), activity);
+            lastRoute.setSubRouteIndex(closestIndex);
+            lastRoute.setRouteId(currentRouteId);
+            routes.add(lastRoute);
 
             //This part is debug purpose to show all results.
             Log.d("RoutesDAO", "searchCloseRouteDesc(destination, x, y, distance) return # of RoutesDAO " + routes.size());

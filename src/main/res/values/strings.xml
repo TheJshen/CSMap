@@ -26,4 +26,6 @@
     <string name="title_activity_map_search">MapSearchActivity</string>
     <string name="title_activity_route">RouteActivity</string>
     <string name="title_activity_add_place">AddPlaceActivity</string>
+    <string name="title_activity_bookmarks">BookmarkActivity</string>
+    <string name="title_activity_history">HistoryActivity</string>
 </resources>

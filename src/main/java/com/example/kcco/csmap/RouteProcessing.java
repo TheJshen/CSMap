@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.os.PowerManager;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.Messenger;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.kcco.csmap.DAO.RoutesDAO;
 import java.util.ArrayList;
@@ -28,8 +30,8 @@ public class RouteProcessing {
 
     public final static int THREE= 3;
     //Constant for distance
-    private static final double SEARCH_DISTANCE = 0.01; //in miles
-    private static final double BUILDING_DISTANCE = 0.01; //in miles
+    private static final double SEARCH_DISTANCE = 0.05; //in miles
+    private static final double BUILDING_DISTANCE = 0.05; //in miles
 
     //Transport Constant
     private static final int CAR_MODE = 1000;
@@ -54,25 +56,183 @@ public class RouteProcessing {
      * @param transportID is the transportation the user is going to be using to get to their destination
      * @param activity is just the activity being passes in from the map
      * */
-    public static ArrayList<Route> getBestRoutes( LatLng currentLoc, int destinationID, int transportID, final Activity activity)
+
+    public static ArrayList<Route> getBestRoutes( LatLng startPoint, int destinationID, int transportID, final Activity activity)
     {
         ArrayList<LatLng> toBeRoute;
         ArrayList<Route> toShow = new ArrayList<>();
+        ArrayList<RoutesDAO> toRouteDao = new ArrayList<>();
+        ArrayList<RoutesDAO> fromRouteDao = new ArrayList<>();
+        Log.d("getBest", "transportID " + Integer.toString(transportID)+ " destinationID " +Integer.toString(destinationID)
+                + " startPoint " + startPoint.toString());
+//        Log.d("getBest", "toRoutes startID " + Integer.toString(startID)+ " destinationID " +Integer.toString(destinationID) );
+//        int[] toRoutes = RoutesDAO.searchAllRoutes(startID, destinationID, activity);
 
-        ArrayList<RoutesDAO> toRoutes = RoutesDAO.searchCloseRoutesAsce(destinationID, currentLoc.latitude, currentLoc.longitude,0.01, activity);
-        ArrayList<RoutesDAO> fromRoutes = RoutesDAO.searchCloseRoutesDesc(destinationID, currentLoc.latitude, currentLoc.longitude, 0.01,  activity);
+        int getNumOfRoute = 0;
 
+        toRouteDao = RoutesDAO.searchCloseRoutesAsce(destinationID, startPoint.latitude, startPoint.longitude, SEARCH_DISTANCE, activity);
+        fromRouteDao = RoutesDAO.searchCloseRoutesDesc(destinationID, startPoint.latitude, startPoint.longitude, SEARCH_DISTANCE, activity);
 
-        if ( toRoutes.size() + fromRoutes.size() <= THREE)
+//        int[] toRoutes = RoutesDAO.searchAllRoutes(startID, destinationID, activity);
+        if ( toRouteDao == null)
+            Log.d( "getBestRoutes", "toRoutes is null");
+
+        else {
+            Log.d("getBset", "Before transport filter, toRouteDAO size = " + Integer.toString(toRouteDao.size()));
+            toRouteDao = getTransportRoutes(toRouteDao, transportID, activity);
+            Log.d("getBset", "After transport filter, toRouteDAO size = " + Integer.toString(toRouteDao.size()));
+            getNumOfRoute += toRouteDao.size();
+        }
+
+//        int[] fromRoutes = RoutesDAO.searchAllRoutes(destinationID, startID, activity);
+        if(fromRouteDao == null)
+            Log.d( "getBestRoutes", "fromRotues is null");
+        else {
+            Log.d("getBset", "Before transport filter, fromRouteDAO size = " + Integer.toString(fromRouteDao.size()));
+            fromRouteDao = getTransportRoutes(fromRouteDao, transportID, activity);
+            Log.d("getBset", "After transport filter, fromRouteDAO size = " + Integer.toString(fromRouteDao.size()));
+            getNumOfRoute += fromRouteDao.size();
+        }
+
+        //verify if fromRouteDao and toRouteDao are both either null or size 0
+        if ( fromRouteDao == null || fromRouteDao.size() == 0) {
+            if (toRouteDao == null || toRouteDao.size() == 0){
+                Messenger.toast("No Routes found", activity);
+                return null;
+            }
+        }
+
+        Log.d("getBest", "getNumOfRoute is " + Integer.toString(getNumOfRoute));
+        //From now, fromRouteDao or toRouteDao have something, so they are not null or size 0
+        if ( getNumOfRoute <= THREE)
         {
-            for( int i = 0; i < toRoutes.size() ; i++)
+            if ( toRouteDao != null ) {
+                for (int i = 0; i < toRouteDao.size(); i++) {
+                    Log.d("getBest", "Adding toRouteDAO, routeId = " + Integer.toString(toRouteDao.get(i).getRouteId())
+                            + " and index = " + Integer.toString(toRouteDao.get(i).getSubRouteIndex()));
+
+//                toBeRoute = RoutesDAO.searchSubRoutes(toRouteDao.get(i).getRouteId(), activity);
+                    toBeRoute = RoutesDAO.searchSubRoutes(toRouteDao.get(i).getRouteId(), toRouteDao.get(i).getSubRouteIndex(), false, activity);
+                    Log.d("getBest", "Adding toRouteDAO, size of subRoute = " + Integer.toString(toBeRoute.size())
+                            + " and last latlng = ( " + Double.toString(toBeRoute.get(toBeRoute.size() - 1).latitude) + ", "
+                            + Double.toString(toBeRoute.get(toBeRoute.size()-1).longitude) + " )");
+                    toShow.add(new Route(toBeRoute));//might add more parameters of the path
+                }
+            }
+
+            if ( fromRouteDao != null ) {
+                for (int i = 0; i < fromRouteDao.size(); i++) {
+                    Log.d("getBest", "Adding fromRouteDAO, routeId = " + Integer.toString(fromRouteDao.get(i).getRouteId())
+                            + " and index = " + Integer.toString(fromRouteDao.get(i).getSubRouteIndex()));
+                    toBeRoute = RoutesDAO.searchSubRoutes(fromRouteDao.get(i).getRouteId(), fromRouteDao.get(i).getSubRouteIndex(), true, activity);
+                    Log.d("getBest", "Adding fromRouteDAO, size of subRoute = " + Integer.toString(toBeRoute.size())
+                            + " and last latlng = ( " + Double.toString(toBeRoute.get(toBeRoute.size() - 1).latitude) + ", "
+                            + Double.toString(toBeRoute.get(toBeRoute.size()-1).longitude) + " )");
+
+                    toShow.add(new Route(toBeRoute));
+                }
+            }
+        }
+        else
+        {
+            double lengthOfPath;
+            int index=0;
+            int indexFor;
+            TreeMap topValues = new TreeMap<Double, ArrayList<LatLng>>();
+            if ( toRouteDao != null ) {
+                while (index < toRouteDao.size()) {
+                    toBeRoute = RoutesDAO.searchSubRoutes(toRouteDao.get(index).getRouteId(), toRouteDao.get(index).getSubRouteIndex(), false, activity);
+
+                    for (lengthOfPath = 0, indexFor = 0; index < toBeRoute.size() - 1; index++) {
+                        lengthOfPath += getDistance(toBeRoute.get(indexFor), toBeRoute.get(indexFor + 1));
+                    }
+
+                    if (topValues.size() < THREE)
+                        topValues.put(lengthOfPath, toBeRoute);
+                    else {
+                    /*must find the largest lengthOfPath in tree and remove it*/
+                        topValues.remove(topValues.lastEntry().getKey());
+                        topValues.put(lengthOfPath, toBeRoute);
+                    }
+
+                    index++;
+                }
+            }
+
+            /*Now to loop through all the fromRoutes in reverse and get some of their distances
+            *
+             */
+            index = 0;
+
+            if (fromRouteDao != null) {
+                while (index < fromRouteDao.size()) {
+                    toBeRoute = RoutesDAO.searchSubRoutes(fromRouteDao.get(index).getRouteId(), fromRouteDao.get(index).getSubRouteIndex(), true, activity);
+
+                    for (lengthOfPath = 0, indexFor = 0; index < toBeRoute.size() - 1; index++) {
+                        lengthOfPath += getDistance(toBeRoute.get(indexFor), toBeRoute.get(indexFor + 1));
+                    }
+
+                    if (topValues.size() < THREE)
+                        topValues.put(lengthOfPath, toBeRoute);
+                    else {
+                    /*must find the largest lengthOfPath in tree and remove it*/
+                        topValues.remove(topValues.lastEntry().getKey());
+                        topValues.put(lengthOfPath, toBeRoute);
+                    }
+                    index++;
+                }
+            }
+
+            /*now to return the array of three routes
+             */
+            toShow.add(new Route((ArrayList<LatLng>)topValues.firstEntry().getValue()));
+            toShow.add(new Route((ArrayList<LatLng>)topValues.lastEntry().getValue()));
+            topValues.remove(topValues.firstEntry().getKey());
+            toShow.add(new Route((ArrayList<LatLng>) topValues.firstEntry().getValue()));
+        }
+        return toShow;
+    }
+
+
+    public static ArrayList<Route> getBestRoutes( int startID, int destinationID, int transportID, final Activity activity)
+    {
+        ArrayList<LatLng> toBeRoute;
+        ArrayList<Route> toShow = new ArrayList<>();
+        ArrayList<RoutesDAO> toRouteDao = new ArrayList<>();
+        ArrayList<RoutesDAO> fromRouteDao = new ArrayList<>();
+        Log.d("getBest", "toRoutes startID " + Integer.toString(startID)+ " destinationID " +Integer.toString(destinationID) );
+        int[] toRoutes = RoutesDAO.searchAllRoutes(startID, destinationID, activity);
+        if ( toRoutes == null)
+        {
+            Log.d( "getBestRoutes", "toRoutes is null");
+        }
+        else
+            toRouteDao= getTransportRoutes(toRoutes, transportID, activity);
+
+        int[] fromRoutes = RoutesDAO.searchAllRoutes(destinationID, startID, activity);
+        if(fromRoutes == null)
+            Log.d( "getBestRoutes", "fromRotues is null");
+        else
+            toRouteDao= getTransportRoutes(toRoutes, transportID, activity);
+
+
+
+        if ( fromRouteDao.size() != 0 && toRouteDao.size() != 0)
+        {
+            Messenger.toast("No Routes found", activity);
+            return null;
+        }
+
+        if ( toRouteDao.size() + fromRouteDao.size() <= THREE)
+        {
+            for( int i = 0; i < toRouteDao.size() ; i++)
             {
-                toBeRoute = RoutesDAO.searchSubRoutes(toRoutes.get(i).getRouteId(), activity);
+                toBeRoute = RoutesDAO.searchSubRoutes(toRouteDao.get(i).getRouteId(), activity);
                 toShow.add(new Route(toBeRoute));//might add more parameters of the path
             }
-            for( int i = 0; i < fromRoutes.size(); i++)
+            for( int i = 0; i < fromRouteDao.size(); i++)
             {
-                toBeRoute = RoutesDAO.searchSubRoutes(fromRoutes.get(i).getRouteId(), activity);
+                toBeRoute = RoutesDAO.searchSubRoutes(fromRouteDao.get(i).getRouteId(), activity);
                 toShow.add(new Route(toBeRoute));
             }
         }
@@ -82,9 +242,9 @@ public class RouteProcessing {
             int index=0;
             int indexFor;
             TreeMap topValues = new TreeMap<Double, ArrayList<LatLng>>();
-            while( index < toRoutes.size())
+            while( index < toRoutes.length)
             {
-                toBeRoute = RoutesDAO.searchSubRoutes(toRoutes.get(index).getRouteId(), toRoutes.get(index).getSubRouteIndex(), false, activity);
+                toBeRoute = RoutesDAO.searchSubRoutes(toRouteDao.get(index).getRouteId(), toRouteDao.get(index).getSubRouteIndex(), false, activity);
 
                 for(lengthOfPath=0, indexFor= 0; index < toBeRoute.size()-1; index++ )
                 {
@@ -108,8 +268,8 @@ public class RouteProcessing {
              */
             index = 0;
 
-            while( index < fromRoutes.size()) {
-                toBeRoute = RoutesDAO.searchSubRoutes(fromRoutes.get(index).getRouteId(), fromRoutes.get(index).getSubRouteIndex(), true, activity);
+            while( index < fromRouteDao.size()) {
+                toBeRoute = RoutesDAO.searchSubRoutes(fromRouteDao.get(index).getRouteId(), fromRouteDao.get(index).getSubRouteIndex(), true, activity);
 
                 for (lengthOfPath = 0, indexFor = 0; index < toBeRoute.size() - 1; index++) {
                     lengthOfPath += getDistance(toBeRoute.get(indexFor), toBeRoute.get(indexFor + 1));
@@ -142,6 +302,96 @@ public class RouteProcessing {
     }
 
 
+
+
+
+    public static ArrayList<RoutesDAO> getTransportRoutes( ArrayList<RoutesDAO> allDaos, int transportID, Activity activity) {
+        ArrayList<RoutesDAO> toReturn = new ArrayList<>();
+//        ArrayList<RoutesDAO> allDaos = new ArrayList<>();
+
+//        for( int j = 0; j < inputIDs.length; j ++)
+//        {
+//            allDaos.add(RoutesDAO.searchARoute(inputIDs[j], activity));
+//        }
+
+        boolean carMode = false, skateMode = false, bikeMode = false, walkMode = false;
+
+        int mode = transportID;
+        //check if selected for car
+        if( mode / CAR_MODE == 1 )
+            carMode = true;
+
+        mode %= CAR_MODE;
+        //check if selected for skate
+        if( mode / SKATE_MODE == 1 )
+            skateMode = true;
+
+        mode %= SKATE_MODE;
+        //check if selected for bike
+        if( mode / BIKE_MODE == 1 )
+            bikeMode = true;
+
+        mode %= BIKE_MODE;
+        //check if selected for walk
+        if( mode / WALK_MODE == 1 )
+            walkMode = true;
+
+        Log.d("getTransportRoutes", "carMode = " + Boolean.toString(carMode) + " skateMode = " + Boolean.toString(skateMode)
+                + " bikeMode = " + Boolean.toString(bikeMode) + " walkMode = " + Boolean.toString(walkMode));
+
+        /*time to remove some of the routeDAO's that do not have the transportation that we need*/
+        for ( int i = 0; i < allDaos.size(); ++i)
+        {
+            int routeMode = RoutesDAO.searchARoute(allDaos.get(i).getRouteId(),activity).getTransport();
+            Log.d("getTransportRoutes", "routeMode = " + Integer.toString(routeMode));
+            if ( carMode && routeMode / CAR_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+
+            routeMode %= CAR_MODE;
+            if ( skateMode && routeMode / SKATE_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+
+            routeMode %= SKATE_MODE;
+            if ( bikeMode && routeMode / BIKE_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+
+            routeMode %= BIKE_MODE;
+            if ( walkMode && routeMode / WALK_MODE == 1 ){
+                toReturn.add(allDaos.get(i));
+                continue;
+            }
+            Log.d("getTransportRoutes", "no match transport for routeId " + Integer.toString(allDaos.get(i).getRouteId()));
+
+        }
+
+        return toReturn;
+    }
+
+    public static ArrayList<RoutesDAO> getTransportRoutes( int[] inputIDs, int transportID, Activity activity)
+    {
+        ArrayList<RoutesDAO> toReturn = new ArrayList<>();
+        ArrayList<RoutesDAO> allDaos = new ArrayList<>();
+
+        for( int j = 0; j < inputIDs.length; j ++)
+        {
+            allDaos.add(RoutesDAO.searchARoute(inputIDs[j], activity));
+        }
+        /*time to remove some of the routeDAO's that do not have the transportation that we need*/
+        for ( int i = 0; i < allDaos.size(); ++i)
+        {
+            if ( allDaos.get(i).getTransport() - transportID > 0 )
+                toReturn.add(allDaos.get(i)); // means that our ID is less restrictive than the routes availability
+        }
+
+        return toReturn;
+    }
+
     public static double getDistance( LatLng start, LatLng end )
     {
         Location starting = new Location("a");
@@ -170,7 +420,7 @@ public class RouteProcessing {
 
     }
 
-    /** TODO: Method that will take an inputted route and use DAO's to get it into the data base
+    /**
      * Might need a helper method to identify similar routes and not duplicate
      *
      */
@@ -220,7 +470,7 @@ public class RouteProcessing {
     //Create a popup Prompt to ask user input name for start and end locations
     //Also, user can choose the transportation that he/she sed for the route.
     //At the end, the info for start and end location and route are saved into Parse.
-    public static void saveRoutePrompt(final Route thisRoute, final int timeSpent, final Activity activity){
+    public static void saveRoutePrompt(final Route thisRoute, final Activity activity){
         final ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
 
         startLoc = BuildingDAO.searchBuilding(latLngRoute.get(0),
@@ -301,6 +551,7 @@ public class RouteProcessing {
                 startLocId = RouteProcessing.verifyExistedPlace(startLoc, latLngRoute.get(0), txtFromInput.getText().toString(), activity);
                 endLocId = RouteProcessing.verifyExistedPlace(endLoc, latLngRoute.get(latLngRoute.size() - 1), txtToInput.getText().toString(), activity);
                 //TODO: Timer give out the time here
+                timeSpent = 9382; // in second
                 transport = 0;
                 if (boxWalk.isChecked())
                     transport += WALK_MODE;
