@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/LoginRegister.Background" >
 
-    <LinearLayout style="@style/LoginRegister.AltActionContainer">
+    <LinearLayout
+        android:id="@+id/signup_login"
+        style="@style/LoginRegister.AltActionContainer">
 
         <Button
             android:id="@+id/button_login"
@@ -12,33 +14,67 @@
 
     </LinearLayout>
 
-    <LinearLayout style="@style/LoginRegister.ActionContainer" >
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/signup_login"
+        android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/username"
-            style="@style/LoginRegister.EditText.Text"
-            android:hint="@string/login_register_username" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
-        <EditText
-            android:id="@+id/email"
-            style="@style/LoginRegister.EditText.Email"
-            android:hint="@string/register_email" />
+            <LinearLayout
+                android:id="@+id/login_image"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
-        <EditText
-            android:id="@+id/password"
-            style="@style/LoginRegister.EditText.Password"
-            android:hint="@string/login_register_password" />
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/logo"
+                    android:gravity="center"/>
 
-        <EditText
-            android:id="@+id/passwordAgain"
-            style="@style/LoginRegister.EditText.Password"
-            android:hint="@string/register_password_again" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/button_signup"
-            style="@style/LoginRegister.ActionButton"
-            android:text="@string/register_sign_up" />
+            <LinearLayout
+                android:id="@+id/signup_textfields"
+                style="@style/LoginRegister.ActionContainer"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/login_image">
 
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/username"
+                    style="@style/LoginRegister.EditText.Text"
+                    android:hint="@string/login_register_username" />
 
-</LinearLayout>
+                <EditText
+                    android:id="@+id/email"
+                    style="@style/LoginRegister.EditText.Email"
+                    android:hint="@string/register_email" />
+
+                <EditText
+                    android:id="@+id/password"
+                    style="@style/LoginRegister.EditText.Password"
+                    android:hint="@string/login_register_password" />
+
+                <EditText
+                    android:id="@+id/passwordAgain"
+                    style="@style/LoginRegister.EditText.Password"
+                    android:hint="@string/register_password_again" />
+
+                <Button
+                    android:id="@+id/button_signup"
+                    style="@style/LoginRegister.ActionButton"
+                    android:text="@string/register_sign_up" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
