@@ -447,7 +447,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         txtSearchInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         txtSearchInput.setLayoutParams(lparams);
         txtSearchInput.setHint("Destination");
-        txtSearchInput.setHintTextColor(0x66ffffff);
+        txtSearchInput.setHintTextColor(0xffffff);
         txtSearchInput.setText(searchInput);
         txtSearchInput.setBackgroundColor(0x00000000);
 
