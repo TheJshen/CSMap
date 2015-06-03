@@ -21,7 +21,7 @@
 
     <TextView
         android:text="Destination:"
-        android:textColor="#B3gffffff"
+        android:textColor="#B3ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtTo"

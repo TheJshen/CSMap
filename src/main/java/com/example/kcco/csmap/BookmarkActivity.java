@@ -1,5 +1,6 @@
 package com.example.kcco.csmap;
 
+import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class BookmarkActivity extends ActionBarActivity {
     private int userID;
     private int[] bookmarks;
     private ArrayList<Pair<String, String>> startEndLocation;
+    private ArrayList<Integer> routeIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class BookmarkActivity extends ActionBarActivity {
         userID = UserDAO.getCurrentUserId();
         // Initialize the array
         startEndLocation = new ArrayList<>();
+        routeIds = new ArrayList<>();
         // Retrieves all the routes from database and poulates the startEndLocation list
         getStartEndLocation();
         // Create the view with list of routes
@@ -97,6 +100,7 @@ public class BookmarkActivity extends ActionBarActivity {
                 end = place.getName();
 
                 startEndLocation.add(new Pair<>(start, end));
+                routeIds.add(routeId);
             }
         }
     }
@@ -136,12 +140,22 @@ public class BookmarkActivity extends ActionBarActivity {
                 public void onClick(View v) {
 
                     //TODO: fill in the response to the button click
-
+                    goToMapActivity(routeIds.get(v.getId() - 1));
                 }
             });
 
             // Add new Layout to RelativeLayout
             ((RelativeLayout) findViewById(R.id.bookmark_main)).addView(newButton,rlParams);
         }
+    }
+
+    public void goToMapActivity(int routeId){
+        Intent intent = new Intent(BookmarkActivity.this, MapMainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //add more information into intent before start different activity
+        intent.putExtra("routeId", routeId);
+        intent.putExtra("activity", "BookmarkActivity");
+        BookmarkActivity.this.startActivity(intent);
+
     }
 }

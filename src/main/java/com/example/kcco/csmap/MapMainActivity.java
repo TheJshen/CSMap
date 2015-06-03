@@ -113,6 +113,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         fromRouteActivity();
         fromHistoryActivity();
+        fromBookmarkActivity();
     }
 
     /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -277,8 +278,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     public void clearCurrentRoute() {
-        if( currentDisplayed != null )
-            currentDisplayed.remove();
+        currentDisplayed.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -507,6 +507,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    public void selectRoute(View view){
+        for( int i = 0; i < displayedLines.size(); i++){
+            if( i != selectedIndex ){
+                displayedLines.get(i).first.remove();
+            }
+        }
+
+        view.setVisibility(View.GONE);
+
+        //save in history
+        addHistory();
+
+        //show addBookmark button
+        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
+    }
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
     private void createLocationMarker(String searchTerm){
@@ -566,6 +581,19 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Log.d("fromHistoryActivity", "getting routeId = " + Integer.toString(routeId));
             ArrayList<LatLng> historyRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
             plotNewRoute(historyRoute, routeId);
+        }
+    }
+
+    public void fromBookmarkActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("BookmarkActivity")){
+
+            Messenger.toast("Generating Bookmark Route", MapMainActivity.this);
+            int routeId = getIntent().getIntExtra("routeId", 0);
+            Log.d("fromBookmarkActivity", "getting routeId = " + Integer.toString(routeId));
+            ArrayList<LatLng> bookmarkRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
+            plotNewRoute(bookmarkRoute, routeId);
         }
     }
 
@@ -658,7 +686,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     if (thisSelectedIndex != -1) {
 
                         //TODO: Add further function here for selected a route
-                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+//                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+
+
 
                         //change selected route into red, save in history show addBookmark button
                         //change selected route into red
@@ -666,11 +696,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
 
-                        //save in history
-                        addHistory();
 
-                        //show addBookmark button
-                        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
                         //hide Bookmark button
@@ -709,6 +735,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 Messenger.toast("Update building "+thisBuilding.getName()+", success", MapMainActivity.this);
             }
         }
+    }
 
 
     }
