@@ -68,13 +68,6 @@
             android:id="@+id/main_button_holder"
             style="@style/MainTheme.ButtonContainer.Right">
 
-            <!--TODO: this is temporary button, will be delete soon-->
-            <Button
-                style="@style/MainTheme.Button"
-                android:onClick="goToAddPlaceActivity"
-                android:text="Add Place" />
-
-
             <Button
                 android:id="@+id/mapMenuToggleBuildingMarker"
                 style="@style/MainTheme.Button"
