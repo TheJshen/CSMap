@@ -40,7 +40,7 @@ public class BuildingDAO {
      * Return:
      */
     //following are places table
-    public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name.toLowerCase()); }
+    public void setName( String name ) { current.put(ParseConstant.PLACES_NAME, name.toLowerCase().trim()); }
     public void setPlaceId( int placeId ) { current.put(ParseConstant.PLACES_PLACE_ID, placeId); }
     public void setCratedBy( int createdBy ) { current.put(ParseConstant.PLACES_CREATED_BY, createdBy); }
     public void setCenterPoint( LatLng point ) {
@@ -49,11 +49,11 @@ public class BuildingDAO {
     }
     public void setRadius( double radius ) { current.put(ParseConstant.PALCES_RADIUS, radius);}
     //following are classroom table
-    public void setClassroomName( String name ) { current.put(ParseConstant.CLASS_NAME, name);}
+    public void setClassroomName( String name ) { current.put(ParseConstant.CLASS_NAME, name.toLowerCase().trim());}
     public void setClassroomPlaceId( int placeId ) { current.put(ParseConstant.CLASS_PLACE_ID, placeId);}
     //following are Events table
-    public void setEventsPlace( String placeName ) { current.put(ParseConstant.EVENTS_LOCATION, placeName); }
-    public void setEventsName( String name ) { current.put(ParseConstant.EVENTS_NAME, name); }
+    public void setEventsPlace( String placeName ) { current.put(ParseConstant.EVENTS_LOCATION, placeName.toLowerCase().trim()); }
+    public void setEventsName( String name ) { current.put(ParseConstant.EVENTS_NAME, name.toLowerCase().trim()); }
     public void setEventsStrTime( Date strTime ) { current.put(ParseConstant.EVENTS_START_TIME, strTime); }
     public void setEventsEndTime( Date endTime ) { current.put(ParseConstant.EVENTS_END_TIME, endTime); }
     public void setEventsId ( int eventsId ) { current.put(ParseConstant.EVENTS_EVENT_ID, eventsId); }
@@ -388,7 +388,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereEqualTo(ParseConstant.PLACES_NAME, placeName.toLowerCase());
+        query.whereEqualTo(ParseConstant.PLACES_NAME, placeName.toLowerCase().trim());
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -472,7 +472,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereContains(ParseConstant.PLACES_NAME, searchTerm.toLowerCase());
+        query.whereContains(ParseConstant.PLACES_NAME, searchTerm.toLowerCase().trim());
 
         try {
             results = (ArrayList<ParseObject>) query.find();
@@ -630,7 +630,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.EVENTS);
-        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase() );
+        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase().trim() );
         query.whereLessThanOrEqualTo(ParseConstant.EVENTS_START_TIME, now);
         query.whereGreaterThanOrEqualTo(ParseConstant.EVENTS_END_TIME, now);
 
@@ -673,7 +673,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.EVENTS);
-        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase() );
+        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase().trim() );
         query.whereLessThanOrEqualTo(ParseConstant.EVENTS_START_TIME, now);
         query.whereGreaterThanOrEqualTo(ParseConstant.EVENTS_END_TIME, now);
 
@@ -722,7 +722,7 @@ public class BuildingDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.EVENTS);
-        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase());
+        query.whereEqualTo(ParseConstant.EVENTS_LOCATION, location.toLowerCase().trim());
         query.whereGreaterThanOrEqualTo(ParseConstant.EVENTS_END_TIME, begin); //catch the event not end the begin of day
         query.whereLessThanOrEqualTo(ParseConstant.EVENTS_START_TIME, end);   //catch the event begin the end of day
 

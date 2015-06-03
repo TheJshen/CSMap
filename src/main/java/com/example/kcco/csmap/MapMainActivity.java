@@ -275,14 +275,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
-    //TODO: Should be deleted after it is done
-    public void goToAddPlaceActivity(View view){
-        Intent intent = new Intent(MapMainActivity.this, AddPlaceActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        MapMainActivity.this.startActivity(intent);
-    }
-
 
     /**
      * Toggles visibility of the menu
@@ -629,7 +621,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             @Override
             public void onMapClick(LatLng latLng) {
 
-                if(isLinesDisplayed){
+                if (isLinesDisplayed) {
                     //hardcode calculate the nearby northeast and southwest points
                     LatLng northeast = new LatLng(latLng.latitude + 0.0001, latLng.longitude + 0.0001);
                     LatLng southwest = new LatLng(latLng.latitude - 0.0001, latLng.longitude - 0.0001);
@@ -638,24 +630,24 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 //                    mMap.addMarker(new MarkerOptions().position(northeast));
                     LatLngBounds clickedArea = new LatLngBounds(southwest, northeast);
                     int thisSelectedIndex = -1;
-                    for( int i = 0; i < displayedLines.size(); i++){
+                    for (int i = 0; i < displayedLines.size(); i++) {
                         List<LatLng> route = displayedLines.get(i).first.getPoints();
-                        if( route != null){
-                            for( int j = 0; j < route.size(); j++ ){
-                                if(clickedArea.contains(route.get(j))){
+                        if (route != null) {
+                            for (int j = 0; j < route.size(); j++) {
+                                if (clickedArea.contains(route.get(j))) {
                                     thisSelectedIndex = i;
                                     break;
                                 }
                             }
-                            if(thisSelectedIndex != -1)
+                            if (thisSelectedIndex != -1)
                                 break;
                         }
                     }
                     //change any previous selected route back to blue
-                    if( selectedIndex != -1)
+                    if (selectedIndex != -1)
                         displayedLines.get(selectedIndex).first.setColor(Color.BLUE);
 
-                    if( thisSelectedIndex != -1 ){
+                    if (thisSelectedIndex != -1) {
 
                         //TODO: Add further function here for selected a route
                         Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
@@ -674,8 +666,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
                         //show addBookmark button
                         findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
-                    }
-                    else {
+                    } else {
                         //hide Bookmark button, and reset any selected variables back to -1
                         //hide Bookmark button
                         findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
@@ -690,6 +681,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
             }
         });
+    }
+
+    //TODO: tempory function script to trime all places name
+    private void trimPlaceName() throws InterruptedException {
+        for( int i = 0; i < 70; i++){
+            Thread.sleep(8000);
+            BuildingDAO thisBuilding = BuildingDAO.searchBuilding(i, MapMainActivity.this);
+            if( thisBuilding != null){
+                thisBuilding.setName(thisBuilding.getName().toLowerCase().trim());
+                thisBuilding.sendBuildingInfo();
+                Messenger.toast("Update building "+thisBuilding.getName()+", success", MapMainActivity.this);
+            }
+        }
+
+
     }
 
 }
