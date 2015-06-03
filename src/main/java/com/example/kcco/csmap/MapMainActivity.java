@@ -659,10 +659,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
 
                         //save in history
-                        UserDAO history = new UserDAO(MapMainActivity.this);
-                        int userId = UserDAO.getCurrentUserId();
-                        history.createHistory(userId, selectedRouteId);
-                        history.sendHistoryInfo();
+                        addHistory();
 
                         //show addBookmark button
                         findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
@@ -681,6 +678,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
             }
         });
+    }
+
+    public void addHistory(){
+        int userId = UserDAO.getCurrentUserId();
+        UserDAO history = UserDAO.searchAHistory(userId, selectedRouteId, MapMainActivity.this);
+        if( history == null){
+            history = new UserDAO(MapMainActivity.this);
+            history.createHistory(userId, selectedRouteId);
+            history.sendHistoryInfo();
+        }
     }
 
     //TODO: tempory function script to trime all places name

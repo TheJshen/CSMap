@@ -402,7 +402,7 @@ public class UserDAO{
                 if (e == null) {
                     //history is saved successfully
                     String success = "History is saved!";
-                    Messenger.toast(success, activity);
+//                    Messenger.toast(success, activity);
                 } else {
                     //history did not saved.
                     String errorMessage = "Parse Error: saveHistoryInfo(): " + e.getMessage();
