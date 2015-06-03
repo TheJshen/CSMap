@@ -230,11 +230,11 @@ public class TrackActivity extends FragmentActivity implements RouteTracker.Loca
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
         /* must have the inputIds converted into destination IDs and transport ID*/
-        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
-        for( int index = 0 ; index < bestRoutes.size() ; index++)
-        {
-            mMap.addPolyline(bestRoutes.get(index).drawRoute());
-        }
+//        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, this);
+//        for( int index = 0 ; index < bestRoutes.size() ; index++)
+//        {
+//            mMap.addPolyline(bestRoutes.get(index).drawRoute());
+//        }
     }
 
 

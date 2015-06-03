@@ -757,10 +757,13 @@ public class BuildingDAO {
 
         for( int i = 0; i < splited.length; i++){
             String processString = splited[i];
-            char[] temp = processString.toCharArray();
-            temp[0] = Character.toUpperCase(temp[0]);
-            processString = new String(temp);
-            newString = newString + processString + " ";
+            processString.trim();
+            if( !processString.equals("")) {
+                char[] temp = processString.toCharArray();
+                temp[0] = Character.toUpperCase(temp[0]);
+                processString = new String(temp);
+                newString = newString + processString + " ";
+            }
         }
 
         newString.trim();

@@ -1,5 +1,6 @@
 package com.example.kcco.csmap;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Pair;
@@ -24,6 +25,7 @@ public class HistoryActivity extends ActionBarActivity {
     private int userID;
     private int[] history;
     private ArrayList<Pair<String, String>> startEndLocation;
+    private ArrayList<Integer> routeIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +36,11 @@ public class HistoryActivity extends ActionBarActivity {
         userID = UserDAO.getCurrentUserId();
         // Initialize the array
         startEndLocation = new ArrayList<>();
+        routeIds = new ArrayList<>();
         // Retrieves all the routes from database and populates the startEndLocation list
         getStartEndLocation();
         // Create the view with the list of routes
-        populateView();;
+        populateView();
 
     }
 
@@ -79,10 +82,11 @@ public class HistoryActivity extends ActionBarActivity {
                 start = place.getName();
 
                 //Get the name of the ending location
-                place = BuildingDAO.searchBuilding(route.getStartLoc(), HistoryActivity.this);
+                place = BuildingDAO.searchBuilding(route.getEndLoc(), HistoryActivity.this);
                 end = place.getName();
 
                 startEndLocation.add(new Pair<>(start, end));
+                routeIds.add(routeId);
             }
         }
     }
@@ -96,7 +100,7 @@ public class HistoryActivity extends ActionBarActivity {
     // Used to populate the display
     private void populateView() {
         //Set the title
-        ((TextView)findViewById(R.id.history_title)).setText("FILLER" /*TODO: fill this in*/);
+        ((TextView)findViewById(R.id.history_title)).setText("Route History");
 
         // Loop that populates the view
         for(int i = 0, id = 1; i < startEndLocation.size(); i++, id++) {
@@ -122,6 +126,7 @@ public class HistoryActivity extends ActionBarActivity {
                 public void onClick(View v) {
 
                     //TODO: fill in the response to the button click
+                    goToMapActivity(routeIds.get(v.getId() - 1));
 
                 }
             });
@@ -129,5 +134,15 @@ public class HistoryActivity extends ActionBarActivity {
             // Add new Layout to RelativeLayout
             ((RelativeLayout) findViewById(R.id.history_main)).addView(newButton,rlParams);
         }
+    }
+
+    public void goToMapActivity(int routeId){
+        Intent intent = new Intent(HistoryActivity.this, MapMainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //add more information into intent before start different activity
+        intent.putExtra("routeId", routeId);
+        intent.putExtra("activity", "HistoryActivity");
+        HistoryActivity.this.startActivity(intent);
+
     }
 }

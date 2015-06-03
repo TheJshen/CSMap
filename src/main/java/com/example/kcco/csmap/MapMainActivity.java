@@ -3,13 +3,10 @@ package com.example.kcco.csmap;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,17 +21,20 @@ import android.widget.Toast;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.Messenger;
+import com.example.kcco.csmap.DAO.RoutesDAO;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MapMainActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
@@ -59,11 +58,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private static RouteTracker GPS;
 
     // User to store all building markers
-    private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
-    private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
+    private ArrayList<Marker> allMarkers = new ArrayList<>();
+    private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<>();
 
     // Save all buttons in menu
-    private ArrayList<Button> menuButtons = new ArrayList<Button>();
+    private ArrayList<Button> menuButtons = new ArrayList<>();
 
     //Timer
     private Chronometer timer;
@@ -71,6 +70,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     //Search String
     private String searchInput = "";
+
+    //variable dealing with line(s)
+    private boolean isLinesDisplayed = false;
+    private int selectedRouteId = -1;
+    private ArrayList<Pair<Polyline, Integer>> displayedLines = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +106,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         GPS = new RouteTracker(this, this);
         setupBuildingMarkers();
+        setMapOnClick();
 
 
-        //TODO: finish this function for search routes
         fromRouteActivity();
+        fromHistoryActivity();
     }
 
     /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -180,27 +185,24 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.addMarker(options);*/
     }
 
-    public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
-        /*
-        for(int i = 0; i < Lat.size(); ++i) {
-            route.add(new LatLng(Lat.get(i), Lng.get(i)));
-        }
-        newRoute = new Route(route);
-        mMap.addPolyline(newRoute.drawRoute());
-        */
+    public void plotNewRoute(ArrayList<LatLng> route, int routeId) {
+        Route newRoute = new Route(route);
+        Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
+        displayedLines.add(new Pair<>(newLine, routeId));
+        isLinesDisplayed = true;
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
-        /* must have the inputIds converted into destination IDs and transport ID*/
-//        int startID = BuildingDAO.searchBuilding(currentLoc,0.05, MapMainActivity.this).getPlaceId();
-//        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(startID, buildingId, transportId, this);
-        ArrayList<Route> bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
+        ArrayList<Pair<Route, Integer>> bestRoutes;
+        bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
         if ( bestRoutes == null)
             return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)
         {
-            mMap.addPolyline(bestRoutes.get(index).drawRoute());
+            Polyline newLine = mMap.addPolyline(bestRoutes.get(index).first.drawRoute());
+            displayedLines.add(new Pair<>(newLine, bestRoutes.get(index).second));
+            isLinesDisplayed = true;
         }
     }
 
@@ -528,16 +530,25 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
         if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
-            //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
-
             int destinationId = getIntent().getIntExtra("destinationId", 0);
             int transportId = getIntent().getIntExtra("transport", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
             plottingRecommendations(startLocation, destinationId, transportId);
+        }
+    }
 
+    public void fromHistoryActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("HistoryActivity")){
 
+            Messenger.toast("Generating History Route", MapMainActivity.this);
+            int routeId = getIntent().getIntExtra("routeId", 0);
+            Log.d("fromHistoryActivity", "getting routeId = " + Integer.toString(routeId));
+            ArrayList<LatLng> historyRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
+            plotNewRoute(historyRoute, routeId);
         }
     }
 
@@ -594,6 +605,50 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .visible(false)
             ));
         }
+    }
+
+    private void setMapOnClick(){
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                if(isLinesDisplayed){
+                    //hardcode calculate the nearby northeast and southwest points
+                    LatLng northeast = new LatLng(latLng.latitude + 0.0001, latLng.longitude + 0.0001);
+                    LatLng southwest = new LatLng(latLng.latitude - 0.0001, latLng.longitude - 0.0001);
+//                    mMap.addMarker(new MarkerOptions().position(southwest));
+//                    mMap.addMarker(new MarkerOptions().position(latLng));
+//                    mMap.addMarker(new MarkerOptions().position(northeast));
+                    LatLngBounds clickedArea = new LatLngBounds(southwest, northeast);
+                    int selectedIndex = -1;
+                    for( int i = 0; i < displayedLines.size(); i++){
+                        List<LatLng> route = displayedLines.get(i).first.getPoints();
+                        if( route != null){
+                            for( int j = 0; j < route.size(); j++ ){
+                                if(clickedArea.contains(route.get(j))){
+                                    selectedIndex = i;
+                                    break;
+                                }
+                            }
+                            if(selectedIndex != -1)
+                                break;
+                        }
+                    }
+                    if( selectedIndex != -1 ){
+                        //TODO: Add further function here for selected a route
+                        selectedRouteId = displayedLines.get(selectedIndex).second;
+                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+                        UserDAO history = new UserDAO(MapMainActivity.this);
+                        int userId = UserDAO.getCurrentUserId();
+                        history.createHistory(userId, selectedRouteId);
+                        history.sendHistoryInfo();
+                    }
+                    else
+                        Messenger.toast("Need to click closer int the map for selecting a route", MapMainActivity.this);
+                }
+
+            }
+        });
     }
 
 }
