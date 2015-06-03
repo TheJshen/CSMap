@@ -3,6 +3,7 @@ package com.example.kcco.csmap;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -74,6 +75,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     //variable dealing with line(s)
     private boolean isLinesDisplayed = false;
     private int selectedRouteId = -1;
+    private int selectedIndex = -1;
     private ArrayList<Pair<Polyline, Integer>> displayedLines = new ArrayList<>();
 
     @Override
@@ -491,6 +493,20 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         bn.setTextColor(0x80ffffff);
     }
 
+    public void addBookmark(View view){
+        int userId = UserDAO.getCurrentUserId();
+        UserDAO bookmark = UserDAO.searchABookmark(userId, selectedRouteId, MapMainActivity.this);
+        if( bookmark != null){
+            Messenger.toast("You have this bookmark already", MapMainActivity.this);
+        }
+        else {
+            bookmark = new UserDAO(MapMainActivity.this);
+            bookmark.createBookmark(userId, selectedRouteId);
+            bookmark.sendBookmarkInfo();
+            Messenger.toast("Bookmark is saved.", MapMainActivity.this);
+        }
+    }
+
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
     private void createLocationMarker(String searchTerm){
@@ -621,31 +637,55 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 //                    mMap.addMarker(new MarkerOptions().position(latLng));
 //                    mMap.addMarker(new MarkerOptions().position(northeast));
                     LatLngBounds clickedArea = new LatLngBounds(southwest, northeast);
-                    int selectedIndex = -1;
+                    int thisSelectedIndex = -1;
                     for( int i = 0; i < displayedLines.size(); i++){
                         List<LatLng> route = displayedLines.get(i).first.getPoints();
                         if( route != null){
                             for( int j = 0; j < route.size(); j++ ){
                                 if(clickedArea.contains(route.get(j))){
-                                    selectedIndex = i;
+                                    thisSelectedIndex = i;
                                     break;
                                 }
                             }
-                            if(selectedIndex != -1)
+                            if(thisSelectedIndex != -1)
                                 break;
                         }
                     }
-                    if( selectedIndex != -1 ){
+                    //change any previous selected route back to blue
+                    if( selectedIndex != -1)
+                        displayedLines.get(selectedIndex).first.setColor(Color.BLUE);
+
+                    if( thisSelectedIndex != -1 ){
+
                         //TODO: Add further function here for selected a route
-                        selectedRouteId = displayedLines.get(selectedIndex).second;
                         Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+
+                        //change selected route into red, save in history show addBookmark button
+                        //change selected route into red
+                        selectedIndex = thisSelectedIndex;
+                        selectedRouteId = displayedLines.get(selectedIndex).second;
+                        displayedLines.get(selectedIndex).first.setColor(Color.RED);
+
+                        //save in history
                         UserDAO history = new UserDAO(MapMainActivity.this);
                         int userId = UserDAO.getCurrentUserId();
                         history.createHistory(userId, selectedRouteId);
                         history.sendHistoryInfo();
+
+                        //show addBookmark button
+                        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
                     }
-                    else
+                    else {
+                        //hide Bookmark button, and reset any selected variables back to -1
+                        //hide Bookmark button
+                        findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
+
+                        //reset
+                        selectedIndex = -1;
+                        selectedRouteId = -1;
+
                         Messenger.toast("Need to click closer int the map for selecting a route", MapMainActivity.this);
+                    }
                 }
 
             }
