@@ -12,7 +12,7 @@
 
     <TextView
         android:text="Start Location:"
-        android:textColor="#99ffffff"
+        android:textColor="#B3ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtFrom"
@@ -21,7 +21,7 @@
 
     <TextView
         android:text="Destination:"
-        android:textColor="#99ffffff"
+        android:textColor="#B3gffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtTo"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtFromInput"
         android:hint="Current Location"
-        android:textColorHint="#D9ffffff"
+        android:textColorHint="#99ffffff"
         android:textColor="#CCffffff"
         android:background="@drawable/edit_text_background"
         android:layout_below="@+id/txtFrom"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtToInput"
         android:hint="Destination"
-        android:textColorHint="#D9ffffff"
+        android:textColorHint="#99ffffff"
         android:textColor="#CCffffff"
         android:background="@drawable/edit_text_background"
         android:layout_below="@+id/txtTo"
