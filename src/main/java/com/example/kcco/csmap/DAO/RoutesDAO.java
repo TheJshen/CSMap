@@ -671,7 +671,7 @@ public class RoutesDAO {
 
         //query to fill out all the search requirement
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstant.PLACES);
-        query.whereEqualTo(ParseConstant.PLACES_NAME, endLoc.toLowerCase());
+        query.whereEqualTo(ParseConstant.PLACES_NAME, endLoc.toLowerCase().trim());
 
         try {
             results = (ArrayList<ParseObject>) query.find();

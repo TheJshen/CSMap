@@ -153,4 +153,14 @@
         android:layout_centerInParent="true"
         android:layout_marginBottom="25dp"/>
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/add_bookmark"
+        android:id="@+id/btnAddBookmark"
+        android:onClick="addBookmark"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>
