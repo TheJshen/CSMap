@@ -501,6 +501,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    public void selectRoute(View view){
+        for( int i = 0; i < displayedLines.size(); i++){
+            if( i != selectedIndex ){
+                displayedLines.get(i).first.remove();
+            }
+        }
+
+        view.setVisibility(View.GONE);
+
+        //save in history
+        addHistory();
+
+        //show addBookmark button
+        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
+    }
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
     private void createLocationMarker(String searchTerm){
@@ -534,7 +549,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Messenger.toast(searchTerm + " is invalid name", MapMainActivity.this);
             searchRoutePrompt(findViewById(R.id.btnSearch));
         }
-
     }
 
     public void fromRouteActivity(){
@@ -665,7 +679,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     if (thisSelectedIndex != -1) {
 
                         //TODO: Add further function here for selected a route
-                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+//                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+
+
 
                         //change selected route into red, save in history show addBookmark button
                         //change selected route into red
@@ -673,11 +689,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
 
-                        //save in history
-                        addHistory();
 
-                        //show addBookmark button
-                        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
                         //hide Bookmark button
@@ -716,8 +728,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 Messenger.toast("Update building "+thisBuilding.getName()+", success", MapMainActivity.this);
             }
         }
-
-
     }
+
+
 
 }
