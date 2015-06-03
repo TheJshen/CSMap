@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.Messenger;
+import com.example.kcco.csmap.DAO.RoutesDAO;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -105,8 +106,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setMapOnClick();
 
 
-        //TODO: finish this function for search routes
         fromRouteActivity();
+        fromHistoryActivity();
     }
 
     /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -181,14 +182,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.addMarker(options);*/
     }
 
-    public void plotNewRoute(ArrayList<Double> Lat, ArrayList<Double> Lng) {
-        /*
-        for(int i = 0; i < Lat.size(); ++i) {
-            route.add(new LatLng(Lat.get(i), Lng.get(i)));
-        }
-        newRoute = new Route(route);
+    public void plotNewRoute(ArrayList<LatLng> route) {
+        Route newRoute = new Route(route);
         mMap.addPolyline(newRoute.drawRoute());
-        */
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
@@ -532,16 +528,25 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
         if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
-            //Messenger.toast("TODO: I am from RouteActivity, now is getBestRoute and display it, lol", MapMainActivity.this);
-
             int destinationId = getIntent().getIntExtra("destinationId", 0);
             int transportId = getIntent().getIntExtra("transport", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
             LatLng startLocation = new LatLng(latitude, longitude);
             plottingRecommendations(startLocation, destinationId, transportId);
+        }
+    }
 
+    public void fromHistoryActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("HistoryActivity")){
 
+            Messenger.toast("Generating History Route", MapMainActivity.this);
+            int routeId = getIntent().getIntExtra("routeId", 0);
+            Log.d("fromHistoryActivity", "getting routeId = " + Integer.toString(routeId));
+            ArrayList<LatLng> historyRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
+            plotNewRoute(historyRoute);
         }
     }
 
