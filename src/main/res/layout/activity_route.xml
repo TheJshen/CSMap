@@ -5,18 +5,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     style="@style/MainTheme"
-    tools:context="com.example.kcco.csmap.RouteActivity">
+    tools:context="com.example.kcco.csmap.RouteActivity"
+    android:background="@drawable/background_ucsd_layered" >
 
 
 
-    <TextView android:text="From Location:" android:layout_width="wrap_content"
+    <TextView
+        android:text="Start Location:"
+        android:textColor="#99ffffff"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtFrom"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true" />[p]
 
     <TextView
-        android:text="To Location:"
+        android:text="Destination:"
+        android:textColor="#99ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtTo"
@@ -29,6 +34,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtFromInput"
         android:hint="Current Location"
+        android:textColorHint="#D9ffffff"
+        android:textColor="#CCffffff"
+        android:background="@drawable/edit_text_background"
         android:layout_below="@+id/txtFrom"
         android:layout_alignParentStart="true" />
 
@@ -37,17 +45,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtToInput"
         android:hint="Destination"
+        android:textColorHint="#D9ffffff"
+        android:textColor="#CCffffff"
+        android:background="@drawable/edit_text_background"
         android:layout_below="@+id/txtTo"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get Route"
-        android:id="@+id/btnSearch"
-        android:onClick="goToMainActivity"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
 
 
 
@@ -120,5 +123,16 @@
 
     </GridLayout>
 
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSearch"
+        android:onClick="goToMainActivity"
+        style="@style/ActivityRoute_ActionButton"
+        android:text="Get Route"
+        android:textColor="#FFffffff"
+        android:layout_below="@+id/imageButtonsLayout"
+        />
 
 </RelativeLayout>

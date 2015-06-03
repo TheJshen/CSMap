@@ -498,10 +498,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         for (Pair<Marker, BuildingDAO> location: locations)
             location.first.remove();
 
-        //Create new Pair Marker and BiildingDAO
+        //Create new Pair Marker and BuildingDAO
         locations = new ArrayList<Pair<Marker,BuildingDAO>>();
 
-        //Generate a list of destionations if there are any match with searchTerm
+        //Generate a list of destinations if there are any match with searchTerm
         ArrayList<BuildingDAO> destinations = BuildingDAO.searchAllBuildings(searchTerm, MapMainActivity.this);
 //        ArrayList<Pair<LatLng,String>> destinations = RouteProcessing.findLocations(searchTerm, MapMainActivity.this);
 

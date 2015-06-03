@@ -250,4 +250,15 @@
         <item name="android:background">@drawable/button_option</item>
     </style>
 
+
+    <style name="ActivityRoute_ActionButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:layout_marginTop">16dp</item>
+
+        <item name="android:background">@drawable/getroute_button_option</item>
+    </style>
+
+
 </resources>
