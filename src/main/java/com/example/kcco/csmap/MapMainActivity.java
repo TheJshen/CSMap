@@ -277,7 +277,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     public void clearCurrentRoute() {
-        currentDisplayed.remove();
+        if( currentDisplayed != null )
+            currentDisplayed.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -711,5 +712,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
     }
+/*
+    private void approachingDestination(Location location) {
+        if(selectedIndex != -1) {
+            displayedLines.get(selectedIndex).first.
+        }
+    }*/
 
 }
