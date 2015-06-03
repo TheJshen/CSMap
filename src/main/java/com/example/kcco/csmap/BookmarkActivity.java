@@ -110,7 +110,7 @@ public class BookmarkActivity extends ActionBarActivity {
     // Used to populate the display
     private void populateView() {
         //Set the title
-        ((TextView)findViewById(R.id.bookmark_title)).setText("FILLER" /*TODO: fill this in*/);
+        ((TextView)findViewById(R.id.bookmark_title)).setText("Bookmarks");
 
         // Loop that populates the view
         for(int i = 0, id = 1; i < startEndLocation.size(); i++, id++) {

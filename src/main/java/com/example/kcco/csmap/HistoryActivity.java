@@ -96,7 +96,7 @@ public class HistoryActivity extends ActionBarActivity {
     // Used to populate the display
     private void populateView() {
         //Set the title
-        ((TextView)findViewById(R.id.history_title)).setText("FILLER" /*TODO: fill this in*/);
+        ((TextView)findViewById(R.id.history_title)).setText("Route History");
 
         // Loop that populates the view
         for(int i = 0, id = 1; i < startEndLocation.size(); i++, id++) {
