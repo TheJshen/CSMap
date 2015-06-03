@@ -3,13 +3,10 @@ package com.example.kcco.csmap;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,11 +27,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MapMainActivity extends FragmentActivity implements RouteTracker.LocationCallBack {
@@ -59,11 +57,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private static RouteTracker GPS;
 
     // User to store all building markers
-    private ArrayList<Marker> allMarkers = new ArrayList<Marker>();
-    private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<Pair<Marker, BuildingDAO>>();
+    private ArrayList<Marker> allMarkers = new ArrayList<>();
+    private ArrayList<Pair<Marker, BuildingDAO>> locations = new ArrayList<>();
 
     // Save all buttons in menu
-    private ArrayList<Button> menuButtons = new ArrayList<Button>();
+    private ArrayList<Button> menuButtons = new ArrayList<>();
 
     //Timer
     private Chronometer timer;
@@ -71,6 +69,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     //Search String
     private String searchInput = "";
+    private ArrayList<Pair<Route, Integer>> bestRoutes = null;
+    private ArrayList<Pair<Polyline, Integer>> bestLines = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +102,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         GPS = new RouteTracker(this, this);
         setupBuildingMarkers();
+        setMapOnClick();
 
 
         //TODO: finish this function for search routes
@@ -195,12 +196,15 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         /* must have the inputIds converted into destination IDs and transport ID*/
 //        int startID = BuildingDAO.searchBuilding(currentLoc,0.05, MapMainActivity.this).getPlaceId();
 //        ArrayList<Route> bestRoutes= RouteProcessing.getBestRoutes(startID, buildingId, transportId, this);
-        ArrayList<Route> bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
+//        ArrayList<Route> bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
+
+        bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
         if ( bestRoutes == null)
             return;
         for( int index = 0 ; index < bestRoutes.size() ; index++)
         {
-            mMap.addPolyline(bestRoutes.get(index).drawRoute());
+            Polyline newLine = mMap.addPolyline(bestRoutes.get(index).first.drawRoute());
+            bestLines.add(new Pair<>(newLine, bestRoutes.get(index).second));
         }
     }
 
@@ -594,6 +598,45 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .visible(false)
             ));
         }
+    }
+
+    private void setMapOnClick(){
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                if(bestRoutes != null){
+                    //hardcode calculate the nearby northeast and southwest points
+                    LatLng northeast = new LatLng(latLng.latitude + 0.0001, latLng.longitude + 0.0001);
+                    LatLng southwest = new LatLng(latLng.latitude - 0.0001, latLng.longitude - 0.0001);
+//                    mMap.addMarker(new MarkerOptions().position(southwest));
+//                    mMap.addMarker(new MarkerOptions().position(latLng));
+//                    mMap.addMarker(new MarkerOptions().position(northeast));
+                    LatLngBounds clickedArea = new LatLngBounds(southwest, northeast);
+                    int selectedIndex = -1;
+                    for( int i = 0; i < bestLines.size(); i++){
+                        List<LatLng> route = bestLines.get(i).first.getPoints();
+                        if( route != null){
+                            for( int j = 0; j < route.size(); j++ ){
+                                if(clickedArea.contains(route.get(j))){
+                                    selectedIndex = i;
+                                    break;
+                                }
+                            }
+                            if(selectedIndex != -1)
+                                break;
+                        }
+                    }
+                    if( selectedIndex != -1 ){
+                        Messenger.toast("I selected A route", MapMainActivity.this);
+                        UserDAO history = new UserDAO(MapMainActivity.this);
+                    }
+                    else
+                        Messenger.toast("Just click on the map", MapMainActivity.this);
+                }
+
+            }
+        });
     }
 
 }
