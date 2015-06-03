@@ -113,6 +113,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         fromRouteActivity();
         fromHistoryActivity();
+        fromBookmarkActivity();
     }
 
     /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -559,6 +560,19 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Log.d("fromHistoryActivity", "getting routeId = " + Integer.toString(routeId));
             ArrayList<LatLng> historyRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
             plotNewRoute(historyRoute, routeId);
+        }
+    }
+
+    public void fromBookmarkActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("BookmarkActivity")){
+
+            Messenger.toast("Generating Bookmark Route", MapMainActivity.this);
+            int routeId = getIntent().getIntExtra("routeId", 0);
+            Log.d("fromBookmarkActivity", "getting routeId = " + Integer.toString(routeId));
+            ArrayList<LatLng> bookmarkRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
+            plotNewRoute(bookmarkRoute, routeId);
         }
     }
 
