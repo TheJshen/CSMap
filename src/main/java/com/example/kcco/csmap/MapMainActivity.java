@@ -628,11 +628,15 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         }
                     }
                     if( selectedIndex != -1 ){
-                        Messenger.toast("I selected A route", MapMainActivity.this);
+                        //TODO: Add further function here for selected a route
+                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
                         UserDAO history = new UserDAO(MapMainActivity.this);
+                        int userId = UserDAO.getCurrentUserId();
+                        history.createHistory(userId, bestLines.get(selectedIndex).second);
+                        history.sendHistoryInfo();
                     }
                     else
-                        Messenger.toast("Just click on the map", MapMainActivity.this);
+                        Messenger.toast("Need to click closer int the map for selecting a route", MapMainActivity.this);
                 }
 
             }
