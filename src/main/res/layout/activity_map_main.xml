@@ -98,7 +98,7 @@
                 android:id="@+id/mapMenuToggleBuildingMarker"
                 style="@style/MainTheme.Button"
                 android:onClick="toggleBuildingMarkers"
-                android:text="Show Markers"/>
+                android:text="Lecture Halls"/>
 
             <Button
                 android:id="@+id/btnLogout"
