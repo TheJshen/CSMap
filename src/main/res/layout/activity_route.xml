@@ -58,8 +58,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:rowCount="1"
-        android:columnCount="4"
         android:id="@+id/imageButtonsLayout"
         android:layout_below="@+id/txtToInput"
         android:layout_centerHorizontal="true"
@@ -73,13 +71,8 @@
             android:tag="1"
             android:button="@drawable/transp_walk_selector"
             android:onClick="selectTransport"
-            android:layout_column="0"
             android:layout_gravity="center"
             android:layout_columnWeight="1" />
-            <!--android:layout_below="@+id/txtToInput"-->
-            <!--android:layout_marginRight="10dp"-->
-            <!--android:layout_marginLeft="5dp"-->
-            <!--android:layout_alignParentStart="true" />-->
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -88,12 +81,9 @@
             android:tag="10"
             android:button="@drawable/transp_bike_selector"
             android:onClick="selectTransport"
-            android:layout_column="1"
             android:layout_gravity="center"
             android:layout_columnWeight="1" />
-            <!--android:layout_alignTop="@+id/btnWalk"-->
-            <!--android:layout_marginRight="10dp"-->
-            <!--android:layout_toEndOf="@+id/btnWalk" />-->
+
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -102,8 +92,6 @@
             android:tag="100"
             android:button="@drawable/transp_skate_selector"
             android:onClick="selectTransport"
-            android:layout_column="2"
-            android:layout_columnWeight="1"
             android:layout_gravity="center" />
             <!--android:layout_alignTop="@+id/btnBike"-->
             <!--android:layout_marginRight="10dp"-->
@@ -116,8 +104,6 @@
             android:tag="1000"
             android:button="@drawable/transp_bus_selector"
             android:onClick="selectTransport"
-            android:layout_column="3"
-            android:layout_columnWeight="1"
             android:layout_gravity="center" />
             <!--android:layout_alignTop="@+id/btnSkate"-->
             <!--android:layout_toEndOf="@+id/btnSkate" />-->
@@ -126,15 +112,20 @@
     </RadioGroup>
 
 
-    <Button
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSearch"
-        android:onClick="goToMainActivity"
-        style="@style/ActivityRoute_ActionButton"
-        android:text="Get Route"
-        android:textColor="#FFffffff"
         android:layout_below="@+id/imageButtonsLayout"
-        />
+        android:gravity="right">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnSearch"
+            android:onClick="goToMainActivity"
+            style="@style/ActivityRoute_ActionButton"
+            android:text="Go"
+            android:textColor="#FFffffff"
+            />
+    </RelativeLayout>
 
 </RelativeLayout>
