@@ -746,13 +746,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         double distance2 = RouteProcessing.getDistance(currentLocation, points.get(points.size()-1));
 
         if( distance1 < distance2 ) {
-            destinationLocation = points.get(points.size() - 1);
-            startLocation = points.get(0);
-
-        }
-        else {
             destinationLocation = points.get(0);
             startLocation = points.get(points.size() - 1);
+        }
+        else {
+            destinationLocation = points.get(points.size() - 1);
+            startLocation = points.get(0);
         }
 
 
