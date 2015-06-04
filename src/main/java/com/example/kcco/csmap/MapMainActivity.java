@@ -707,6 +707,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedIndex = thisSelectedIndex;
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
+                        findViewById(R.id.btnStartRoute).setVisibility(View.VISIBLE);
 
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
