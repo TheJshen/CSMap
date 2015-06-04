@@ -198,9 +198,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
+        processStartEndPoints();
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
-        processStartEndPoints();
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
@@ -285,8 +285,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     public void clearCurrentRoute() {
-        if( currentDisplayed != null)
-            currentDisplayed.remove();
+        currentDisplayed.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -702,7 +701,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedIndex = thisSelectedIndex;
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
-                        findViewById(R.id.btnStartRoute).setVisibility(View.VISIBLE);
 
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
