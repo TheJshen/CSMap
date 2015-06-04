@@ -198,9 +198,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
-        processStartEndPoints();
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
+        processStartEndPoints();
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
@@ -285,7 +285,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     public void clearCurrentRoute() {
-        currentDisplayed.remove();
+        if( currentDisplayed != null)
+            currentDisplayed.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
