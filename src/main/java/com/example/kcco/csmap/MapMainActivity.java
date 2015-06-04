@@ -527,6 +527,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         //show addBookmark button
         findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
+        findViewById(R.id.btnStartRoute).setVisibility(View.VISIBLE);
     }
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
@@ -744,7 +745,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 
-    }
+}
 /*
     private void approachingDestination(Location location) {
         if(selectedIndex != -1) {
@@ -752,5 +753,3 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }*/
 
-
-}
