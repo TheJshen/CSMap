@@ -178,19 +178,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         currentLocation = latLng;
         //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
-        /*cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
-                .zoom(13)                   // Sets the zoom
-                .bearing(0)                // Sets the orientation of the camera to North
-                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        */
-        /*MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("You are here!");
+        approachingDestination(location);
 
-        mMap.addMarker(options);*/
     }
 
     public void plotNewRoute(ArrayList<LatLng> route, int routeId) {
@@ -201,6 +190,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
         processStartEndPoints();
+        dropStartAndEndPinAndCenterCameraOnStart(startLocation);
+
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
