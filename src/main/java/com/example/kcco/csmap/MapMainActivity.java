@@ -80,6 +80,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     //variable
     LatLng destinationLocation = null;
+    LatLng startLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +198,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
-        processDestination();
+        processStartEndPoints();
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
     }
@@ -214,7 +215,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             displayedLines.add(new Pair<>(newLine, bestRoutes.get(index).second));
             isLinesDisplayed = true;
         }
-        processDestination();
+        processStartEndPoints();
     }
 
 
@@ -527,7 +528,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         //show addBookmark button
         findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
-        findViewById(R.id.btnStartRoute).setVisibility(View.VISIBLE);
     }
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
@@ -729,27 +729,25 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    public void processDestination(){
+    public void processStartEndPoints(){
 
         List<LatLng> points = displayedLines.get(0).first.getPoints();
 
         double distance1 = RouteProcessing.getDistance(currentLocation, points.get(0));
         double distance2 = RouteProcessing.getDistance(currentLocation, points.get(points.size()-1));
 
-        if( distance1 < distance2 )
-            destinationLocation = points.get(points.size()-1);
-        else
+        if( distance1 < distance2 ) {
+            destinationLocation = points.get(points.size() - 1);
+            startLocation = points.get(0);
+
+        }
+        else {
             destinationLocation = points.get(0);
+            startLocation = points.get(points.size() - 1);
+        }
 
 
     }
 
 
 }
-/*
-    private void approachingDestination(Location location) {
-        if(selectedIndex != -1) {
-            displayedLines.get(selectedIndex).first.
-        }
-    }*/
-
