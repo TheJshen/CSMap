@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtFrom"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />[p]
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:text="Destination:"

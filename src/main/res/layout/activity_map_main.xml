@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/toggleMapMenu"
                 android:background="#00ffffff"
-                android:src="@drawable/button_menu_pullup"
+                android:src="@drawable/button_menu_dropdwn"
                 android:onClick="toggleMenu" />
 
         </RelativeLayout>
@@ -69,16 +69,24 @@
             style="@style/MainTheme.ButtonContainer.Right">
 
             <Button
-                android:id="@+id/mapMenuToggleBuildingMarker"
-                style="@style/MainTheme.Button"
-                android:onClick="toggleBuildingMarkers"
-                android:text="Show Markers"/>
-
-            <Button
                 android:id="@+id/btnSearch"
                 style="@style/MainTheme.Button"
                 android:onClick="searchRoutePrompt"
                 android:text="Search" />
+
+            <Button
+                android:id="@+id/trackButton"
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="track"
+                android:text="Input Route" />
+
+            <Button
+                android:layout_height="match_parent"
+                style="@style/MainTheme.Button"
+                android:onClick="goToShowHistory"
+                android:text="History" />
+
 
             <Button
                 android:layout_height="match_parent"
@@ -87,17 +95,10 @@
                 android:text="Bookmark" />
 
             <Button
-                android:layout_height="match_parent"
+                android:id="@+id/mapMenuToggleBuildingMarker"
                 style="@style/MainTheme.Button"
-                android:onClick="goToShowHistory"
-                android:text="History" />
-
-            <Button
-                android:id="@+id/trackButton"
-                android:layout_height="match_parent"
-                style="@style/MainTheme.Button"
-                android:onClick="track"
-                android:text="Input Route" />
+                android:onClick="toggleBuildingMarkers"
+                android:text="Lecture Halls"/>
 
             <Button
                 android:id="@+id/btnLogout"
@@ -156,11 +157,21 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/add_bookmark"
+        android:src="@drawable/button_add_bookmark"
         android:id="@+id/btnAddBookmark"
         android:onClick="addBookmark"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/button_start_route"
+        android:id="@+id/btnStartRoute"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="25dp" />
 
 </RelativeLayout>

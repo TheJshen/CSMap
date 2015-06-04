@@ -78,6 +78,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private int selectedIndex = -1;
     private ArrayList<Pair<Polyline, Integer>> displayedLines = new ArrayList<>();
 
+    //variable
+    LatLng destinationLocation = null;
+    LatLng startLocation = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +97,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
             if(thisButtonScroller.getChildAt(i) instanceof Button) {
                 menuButtons.add((Button) thisButtonScroller.getChildAt(i));
+                menuButtons.get(i).setVisibility(View.GONE);
             }
         }
 
@@ -113,6 +118,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
         fromRouteActivity();
         fromHistoryActivity();
+        fromBookmarkActivity();
     }
 
     /////////////////////////////////Overriding Activity Functions//////////////////////////////////////
@@ -172,6 +178,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         currentLocation = latLng;
         //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
+        approachingDestination(location);
         /*cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
                 .zoom(13)                   // Sets the zoom
@@ -188,8 +195,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     public void plotNewRoute(ArrayList<LatLng> route, int routeId) {
+        clearCurrentRoute();
+        clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
+        processStartEndPoints();
+        dropStartAndEndPinAndCenterCameraOnStart(startLocation);
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
     }
@@ -206,6 +217,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             displayedLines.add(new Pair<>(newLine, bestRoutes.get(index).second));
             isLinesDisplayed = true;
         }
+        processStartEndPoints();
     }
 
 
@@ -267,11 +279,33 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     }
 
+    public void dropStartAndEndPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
+        cameraPosition = new CameraPosition.Builder()
+                .target(pointToCenterOn)      // Sets the center of the map to Mountain View
+                .zoom(19)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                .position(destinationLocation)
+                .title("Finish")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                .position(pointToCenterOn)
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
+
     public void clearRouteTrackingMarker() {
         if(startMarker != null)
             startMarker.remove();
         if(finishMarker != null)
             finishMarker.remove();
+    }
+
+    public void clearCurrentRoute() {
+        currentDisplayed.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -280,7 +314,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Toggles visibility of the menu
      * @param view The current view
      */
-    private boolean menuVisible = true;
+    private boolean menuVisible = false;
     public void toggleMenu(View view) {
         ImageButton toggleButton = (ImageButton) findViewById(R.id.toggleMapMenu);
 
@@ -500,6 +534,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    public void selectRoute(View view){
+        for( int i = 0; i < displayedLines.size(); i++){
+            if( i != selectedIndex ){
+                displayedLines.get(i).first.remove();
+            }
+        }
+
+        view.setVisibility(View.GONE);
+
+        //save in history
+        addHistory();
+
+        //show addBookmark button
+        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
+    }
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
     private void createLocationMarker(String searchTerm){
@@ -559,6 +608,19 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             Log.d("fromHistoryActivity", "getting routeId = " + Integer.toString(routeId));
             ArrayList<LatLng> historyRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
             plotNewRoute(historyRoute, routeId);
+        }
+    }
+
+    public void fromBookmarkActivity(){
+        //TODO: find a way to recognize the previous Activity is RouteActivity.
+        String prevActivityName = getIntent().getStringExtra("activity");
+        if( prevActivityName != null && prevActivityName.equals("BookmarkActivity")){
+
+            Messenger.toast("Generating Bookmark Route", MapMainActivity.this);
+            int routeId = getIntent().getIntExtra("routeId", 0);
+            Log.d("fromBookmarkActivity", "getting routeId = " + Integer.toString(routeId));
+            ArrayList<LatLng> bookmarkRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
+            plotNewRoute(bookmarkRoute, routeId);
         }
     }
 
@@ -651,7 +713,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     if (thisSelectedIndex != -1) {
 
                         //TODO: Add further function here for selected a route
-                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+//                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+
 
                         //change selected route into red, save in history show addBookmark button
                         //change selected route into red
@@ -659,11 +722,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
 
-                        //save in history
-                        addHistory();
-
-                        //show addBookmark button
-                        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
                         //hide Bookmark button
@@ -691,19 +749,39 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    //TODO: tempory function script to trime all places name
-    private void trimPlaceName() throws InterruptedException {
-        for( int i = 0; i < 70; i++){
-            Thread.sleep(8000);
-            BuildingDAO thisBuilding = BuildingDAO.searchBuilding(i, MapMainActivity.this);
-            if( thisBuilding != null){
-                thisBuilding.setName(thisBuilding.getName().toLowerCase().trim());
-                thisBuilding.sendBuildingInfo();
-                Messenger.toast("Update building "+thisBuilding.getName()+", success", MapMainActivity.this);
-            }
+    public void processStartEndPoints(){
+
+        List<LatLng> points = displayedLines.get(0).first.getPoints();
+
+        double distance1 = RouteProcessing.getDistance(currentLocation, points.get(0));
+        double distance2 = RouteProcessing.getDistance(currentLocation, points.get(points.size()-1));
+
+        if( distance1 < distance2 ) {
+            destinationLocation = points.get(points.size() - 1);
+            startLocation = points.get(0);
+
+        }
+        else {
+            destinationLocation = points.get(0);
+            startLocation = points.get(points.size() - 1);
         }
 
 
     }
 
+    private void approachingDestination(Location location) {
+        //LatLng = destinationLocation;
+        if( destinationLocation != null && isLinesDisplayed == true) {
+            LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+            if (RouteProcessing.getDistance(destinationLocation, current) < 0.001) {
+                if (selectedIndex != -1) {
+                    displayedLines.get(selectedIndex).first.remove();
+                    startMarker.remove();
+                    finishMarker.remove();
+                    dropPinAndCenterCameraOnFinish(startLocation);
+                    isLinesDisplayed = false;
+                }
+            }
+        }
+    }
 }
