@@ -771,7 +771,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     private void approachingDestination(Location location) {
         //LatLng = destinationLocation;
-        if( destinationLocation != null ) {
+        if( destinationLocation != null && isLinesDisplayed == true) {
             LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
             if (RouteProcessing.getDistance(destinationLocation, current) < 0.001) {
                 if (selectedIndex != -1) {
@@ -779,6 +779,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     startMarker.remove();
                     finishMarker.remove();
                     dropPinAndCenterCameraOnFinish(startLocation);
+                    isLinesDisplayed = false;
                 }
             }
         }
