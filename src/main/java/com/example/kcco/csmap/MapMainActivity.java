@@ -341,24 +341,21 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Toggles visibility of the building markers
      * @param view The current view
      */
-    final String[] buildingMarkerStatus = {"Show Markers", "Hide Markers"};
+    private boolean buildingMarkerShown= false;
     public void toggleBuildingMarkers(View view) {
-        Button thisButton = (Button) findViewById(R.id.mapMenuToggleBuildingMarker);
-
         // Markers are not shown, show markers
-        if(thisButton.getText().equals(buildingMarkerStatus[0])) {
+        if(!this.buildingMarkerShown) {
             for (Marker currMarker : allMarkers) {
                 currMarker.setVisible(true);
             }
-            thisButton.setText(buildingMarkerStatus[1]);
         }
         // Markers are shown, hide markers
         else {
             for (Marker currMarker : allMarkers) {
                 currMarker.setVisible(false);
             }
-            thisButton.setText(buildingMarkerStatus[0]);
         }
+        this.buildingMarkerShown = !this.buildingMarkerShown;
     }
 
     public void goToShowBookmarks(View view) {
