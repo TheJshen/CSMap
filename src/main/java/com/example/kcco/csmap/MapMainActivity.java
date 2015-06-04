@@ -78,6 +78,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private int selectedIndex = -1;
     private ArrayList<Pair<Polyline, Integer>> displayedLines = new ArrayList<>();
 
+    //variable
+    LatLng destinationLocation = null;
+    LatLng startLocation = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +97,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
             if(thisButtonScroller.getChildAt(i) instanceof Button) {
                 menuButtons.add((Button) thisButtonScroller.getChildAt(i));
+                menuButtons.get(i).setVisibility(View.GONE);
             }
         }
 
@@ -193,6 +198,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
+        processStartEndPoints();
         dropStartAndEndPinAndCenterCameraOnStart(startLocation);
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
@@ -210,6 +216,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             displayedLines.add(new Pair<>(newLine, bestRoutes.get(index).second));
             isLinesDisplayed = true;
         }
+        processStartEndPoints();
     }
 
 
@@ -306,7 +313,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Toggles visibility of the menu
      * @param view The current view
      */
-    private boolean menuVisible = true;
+    private boolean menuVisible = false;
     public void toggleMenu(View view) {
         ImageButton toggleButton = (ImageButton) findViewById(R.id.toggleMapMenu);
 
@@ -708,13 +715,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 //                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
 
 
-
                         //change selected route into red, save in history show addBookmark button
                         //change selected route into red
                         selectedIndex = thisSelectedIndex;
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
-
 
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
@@ -743,18 +748,22 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    //TODO: tempory function script to trime all places name
-    private void trimPlaceName() throws InterruptedException {
-        for( int i = 0; i < 70; i++){
-            Thread.sleep(8000);
-            BuildingDAO thisBuilding = BuildingDAO.searchBuilding(i, MapMainActivity.this);
-            if( thisBuilding != null){
-                thisBuilding.setName(thisBuilding.getName().toLowerCase().trim());
-                thisBuilding.sendBuildingInfo();
-                Messenger.toast("Update building "+thisBuilding.getName()+", success", MapMainActivity.this);
-            }
+    public void processStartEndPoints(){
+
+        List<LatLng> points = displayedLines.get(0).first.getPoints();
+
+        double distance1 = RouteProcessing.getDistance(currentLocation, points.get(0));
+        double distance2 = RouteProcessing.getDistance(currentLocation, points.get(points.size()-1));
+
+        if( distance1 < distance2 ) {
+            destinationLocation = points.get(points.size() - 1);
+            startLocation = points.get(0);
+
         }
-    }
+        else {
+            destinationLocation = points.get(0);
+            startLocation = points.get(points.size() - 1);
+        }
 
 
     }
