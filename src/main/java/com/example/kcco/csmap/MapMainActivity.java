@@ -207,6 +207,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             isLinesDisplayed = true;
         }
         processStartEndPoints();
+        dropStartAndEndPinAndCenterCameraOnStart(startLocation);
     }
 
 
