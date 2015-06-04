@@ -178,6 +178,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         currentLocation = latLng;
         //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
+        approachingDestination(location);
         /*cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
                 .zoom(13)                   // Sets the zoom
@@ -777,7 +778,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     displayedLines.get(selectedIndex).first.remove();
                     startMarker.remove();
                     finishMarker.remove();
-                    dropPinAndCenterCameraOnFinish();
+                    dropPinAndCenterCameraOnFinish(startLocation);
                 }
             }
         }
