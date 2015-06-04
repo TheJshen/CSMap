@@ -178,19 +178,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         currentLocation = latLng;
         //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
-        /*cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(location.getLatitude(), location.getLongitude() ))      // Sets the center of the map to Mountain View
-                .zoom(13)                   // Sets the zoom
-                .bearing(0)                // Sets the orientation of the camera to North
-                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        */
-        /*MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("You are here!");
+        approachingDestination(location);
 
-        mMap.addMarker(options);*/
     }
 
     public void plotNewRoute(ArrayList<LatLng> route, int routeId) {
@@ -198,9 +187,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
-        processStartEndPoints();
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
+        processStartEndPoints();
+        dropStartAndEndPinAndCenterCameraOnStart(startLocation);
+
     }
 
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
@@ -247,6 +238,23 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
+    public void dropStartAndEndPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
+        cameraPosition = new CameraPosition.Builder()
+                .target(pointToCenterOn)      // Sets the center of the map to Mountain View
+                .zoom(19)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                .position(destinationLocation)
+                .title("Finish")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                .position(pointToCenterOn)
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
 
     // This method is used to center on current location
     public void dropPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
@@ -285,7 +293,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     public void clearCurrentRoute() {
-        currentDisplayed.remove();
+        if( currentDisplayed != null)
+            currentDisplayed.remove();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -562,10 +571,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     }
 
-    public void fromRouteActivity(){
+    public void fromRouteActivity() {
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
-        if( prevActivityName != null && prevActivityName.equals("RouteActivity")){
+        if( prevActivityName != null && prevActivityName.equals("RouteActivity")) {
             int destinationId = getIntent().getIntExtra("destinationId", 0);
             int transportId = getIntent().getIntExtra("transport", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
@@ -644,7 +653,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             }
         });
 
-        for( MapsConstants.MarkerDetails building : MapsConstants.allBuildings ) {
+        for (MapsConstants.MarkerDetails building : MapsConstants.allBuildings) {
             allMarkers.add(mMap.addMarker(new MarkerOptions()
                             //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pointer_gary))
@@ -656,7 +665,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    private void setMapOnClick(){
+    private void setMapOnClick() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -745,6 +754,20 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
     }
-
+    private void approachingDestination(Location location) {
+        //LatLng = destinationLocation;
+        if( destinationLocation != null && isLinesDisplayed == true) {
+            LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+            if (RouteProcessing.getDistance(destinationLocation, current) < 0.001) {
+                if (selectedIndex != -1) {
+                    displayedLines.get(selectedIndex).first.remove();
+                    startMarker.remove();
+                    finishMarker.remove();
+                    dropPinAndCenterCameraOnFinish(startLocation);
+                    isLinesDisplayed = false;
+                }
+            }
+        }
+    }
 
 }
