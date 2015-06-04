@@ -533,7 +533,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         addHistory();
 
         //show addBookmark button
-        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
+//        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
     }
 /////////////////////////////Helper functions//////////////////////////////////////////////////
 
@@ -764,6 +764,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     displayedLines.get(selectedIndex).first.remove();
                     startMarker.remove();
                     finishMarker.remove();
+
                     dropPinAndCenterCameraOnFinish(startLocation);
                     isLinesDisplayed = false;
                 }
