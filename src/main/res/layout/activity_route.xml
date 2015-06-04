@@ -21,7 +21,7 @@
 
     <TextView
         android:text="Destination:"
-        android:textColor="#B3gffffff"
+        android:textColor="#B3ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtTo"
@@ -54,22 +54,24 @@
 
 
 
-    <GridLayout
+    <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:rowCount="1"
         android:columnCount="4"
         android:id="@+id/imageButtonsLayout"
         android:layout_below="@+id/txtToInput"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
 
 
-        <ImageButton
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnWalk"
             android:tag="1"
-            android:src="@drawable/walking"
+            android:button="@drawable/transp_walk_selector"
             android:onClick="selectTransport"
             android:layout_column="0"
             android:layout_gravity="center"
@@ -79,12 +81,12 @@
             <!--android:layout_marginLeft="5dp"-->
             <!--android:layout_alignParentStart="true" />-->
 
-        <ImageButton
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnBike"
             android:tag="10"
-            android:src="@drawable/bicycle"
+            android:button="@drawable/transp_bike_selector"
             android:onClick="selectTransport"
             android:layout_column="1"
             android:layout_gravity="center"
@@ -93,12 +95,12 @@
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_toEndOf="@+id/btnWalk" />-->
 
-        <ImageButton
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnSkate"
             android:tag="100"
-            android:src="@drawable/skateboarding"
+            android:button="@drawable/transp_skate_selector"
             android:onClick="selectTransport"
             android:layout_column="2"
             android:layout_columnWeight="1"
@@ -107,12 +109,12 @@
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_toEndOf="@+id/btnBike" />-->
 
-        <ImageButton
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnCar"
             android:tag="1000"
-            android:src="@drawable/bus"
+            android:button="@drawable/transp_bus_selector"
             android:onClick="selectTransport"
             android:layout_column="3"
             android:layout_columnWeight="1"
@@ -121,7 +123,7 @@
             <!--android:layout_toEndOf="@+id/btnSkate" />-->
 
 
-    </GridLayout>
+    </RadioGroup>
 
 
     <Button
