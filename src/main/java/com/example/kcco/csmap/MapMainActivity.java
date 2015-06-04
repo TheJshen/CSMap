@@ -93,6 +93,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
             if(thisButtonScroller.getChildAt(i) instanceof Button) {
                 menuButtons.add((Button) thisButtonScroller.getChildAt(i));
+                menuButtons.get(i).setVisibility(View.GONE);
             }
         }
 
@@ -287,7 +288,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Toggles visibility of the menu
      * @param view The current view
      */
-    private boolean menuVisible = true;
+    private boolean menuVisible = false;
     public void toggleMenu(View view) {
         ImageButton toggleButton = (ImageButton) findViewById(R.id.toggleMapMenu);
 
