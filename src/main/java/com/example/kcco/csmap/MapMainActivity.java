@@ -528,6 +528,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
         view.setVisibility(View.GONE);
+        displayedLines.get(selectedIndex).first.setColor(Color.BLUE);
 
         //save in history
         addHistory();
