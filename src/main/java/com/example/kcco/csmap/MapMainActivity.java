@@ -193,6 +193,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         clearRouteTrackingMarker();
         Route newRoute = new Route(route);
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
+        dropStartAndEndPinAndCenterCameraOnStart(startLocation);
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
     }
@@ -268,6 +269,24 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .position(pointToCenterOn)
                             .title("Finish")
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+    }
+
+    public void dropStartAndEndPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
+        cameraPosition = new CameraPosition.Builder()
+                .target(pointToCenterOn)      // Sets the center of the map to Mountain View
+                .zoom(19)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                .position(destinationLocation)
+                .title("Finish")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        finishMarker = mMap.addMarker(new MarkerOptions()
+                .position(pointToCenterOn)
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     public void clearRouteTrackingMarker() {
@@ -739,11 +758,19 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 
     }
-/*
-    private void approachingDestination(Location location) {
-        if(selectedIndex != -1) {
-            displayedLines.get(selectedIndex).first.
-        }
-    }*/
 
+    private void approachingDestination(Location location) {
+        //LatLng = destinationLocation;
+        if( destinationLocation != null ) {
+            LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+            if (RouteProcessing.getDistance(destinationLocation, current) < 0.001) {
+                if (selectedIndex != -1) {
+                    displayedLines.get(selectedIndex).first.remove();
+                    startMarker.remove();
+                    finishMarker.remove();
+                    dropPinAndCenterCameraOnFinish();
+                }
+            }
+        }
+    }
 }
