@@ -217,20 +217,66 @@ public class RoutesDAO {
         });
     }
 
-    /* Name: sendSubRouteInfo (not tested)
+    /**Name: sendSubRouteInfo (not tested)
      * Describe:
      *      it will send SubRoute info to Parse, and show message for success or error
      * Parameter:
      * Return:
      */
     public void sendSubRouteInfo(){
-        ParseObject.saveAllInBackground(subRoutes, new SaveCallback() {
+        if( subRoutes.size() > 40){
+            sendSubRouteInfo(0, 40);
+        }
+        else {
+            ParseObject.saveAllInBackground(subRoutes, new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        //subRoute is saved successfully
+                        String success = "SubRoute is saved!";
+//                        Messenger.toast(success, activity);
+                    } else {
+                        //subRoute did not saved.
+                        String errorMessage = "Parse Error: sendSubRouteInfo(): " + e.getMessage();
+                        Messenger.error(errorMessage, activity);
+                        Messenger.logException(e, "RoutesDAO", "sendSubRouteInfo");
+                    }
+                }
+            });
+        }
+    }
+
+    /**Name: sendSubRouteInfo (not tested)
+     * Describe:
+     *      it will send SubRoute info to Parse, and show message for success or error
+     * Parameter:
+     *      int index: the index begin with
+     *      int size: the size for this segment.
+     * Return:
+     */
+    public void sendSubRouteInfo(final int index, final int size){
+
+        ArrayList<ParseObject> segment = new ArrayList<>();
+        for( int i = index; i < index+size; i++){
+            segment.add(subRoutes.get(i));
+        }
+
+        ParseObject.saveAllInBackground(segment, new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
                     //subRoute is saved successfully
-                    String success = "SubRoute is saved!";
-                    Messenger.toast(success, activity);
+                    String success = "Segment index " + Integer.toString(index) + " and size " + Integer.toString(size) + " is saved!";
+
+//                    Messenger.toast(success, activity);
+
+                    int nextIndex = index + size;
+                    if( nextIndex + size < subRoutes.size()){
+                        sendSubRouteInfo(nextIndex, size);
+                    }
+                    else if( size == 40 ){
+                        sendSubRouteInfo(nextIndex, subRoutes.size() - nextIndex);
+                    }
                 } else {
                     //subRoute did not saved.
                     String errorMessage = "Parse Error: sendSubRouteInfo(): " + e.getMessage();
@@ -240,6 +286,7 @@ public class RoutesDAO {
             }
         });
     }
+
 
     /* Name: sendPossibleEdgeInfo (not tested)
      * Describe:
