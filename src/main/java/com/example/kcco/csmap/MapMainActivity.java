@@ -316,6 +316,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     }
 
+    /**
+     * Clear all markers on the map that show the beginning or ending of
+     * a previously displayed route
+     */
     public void clearRouteTrackingMarker() {
         if(startMarker != null)
             startMarker.remove();
@@ -323,6 +327,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             finishMarker.remove();
     }
 
+    /**
+     * Clears all routes that are currently displayed on the map
+     */
     public void clearCurrentRoute() {
         if( currentDisplayed != null)
             currentDisplayed.remove();
@@ -384,30 +391,38 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         this.buildingMarkerShown = !this.buildingMarkerShown;
     }
 
+    /**
+     * Goes to BookmarkActivity
+     * @param view
+     */
     public void goToShowBookmarks(View view) {
         Intent intent = new Intent(this, BookmarkActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
-        /*Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        MapMainActivity.this.startActivity(intent);*/
     }
 
+    /** Goes to HistoryActivity
+     * @param view
+     */
     public void goToShowHistory(View view) {
         Intent intent = new Intent(this, HistoryActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
+    /**
+     * Goes to Login page
+     */
     public void goToLoginActivity(){
         Intent intent = new Intent(MapMainActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         MapMainActivity.this.startActivity(intent);
     }
 
+    /**
+     * Method used to log user out of the app
+     * @param view
+     */
     public void logout(View view) {
         toggleMenu(view);
         if (UserDAO.isUserActive()){
@@ -424,6 +439,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     /*  Button function track
      *  Button name: btnSurrey
      *  Describe: Begin to track the route.
+     */
+
+    /**
+     * This methods uses RouteTracker class to retrieve the user inputted
+     * path by adding the GPS coordinates into an array list. It also uses a timer
+     * to time how long it takes for the user to move along the path.
+     * When this is done it would call RouteProcessing to allow the user to save
+     * and submit the route to teh database.
+     * This method will also plog the path onto the gps live.
+     * @param view
      */
     public void track(View view) {
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
