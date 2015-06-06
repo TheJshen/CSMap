@@ -816,11 +816,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                                 if (clickedArea.contains(route.get(j)) && clickLoc.distanceTo(currLoc) < minDist) {
                                     thisSelectedIndex = i;
                                     minDist = clickLoc.distanceTo(currLoc);
-                                    //break;
                                 }
                             }
-                            /*if (thisSelectedIndex != -1)
-                                break;*/
                         }
                     }
                     //change any previous selected route back to blue
@@ -848,7 +845,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
 
                         //reset
-                        displayedLines.get(selectedIndex).first.setZIndex(0);
+                        if(selectedIndex != -1)
+                            displayedLines.get(selectedIndex).first.setZIndex(0);
                         //selectedIndex = -1;
                         //selectedRouteId = -1;
 
