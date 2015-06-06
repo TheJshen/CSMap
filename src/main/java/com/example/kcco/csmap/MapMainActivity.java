@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
@@ -77,10 +78,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     private int selectedRouteId = -1;
     private int selectedIndex = -1;
     private ArrayList<Pair<Polyline, Integer>> displayedLines = new ArrayList<>();
-
+    private boolean takingRoute = false;
     //variable
     LatLng destinationLocation = null;
     LatLng startLocation = null;
+    final int APPROX_DESTINATION = 5; //this is in meters
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setUpMapIfNeeded();
         currentLocation = UCSD;
 
-        ((Button) findViewById(R.id.stopTrackButton)).setVisibility(View.GONE);
+        findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
 
         // Get all buttons in menu
         LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
@@ -191,7 +194,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * Used to plot a new route onto the screen. Takes a list of points
      * and the route id.
      * Clears any paths or markers that are already present on the map.
-     * Then draw the approrpiate path. and center the camera on the start
+     * Then draw the appropriate path. and center the camera on the start
      * location.
      * @param route
      * @param routeId
@@ -203,6 +206,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         Polyline newLine = mMap.addPolyline(newRoute.drawRoute());
         displayedLines.add(new Pair<>(newLine, routeId));
         isLinesDisplayed = true;
+        takingRoute = false;
         processStartEndPoints();
         dropStartAndEndPinAndCenterCameraOnStart(startLocation);
 
@@ -228,8 +232,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         {
             Polyline newLine = mMap.addPolyline(bestRoutes.get(index).first.drawRoute());
             displayedLines.add(new Pair<>(newLine, bestRoutes.get(index).second));
-            isLinesDisplayed = true;
+
         }
+        isLinesDisplayed = true;
+        takingRoute = false;
+        if( startLocation == null)
+            startLocation = currentLoc;
         processStartEndPoints();
         dropStartAndEndPinAndCenterCameraOnStart(startLocation);
     }
@@ -287,7 +295,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
-    // This method is used to center on current location
+    /**
+     * This method will place the camera with the center point being the current
+     * location, this will add a pin to the current location and position the camera for the
+     * start to occur
+     * @param pointToCenterOn this is the coordinates at which the camera will center
+     */
     public void dropPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
         cameraPosition = new CameraPosition.Builder()
                 .target(pointToCenterOn)      // Sets the center of the map to Mountain View
@@ -302,6 +315,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
+    /**
+     * this method will allow the camera to center around the end point and drop an end
+     * point pin on the last coordinate of the path
+     * @param pointToCenterOn this should be coordinates of the last point
+     */
     public void dropPinAndCenterCameraOnFinish(LatLng pointToCenterOn) {
         cameraPosition = new CameraPosition.Builder()
                 .target(pointToCenterOn)      // Sets the center of the map to Mountain View
@@ -317,8 +335,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     /**
-     * Clear all markers on the map that show the beginning or ending of
-     * a previously displayed route
+     * This method will get rid of the markers that identify a start and end location when
+     * displaying a path.
      */
     public void clearRouteTrackingMarker() {
         if(startMarker != null)
@@ -328,10 +346,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
     /**
-     * Clears all routes that are currently displayed on the map
+     * This method will clear the poly line in the map that describes the route that is being
+     * displayed on the map currently
      */
     public void clearCurrentRoute() {
-        if( currentDisplayed != null)
+        if( currentDisplayed != null) // currentDisplayed is a poly line that is being shown
             currentDisplayed.remove();
         for(int i = 0; i < displayedLines.size(); ++i) {
             if( displayedLines.get(i) != null) {
@@ -391,39 +410,52 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         this.buildingMarkerShown = !this.buildingMarkerShown;
     }
 
+    public void removeAllFromScreen()
+    {
+        // remove the buttons, set taking route to false, set displaying to false
+        findViewById(R.id.btnStartRoute).setVisibility(View.GONE);
+        findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
+        takingRoute = false;
+        isLinesDisplayed = false;
+        clearCurrentRoute();
+        clearRouteTrackingMarker();
+
+    }
+
+
     /**
-     * Goes to BookmarkActivity
+     * Method will move on from the main map activity to the bookmarks activity
      * @param view
      */
     public void goToShowBookmarks(View view) {
+        removeAllFromScreen();
         Intent intent = new Intent(this, BookmarkActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+
+        /*Intent intent = new Intent(MapMainActivity.this, BookmarkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        MapMainActivity.this.startActivity(intent);*/
     }
 
-    /** Goes to HistoryActivity
-     * @param view
-     */
     public void goToShowHistory(View view) {
+        removeAllFromScreen();
         Intent intent = new Intent(this, HistoryActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
-    /**
-     * Goes to Login page
-     */
     public void goToLoginActivity(){
+        removeAllFromScreen();
         Intent intent = new Intent(MapMainActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         MapMainActivity.this.startActivity(intent);
     }
 
-    /**
-     * Method used to log user out of the app
-     * @param view
-     */
     public void logout(View view) {
+        removeAllFromScreen();
         toggleMenu(view);
         if (UserDAO.isUserActive()){
             Toast.makeText(MapMainActivity.this, "You have been logged out.", Toast.LENGTH_LONG).show();
@@ -436,21 +468,31 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+
+    private boolean tracking = false;
+    public void enableTrack(View view) {
+        if (!tracking) {
+            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
+            findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
+            tracking = true;
+        }
+    }
+
+    public void disableTrack() {
+        findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
+        findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+        tracking = false;
+    }
+
+
     /*  Button function track
      *  Button name: btnSurrey
      *  Describe: Begin to track the route.
      */
-
-    /**
-     * This methods uses RouteTracker class to retrieve the user inputted
-     * path by adding the GPS coordinates into an array list. It also uses a timer
-     * to time how long it takes for the user to move along the path.
-     * When this is done it would call RouteProcessing to allow the user to save
-     * and submit the route to teh database.
-     * This method will also plog the path onto the gps live.
-     * @param view
-     */
     public void track(View view) {
+        if (!tracking) return; // Short circuit, should never happen
+
+        removeAllFromScreen();
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
             clearRouteTrackingMarker(); // clears marker if on screen
@@ -469,9 +511,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //timerValue.postDelayed(updateTimerThread, 0);
             /**************************** TIMER START END**********************************/
 
-            //((Button) view).setText("Stop");
-            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
-            findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
+            //findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
+            findViewById(R.id.stopTrackButton).setBackgroundResource(R.drawable.round_button_red);
+            ((Button)findViewById(R.id.stopTrackButton)).setText("end");
 
             if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
@@ -497,8 +539,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             timerLabel.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
             //((Button) view).setText("Track");
-            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
-            findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+            //findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
+            findViewById(R.id.stopTrackButton).setBackgroundResource(R.drawable.round_button_green);
+            ((Button)findViewById(R.id.stopTrackButton)).setText("track");
 
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
@@ -506,11 +549,13 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
+            disableTrack();
         }
     }
 
         //Let user enter searchTerm for the destination and drop Marker in the map if any match
     public void searchRoutePrompt(View view){
+        removeAllFromScreen();
         AlertDialog.Builder prompt = new AlertDialog.Builder(MapMainActivity.this);
         //prompt.setTitle("Search");
 
@@ -528,7 +573,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         txtSearchInput.setHint("Destination");
         txtSearchInput.setHintTextColor(0xFFffffff);
         txtSearchInput.setText(searchInput);
-        txtSearchInput.setTextColor(0xFFfffff);
+        txtSearchInput.setTextColor(0xFFffffff);
         txtSearchInput.setBackgroundColor(0x00000000);
 
         txtSearch.setLayoutParams(lparams);
@@ -583,7 +628,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
-    public void selectRoute(View view){
+    public void takeRoute(View view){
         for( int i = 0; i < displayedLines.size(); i++){
             if( i != selectedIndex ){
                 displayedLines.get(i).first.remove();
@@ -591,8 +636,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
         view.setVisibility(View.GONE);
+        findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
         displayedLines.get(selectedIndex).first.setColor(Color.BLUE);
-
+        takingRoute = true;
         //save in history
         addHistory();
 
@@ -645,7 +691,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             int transportId = getIntent().getIntExtra("transport", 1);
             double latitude = getIntent().getDoubleExtra("latitude", 0);
             double longitude = getIntent().getDoubleExtra("longitude", 0);
-            LatLng startLocation = new LatLng(latitude, longitude);
+            startLocation = new LatLng(latitude, longitude);
             plottingRecommendations(startLocation, destinationId, transportId);
         }
     }
@@ -654,9 +700,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
         if( prevActivityName != null && prevActivityName.equals("HistoryActivity")){
-
             Messenger.toast("Generating History Route", MapMainActivity.this);
             int routeId = getIntent().getIntExtra("routeId", 0);
+            Bundle bundle = getIntent().getParcelableExtra("bundle");
+            startLocation = bundle.getParcelable("startingLocation");
             Log.d("fromHistoryActivity", "getting routeId = " + Integer.toString(routeId));
             ArrayList<LatLng> historyRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
             plotNewRoute(historyRoute, routeId);
@@ -667,11 +714,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: find a way to recognize the previous Activity is RouteActivity.
         String prevActivityName = getIntent().getStringExtra("activity");
         if( prevActivityName != null && prevActivityName.equals("BookmarkActivity")){
-
             Messenger.toast("Generating Bookmark Route", MapMainActivity.this);
             int routeId = getIntent().getIntExtra("routeId", 0);
             Log.d("fromBookmarkActivity", "getting routeId = " + Integer.toString(routeId));
             ArrayList<LatLng> bookmarkRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
+            Bundle bundle = getIntent().getParcelableExtra("bundle");
+            startLocation = bundle.getParcelable("startingLocation");
             plotNewRoute(bookmarkRoute, routeId);
         }
     }
@@ -731,12 +779,18 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    /**
+     * Method used to listen to the clicking by the user on the map lines that the user could
+     * potentially take between two destinations
+     * Turns the desired route red and then allows for the buttons to be shown, once of which is to
+     * add to bookmarks and another is to begin the navigation feature
+     */
     private void setMapOnClick() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
 
-                if (isLinesDisplayed) {
+                if (isLinesDisplayed && takingRoute == false) {
                     //hardcode calculate the nearby northeast and southwest points
                     LatLng northeast = new LatLng(latLng.latitude + 0.0001, latLng.longitude + 0.0001);
                     LatLng southwest = new LatLng(latLng.latitude - 0.0001, latLng.longitude - 0.0001);
@@ -762,10 +816,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     if (selectedIndex != -1)
                         displayedLines.get(selectedIndex).first.setColor(Color.BLUE);
 
-                    if (thisSelectedIndex != -1) {
+                    if (thisSelectedIndex != -1 && takingRoute == false) {
 
                         //TODO: Add further function here for selected a route
-//                        Messenger.toast("TODO: I selected A route, added to history, need further functions", MapMainActivity.this);
+                      Messenger.toast("Clicked", MapMainActivity.this);
 
 
                         //change selected route into red, save in history show addBookmark button
@@ -774,6 +828,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
                         findViewById(R.id.btnStartRoute).setVisibility(View.VISIBLE);
+                        findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
 
                     } else {
                         //hide Bookmark button, and reset any selected variables back to -1
@@ -792,6 +847,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         });
     }
 
+    /**
+     * this method uses a DAO to add a certain selected routeID to be entered into the database for
+     * the user
+     */
     public void addHistory(){
         int userId = UserDAO.getCurrentUserId();
         UserDAO history = UserDAO.searchAHistory(userId, selectedRouteId, MapMainActivity.this);
@@ -802,36 +861,49 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+    /**
+     * This method will determine which points on the array of points are the starting and ending
+     * points, by calculation the distance from the two points in the array
+     */
     public void processStartEndPoints(){
 
         List<LatLng> points = displayedLines.get(0).first.getPoints();
 
-        double distance1 = RouteProcessing.getDistance(currentLocation, points.get(0));
-        double distance2 = RouteProcessing.getDistance(currentLocation, points.get(points.size()-1));
+        double distance1 = RouteProcessing.getDistance(startLocation, points.get(0));
+        double distance2 = RouteProcessing.getDistance(startLocation, points.get(points.size()-1));
 
-        if( distance1 < distance2 ) {
-            destinationLocation = points.get(0);
-            startLocation = points.get(points.size() - 1);
-        }
-        else {
+        if( distance1 < distance2 ) { // if distance 1 i shorter then that is our starting point
             destinationLocation = points.get(points.size() - 1);
             startLocation = points.get(0);
+        }
+        else {
+            destinationLocation = points.get(0);
+            startLocation = points.get(points.size() - 1);
         }
 
 
     }
+
+    /**
+     * This method will be called once the taking route boolean is true while the camera
+     * is also refocusing on the current location of the user
+     * @param location the place we are currently in and checking the relation ship to the final
+     *                 destination
+     */
     private void approachingDestination(Location location) {
         //LatLng = destinationLocation;
-        if( destinationLocation != null && isLinesDisplayed == true) {
+        if( destinationLocation != null && isLinesDisplayed == true &&  takingRoute) {
             LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
-            if (RouteProcessing.getDistance(destinationLocation, current) < 0.001) {
+
+            if (RouteProcessing.getDistance(destinationLocation, current) < APPROX_DESTINATION) {
                 if (selectedIndex != -1) {
                     displayedLines.get(selectedIndex).first.remove();
                     startMarker.remove();
                     finishMarker.remove();
-
+                    Messenger.toast("You are at your destination!", MapMainActivity.this);
                     dropPinAndCenterCameraOnFinish(startLocation);
                     isLinesDisplayed = false;
+                    takingRoute = false;
                 }
             }
         }

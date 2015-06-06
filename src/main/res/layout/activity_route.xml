@@ -93,9 +93,6 @@
             android:button="@drawable/transp_skate_selector"
             android:onClick="selectTransport"
             android:layout_gravity="center" />
-            <!--android:layout_alignTop="@+id/btnBike"-->
-            <!--android:layout_marginRight="10dp"-->
-            <!--android:layout_toEndOf="@+id/btnBike" />-->
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -105,8 +102,6 @@
             android:button="@drawable/transp_bus_selector"
             android:onClick="selectTransport"
             android:layout_gravity="center" />
-            <!--android:layout_alignTop="@+id/btnSkate"-->
-            <!--android:layout_toEndOf="@+id/btnSkate" />-->
 
 
     </RadioGroup>

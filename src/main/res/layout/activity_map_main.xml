@@ -78,7 +78,7 @@
                 android:id="@+id/trackButton"
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
-                android:onClick="track"
+                android:onClick="enableTrack"
                 android:text="Input Route" />
 
             <Button
@@ -92,7 +92,7 @@
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
                 android:onClick="goToShowBookmarks"
-                android:text="Bookmark" />
+                android:text="Bookmarks" />
 
             <Button
                 android:id="@+id/mapMenuToggleBuildingMarker"
@@ -146,35 +146,54 @@
         android:id="@+id/stopTrackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="end"
+        android:text="start"
         android:onClick="track"
         android:textColor="@color/text_color_important"
-        android:background="@drawable/round_button"
+        android:background="@drawable/round_button_green"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginBottom="25dp"/>
 
-    <ImageButton
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/button_add_bookmark"
-        android:id="@+id/btnAddBookmark"
-        android:onClick="addBookmark"
-        android:visibility="gone"
-        android:background="@drawable/start_bookmark_round"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true">
+        
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin" >
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/button_start_route"
-        android:id="@+id/btnStartRoute"
-        android:visibility="gone"
-        android:onClick="selectRoute"
-        android:background="@drawable/start_bookmark_round"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="25dp" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/button_add_bookmark"
+                android:id="@+id/btnAddBookmark"
+                android:onClick="addBookmark"
+                android:visibility="gone"
+                android:background="@drawable/start_bookmark_round" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin" >
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/button_start_route"
+                android:id="@+id/btnStartRoute"
+                android:visibility="gone"
+                android:onClick="takeRoute"
+                android:background="@drawable/start_bookmark_round" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
