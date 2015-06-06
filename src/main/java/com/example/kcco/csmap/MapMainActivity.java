@@ -827,6 +827,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         selectedIndex = thisSelectedIndex;
                         selectedRouteId = displayedLines.get(selectedIndex).second;
                         displayedLines.get(selectedIndex).first.setColor(Color.RED);
+                        displayedLines.get(selectedIndex).first.setZIndex(1);
                         findViewById(R.id.btnStartRoute).setVisibility(View.VISIBLE);
                         findViewById(R.id.btnAddBookmark).setVisibility(View.VISIBLE);
 
@@ -836,6 +837,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
 
                         //reset
+                        displayedLines.get(selectedIndex).first.setZIndex(0);
                         selectedIndex = -1;
                         selectedRouteId = -1;
 
