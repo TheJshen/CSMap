@@ -93,7 +93,7 @@
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
                 android:onClick="goToShowBookmarks"
-                android:text="Bookmark" />
+                android:text="Bookmarks" />
 
             <Button
                 android:id="@+id/mapMenuToggleBuildingMarker"
@@ -172,7 +172,7 @@
         android:src="@drawable/button_start_route"
         android:id="@+id/btnStartRoute"
         android:visibility="gone"
-        android:onClick="selectRoute"
+        android:onClick="takeRoute"
         android:background="@drawable/start_bookmark_round"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
