@@ -2,6 +2,7 @@ package com.example.kcco.csmap;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.Messenger;
@@ -82,11 +84,9 @@ public class RouteActivity extends ActionBarActivity {
         //Car button is clicked
         if( mode / CAR_MODE == 1 && tag == CAR_MODE){
             transport -= CAR_MODE;
-            //may change button effect
         }
         else if( tag == CAR_MODE ){
             transport += CAR_MODE;
-            //may change button effect
         }
 
         mode %= CAR_MODE;

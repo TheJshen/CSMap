@@ -93,8 +93,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setUpMapIfNeeded();
         currentLocation = UCSD;
 
-        ((Button) findViewById(R.id.stopTrackButton)).setVisibility(View.GONE);
-
         // Get all buttons in menu
         LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
@@ -492,9 +490,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //timerValue.postDelayed(updateTimerThread, 0);
             /**************************** TIMER START END**********************************/
 
-            //((Button) view).setText("Stop");
-            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
-            findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
+            //findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
+            findViewById(R.id.stopTrackButton).setBackgroundResource(R.drawable.round_button_red);
+            ((Button)findViewById(R.id.stopTrackButton)).setText("end");
 
             if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
@@ -520,8 +518,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             timerLabel.setVisibility(View.GONE);
             /******************************* TIMER STOP ******************************/
             //((Button) view).setText("Track");
-            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
-            findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+            //findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
+            findViewById(R.id.stopTrackButton).setBackgroundResource(R.drawable.round_button_green);
+            ((Button)findViewById(R.id.stopTrackButton)).setText("track");
 
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
