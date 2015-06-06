@@ -74,13 +74,12 @@
                 android:onClick="searchRoutePrompt"
                 android:text="Search" />
 
-            <!--
             <Button
                 android:id="@+id/trackButton"
                 android:layout_height="match_parent"
                 style="@style/MainTheme.Button"
-                android:onClick="track"
-                android:text="Input Route" /> -->
+                android:onClick="enableTrack"
+                android:text="Input Route" />
 
             <Button
                 android:layout_height="match_parent"
@@ -147,7 +146,7 @@
         android:id="@+id/stopTrackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="track"
+        android:text="start"
         android:onClick="track"
         android:textColor="@color/text_color_important"
         android:background="@drawable/round_button_green"

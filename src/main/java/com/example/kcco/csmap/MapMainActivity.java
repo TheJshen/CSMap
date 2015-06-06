@@ -93,6 +93,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         setUpMapIfNeeded();
         currentLocation = UCSD;
 
+        findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+
         // Get all buttons in menu
         LinearLayout thisButtonScroller = (LinearLayout) this.findViewById(R.id.main_button_holder);
         for(int i = 0; i < thisButtonScroller.getChildCount(); ++i) {
@@ -466,11 +468,30 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
     }
 
+
+    private boolean tracking = false;
+    public void enableTrack(View view) {
+        if (!tracking) {
+            findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_main_inaction);
+            findViewById(R.id.stopTrackButton).setVisibility(View.VISIBLE);
+            tracking = true;
+        }
+    }
+
+    public void disableTrack() {
+        findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
+        findViewById(R.id.stopTrackButton).setVisibility(View.GONE);
+        tracking = false;
+    }
+
+
     /*  Button function track
      *  Button name: btnSurrey
      *  Describe: Begin to track the route.
      */
     public void track(View view) {
+        if (!tracking) return; // Short circuit, should never happen
+
         removeAllFromScreen();
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
@@ -528,6 +549,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 RouteProcessing.saveRoutePrompt(thisRoute, MapMainActivity.this);
             }
 
+            disableTrack();
         }
     }
 
