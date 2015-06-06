@@ -281,7 +281,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 .position(destinationLocation)
                 .title("Finish")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        finishMarker = mMap.addMarker(new MarkerOptions()
+        startMarker = mMap.addMarker(new MarkerOptions()
                 .position(pointToCenterOn)
                 .title("Start")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
@@ -429,6 +429,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
             clearRouteTrackingMarker(); // clears marker if on screen
+            clearCurrentRoute();
             dropPinAndCenterCameraOnStart(currentLocation);
             // show timer
             timer.setVisibility(View.VISIBLE);
@@ -577,6 +578,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     private void createLocationMarker(String searchTerm){
         //Clean any previous Marker if it has any,
+        clearCurrentRoute();
+        clearRouteTrackingMarker();
         for (Pair<Marker, BuildingDAO> location: locations)
             location.first.remove();
 
