@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ public class BookmarkActivity extends ActionBarActivity {
     private ArrayList<Pair<String, String>> startEndLocation;
     // Array of the Ids to be used to retrieve from database
     private ArrayList<Integer> routeIds;
+    private LatLng startingLocation= null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class BookmarkActivity extends ActionBarActivity {
         // loop through bookmarks
         // Only shows bookmarks if they are available
         if (bookmarks != null) {
+            int once = 0;
             for (int routeId : bookmarks) {
                 String start, end;
 
@@ -90,13 +93,15 @@ public class BookmarkActivity extends ActionBarActivity {
                 // Get the name of the starting location
                 BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), BookmarkActivity.this);
                 start = place.getName();
-
+                if ( once > 0)
+                    startingLocation = place.getCenterPoint();
                 // Get the name of the ending location
                 place = BuildingDAO.searchBuilding(route.getEndLoc(), BookmarkActivity.this);
                 end = place.getName();
 
                 startEndLocation.add(new Pair<>(start, end));
                 routeIds.add(routeId);
+                once++;
             }
         }
     }
@@ -152,8 +157,11 @@ public class BookmarkActivity extends ActionBarActivity {
         Intent intent = new Intent(BookmarkActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         //add more information into intent before start different activity
+        Bundle args = new Bundle();
+        args.putParcelable("startingLocation", startingLocation);
         intent.putExtra("routeId", routeId);
         intent.putExtra("activity", "BookmarkActivity");
+        intent.putExtra("bundle", args);
         BookmarkActivity.this.startActivity(intent);
 
     }

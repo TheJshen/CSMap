@@ -9,6 +9,8 @@ import android.view.MenuItem;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
+import com.google.android.gms.maps.model.LatLng;
+
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,8 @@ public class HistoryActivity extends ActionBarActivity {
     private int[] history;
     private ArrayList<Pair<String, String>> startEndLocation;
     private ArrayList<Integer> routeIds;
+    private LatLng startingLocation;
+    private LatLng endingLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +76,7 @@ public class HistoryActivity extends ActionBarActivity {
         // loop through history
         // Only shows history if they are available
         if( history != null ) {
+            int once = 0;
             for (int routeId : history) {
                 String start, end;
 
@@ -81,13 +86,26 @@ public class HistoryActivity extends ActionBarActivity {
                 BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), HistoryActivity.this);
                 start = place.getName();
 
+                if( once < 1)
+                    startingLocation = place.getCenterPoint(); //to get the starting point to return
+
+
+
                 //Get the name of the ending location
                 place = BuildingDAO.searchBuilding(route.getEndLoc(), HistoryActivity.this);
                 end = place.getName();
 
+                if( once < 1 )
+                    endingLocation = place.getCenterPoint();
                 startEndLocation.add(new Pair<>(start, end));
                 routeIds.add(routeId);
+
+
+
+                once++;
             }
+
+
         }
     }
 
@@ -143,8 +161,12 @@ public class HistoryActivity extends ActionBarActivity {
         Intent intent = new Intent(HistoryActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         //add more information into intent before start different activity
+        Bundle args = new Bundle();
+        args.putParcelable("startingLocation", startingLocation);
+        args.putParcelable("endingLocation", endingLocation);
         intent.putExtra("routeId", routeId);
         intent.putExtra("activity", "HistoryActivity");
+        intent.putExtra("bundle", args);
         HistoryActivity.this.startActivity(intent);
 
     }
