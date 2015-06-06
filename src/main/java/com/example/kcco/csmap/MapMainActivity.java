@@ -799,17 +799,28 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 //                    mMap.addMarker(new MarkerOptions().position(northeast));
                     LatLngBounds clickedArea = new LatLngBounds(southwest, northeast);
                     int thisSelectedIndex = -1;
+                    float minDist = Float.MAX_VALUE;
+
+                    Location clickLoc = new Location("click");
+                    clickLoc.setLatitude(latLng.latitude);
+                    clickLoc.setLongitude(latLng.longitude);
+
                     for (int i = 0; i < displayedLines.size(); i++) {
                         List<LatLng> route = displayedLines.get(i).first.getPoints();
                         if (route != null) {
                             for (int j = 0; j < route.size(); j++) {
-                                if (clickedArea.contains(route.get(j))) {
+                                Location currLoc = new Location("curr");
+                                currLoc.setLatitude(route.get(j).latitude);
+                                currLoc.setLongitude(route.get(j).longitude);
+
+                                if (clickedArea.contains(route.get(j)) && clickLoc.distanceTo(currLoc) < minDist) {
                                     thisSelectedIndex = i;
-                                    break;
+                                    minDist = clickLoc.distanceTo(currLoc);
+                                    //break;
                                 }
                             }
-                            if (thisSelectedIndex != -1)
-                                break;
+                            /*if (thisSelectedIndex != -1)
+                                break;*/
                         }
                     }
                     //change any previous selected route back to blue
@@ -838,8 +849,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
                         //reset
                         displayedLines.get(selectedIndex).first.setZIndex(0);
-                        selectedIndex = -1;
-                        selectedRouteId = -1;
+                        //selectedIndex = -1;
+                        //selectedRouteId = -1;
 
                         Messenger.toast("Need to click closer int the map for selecting a route", MapMainActivity.this);
                     }
