@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,8 +14,6 @@ import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
 import com.example.kcco.csmap.DAO.RoutesDAO;
-import com.example.kcco.csmap.R;
-import com.parse.ParseObject;
 
 import java.util.ArrayList;
 
@@ -24,12 +21,18 @@ import java.util.ArrayList;
  * Created by Teresa on 5/22/15.
  */
 
-// Not tested yet
+/**
+ * This is the activity where all bookmark related methods wil be places
+ * this class can be called from the MapMainActivity.
+ */
 public class BookmarkActivity extends ActionBarActivity {
 
     private int userID;
-    private int[] bookmarks;
+    private int[] bookmarks; // Array of bookmarks retrieved from database
+    // Array that indexes the start and end location of all bookmarks from
+    // the array above
     private ArrayList<Pair<String, String>> startEndLocation;
+    // Array of the Ids to be used to retrieve from database
     private ArrayList<Integer> routeIds;
 
     @Override
@@ -71,16 +74,9 @@ public class BookmarkActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    //asumme that we have a routeID, need to fig.out how to get rounteID to pass in first
-    public void addBookmark(int routeID)
-    {
-        UserDAO bookmark=new UserDAO(BookmarkActivity.this);
-        int userID = UserDAO.getCurrentUserId();
-        bookmark.createBookmark(userID,routeID);
-        bookmark.sendBookmarkInfo();
 
-    }
-
+    // Retrieves the data to be displayed in the bookmark list when users
+    // touches the bookmarks tab on hte main screen
     public void getStartEndLocation() {
         bookmarks = UserDAO.searchBookmarkRoutes(userID, this);
         // loop through bookmarks
@@ -105,8 +101,9 @@ public class BookmarkActivity extends ActionBarActivity {
         }
     }
 
-    // Used to format the items in the list: TODO: Change to make it look nicer??
+    // Used to format the items in the list:
     private String createBookmarkLabel( Pair<String, String> startEndLocationStrings ) {
+        // Format for each cell on the bookmark display
         return new String("From: " + startEndLocationStrings.first + "\n" +
                           " To: " + startEndLocationStrings.second);
     }
@@ -149,6 +146,8 @@ public class BookmarkActivity extends ActionBarActivity {
         }
     }
 
+    // Method used to transition from bookmark activity to the main map activity
+    // Passing back the selected route to be displayed if needed.
     public void goToMapActivity(int routeId){
         Intent intent = new Intent(BookmarkActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

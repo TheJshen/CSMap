@@ -93,6 +93,7 @@ public class HistoryActivity extends ActionBarActivity {
 
     // Used to format the items in the list TODO: Change to make it look nicer??
     private String createHistoryLabel( Pair<String, String> startEndLocationStrings ) {
+        // Format for each cell on history display
         return new String("From: " + startEndLocationStrings.first + "\n" +
                           " To: " + startEndLocationStrings.second);
     }
@@ -136,6 +137,8 @@ public class HistoryActivity extends ActionBarActivity {
         }
     }
 
+    // Method used to trasition from history activity to the main map activity
+    // Passing back the selected route to be displayed if needed.
     public void goToMapActivity(int routeId){
         Intent intent = new Intent(HistoryActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

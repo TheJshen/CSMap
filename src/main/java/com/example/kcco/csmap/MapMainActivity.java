@@ -169,6 +169,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
 /////////////////////////////////Overriding LocationCallBack Functions//////////////////////////////
 
+    /**
+     * When the GPS updates the current location this method gets called
+     * to update the currentlocation and pass it into methods that might
+     * need to use the updated location for some features
+     * @param location
+     */
     @Override
     public void handleNewLocation(Location location) {
 
@@ -176,12 +182,20 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
         currentLocation = latLng;
-        //route.add(latLng); // Save the first point
         routeToDisplay = GPS.returnCompletedRoute();
         approachingDestination(location);
 
     }
 
+    /**
+     * Used to plot a new route onto the screen. Takes a list of points
+     * and the route id.
+     * Clears any paths or markers that are already present on the map.
+     * Then draw the approrpiate path. and center the camera on the start
+     * location.
+     * @param route
+     * @param routeId
+     */
     public void plotNewRoute(ArrayList<LatLng> route, int routeId) {
         clearCurrentRoute();
         clearRouteTrackingMarker();
@@ -194,8 +208,18 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     }
 
+    /**
+     * Used to plot the recommended routes onto the map when the user
+     * requests route recommendations from the app. This will plot up to 3
+     * routes.
+     * @param currentLoc
+     * @param buildingId
+     * @param transportId
+     */
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
+        clearCurrentRoute();
+        clearRouteTrackingMarker();
         ArrayList<Pair<Route, Integer>> bestRoutes;
         bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
         if ( bestRoutes == null)
@@ -211,9 +235,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     }
 
 
-
-    // This method updates the route plot on the map as the GPS is tracking a new route
-    // currentDisplayed is the Polyline displayed on the mapsActivity
+    /** This method updates the route plot on the map as the GPS is tracking a new route
+     * currentDisplayed is the Polyline displayed on the mapsActivity
+     * @param location
+     */
     @Override
     public void updateRoutePts(Location location) {
         if(currentDisplayed == null) {
@@ -239,6 +264,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
+
+    /**
+     * This method will be used to drop start and end pin for the route.
+     * This will also reposition the camera onto the start marker
+     */
     public void dropStartAndEndPinAndCenterCameraOnStart(LatLng pointToCenterOn) {
         cameraPosition = new CameraPosition.Builder()
                 .target(pointToCenterOn)      // Sets the center of the map to Mountain View
@@ -296,6 +326,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void clearCurrentRoute() {
         if( currentDisplayed != null)
             currentDisplayed.remove();
+        for(int i = 0; i < displayedLines.size(); ++i) {
+            if( displayedLines.get(i) != null) {
+                displayedLines.get(i).first.remove();
+            }
+        }
+        displayedLines = new ArrayList<>();
     }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
@@ -466,7 +502,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         txtSearchInput.setHint("Destination");
         txtSearchInput.setHintTextColor(0xFFffffff);
         txtSearchInput.setText(searchInput);
-        txtSearchInput.setTextColor(0xFFffffff);
+        txtSearchInput.setTextColor(0xFFfffff);
         txtSearchInput.setBackgroundColor(0x00000000);
 
         txtSearch.setLayoutParams(lparams);
