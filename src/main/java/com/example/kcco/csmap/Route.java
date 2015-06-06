@@ -9,8 +9,13 @@ package com.example.kcco.csmap;
  */
 
 import android.graphics.Color;
+import android.widget.Chronometer;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -24,27 +29,156 @@ import java.util.Date;
 public class Route {
 
     private static final int LINE_WIDTH = 10;
+    private GoogleMap map;
     private ArrayList<LatLng> routePoints;
+    private Marker start, end;
+    private Polyline visibleLine;
+    private Chronometer routeTime;
+    private LatLng startLoc, endLoc;
+
+    // Database ids
+    private int routeID;
     private int createdBy;
-    private double routeTime;
     Date createWhen;
 
 
-    // No arg constructor. Creates empty route
     public Route() {
         routePoints = new ArrayList<>();
     }
 
-    // Constructor saves the points into the private membervariable
-    public Route( ArrayList<LatLng> points ) {
+    public Route(ArrayList<LatLng> points) {
         routePoints = points;
     }
 
-/*    public Route( ArrayList<LatLng> points, String created_by, int routeT)
-    {
-        createdBy = created_by;
-        routeTime = routeT;
-    }*/
+    /**
+     * Constructor that takes the reference to the map to draw on
+     * @param mMap
+     */
+    public Route(GoogleMap mMap) {
+        map = mMap;
+        routePoints = new ArrayList<>();
+    }
+
+    /**
+     * Constructor that takes an array of points.
+     * Takes a reference to the map so it knows what to draw on
+     * @param mMap
+     * @param points
+     */
+    public Route( GoogleMap mMap, ArrayList<LatLng> points ) {
+        map = mMap;
+        routePoints = points;
+    }
+
+    /**
+     * Constructor that takes an array of points and reference to the map to draw on
+     * The routeId to store in database and the current location to generate start and end points
+     * @param mMap
+     * @param points
+     * @param routeId
+     * @param current
+     */
+    public Route( GoogleMap mMap, ArrayList<LatLng> points, int routeId, LatLng current ) {
+        map = mMap;
+        routePoints = points;
+        routeID = routeId;
+        processStartEndMarker(current);
+    }
+
+    /**
+     * This method will be used to find which end of the line is the start and end of the path
+     * based on the current location of the user at the time of execution.
+     * @param current
+     */
+    private void processStartEndMarker( LatLng current ) {
+        double distance1 = RouteProcessing.getDistance(current, routePoints.get(0));
+        double distance2 = RouteProcessing.getDistance(current, routePoints.get(routePoints.size()-1));
+
+        if( distance1 < distance2 ) {
+            endLoc = routePoints.get(0);
+            startLoc = routePoints.get(routePoints.size()-1);
+
+        } else {
+            startLoc = routePoints.get(0);
+            endLoc = routePoints.get(routePoints.size()-1);
+        }
+    }
+
+    /**
+     * This method would be used to create the start marker on the map
+     */
+    private void createStartMarker() {
+        start = map.addMarker(new MarkerOptions()
+                .position(startLoc)
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+    }
+
+    /**
+     * This method will create the end marker on the map
+     */
+    private void createEndMarker() {
+        end = map.addMarker(new MarkerOptions()
+                .position(endLoc)
+                .title("Finish")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+    }
+
+    /**
+     * Clear all markers on the map that belongs to this
+     */
+    public void clearAllMarkers() {
+        if(end != null)
+            end.remove();
+        if(start != null)
+            start.remove();
+    }
+
+    /**
+     * Clear just the start marker
+     */
+    public void clearStartMarker() {
+        if(start != null)
+            start.remove();
+    }
+
+    /**
+     * clears the polyline off the map
+     */
+    public void clearPolyline() {
+        if(visibleLine != null)
+            visibleLine.remove();
+    }
+
+    /**
+     * removes all markers and polyline related to this route off the map
+     */
+    public void removeAll() {
+        clearAllMarkers();
+        clearPolyline();
+    }
+
+    /**
+     * Method to draw the line onto the map
+     */
+    public void draw() {
+        map.addPolyline(new PolylineOptions()
+                .addAll(routePoints)
+                .width(LINE_WIDTH)
+                .color(Color.BLUE));
+    }
+
+    /**
+     * Method to draw the line with non default color(blue)
+     * @param color
+     */
+    public void draw(int color) {
+        map.addPolyline(new PolylineOptions()
+                .addAll(routePoints)
+                .width(LINE_WIDTH)
+                .color(color));
+    }
 
     // Route constructor
     public Route( ArrayList<Double> lat, ArrayList<Double> lng ) {
@@ -113,7 +247,7 @@ public class Route {
         createdBy = userID;
     }
 
-    public void setRouteTime( double timeElapsed ) {
+    public void setRouteTime( Chronometer timeElapsed ) {
         routeTime = timeElapsed;
     }
 
@@ -121,15 +255,27 @@ public class Route {
         createWhen = date;
     }
 
+    public void setRouteId( int routeId ) {
+        routeID = routeId;
+    }
+
     public int getCreatedBy() {
         return createdBy;
     }
 
-    public double getRouteTime() {
+    public Chronometer getRouteTime() {
         return routeTime;
     }
 
     public Date getCreationDate() {
         return createWhen;
+    }
+
+    public int getRouteID() {
+        return routeID;
+    }
+
+    public Polyline getPolyline() {
+        return visibleLine;
     }
 }
