@@ -11,8 +11,10 @@ package com.example.kcco.csmap;
 import android.graphics.Color;
 import android.widget.Chronometer;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -29,6 +31,10 @@ import java.util.Date;
 public class Route {
 
     private static final int LINE_WIDTH = 10;
+    private static final int CENTER_ZOOM = 19;
+    private static final int CENTER_TILT = 45;
+    private static final int CENTER_BEARING =0;
+
     private GoogleMap map;
     private ArrayList<LatLng> routePoints;
     private Marker start, end;
@@ -163,7 +169,9 @@ public class Route {
      * Method to draw the line onto the map
      */
     public void draw() {
-        map.addPolyline(new PolylineOptions()
+        if(visibleLine != null)
+            visibleLine.remove();
+        visibleLine = map.addPolyline(new PolylineOptions()
                 .addAll(routePoints)
                 .width(LINE_WIDTH)
                 .color(Color.BLUE));
@@ -174,10 +182,38 @@ public class Route {
      * @param color
      */
     public void draw(int color) {
-        map.addPolyline(new PolylineOptions()
+        if(visibleLine != null)
+            visibleLine.remove();
+        visibleLine = map.addPolyline(new PolylineOptions()
                 .addAll(routePoints)
                 .width(LINE_WIDTH)
                 .color(color));
+    }
+
+    /**
+     * Method used to center camera on the start marker
+     */
+    public void centerCameraOnStart() {
+        CameraPosition cameraPos = new CameraPosition.Builder()
+                .target(startLoc)
+                .zoom(CENTER_ZOOM)
+                .bearing(CENTER_BEARING)
+                .tilt(CENTER_TILT)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
+    }
+
+    /**
+     * Method used to center on end marker
+     */
+    public void centerCameraOnFinish() {
+        CameraPosition cameraPos = new CameraPosition.Builder()
+                .target(endLoc)
+                .zoom(CENTER_ZOOM)
+                .bearing(CENTER_BEARING)
+                .tilt(CENTER_TILT)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
     }
 
     // Route constructor
