@@ -453,8 +453,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
         takingRoute = false;
         isLinesDisplayed = false;
-        clearCurrentRoute();
         clearRouteTrackingMarker();
+        clearCurrentRoute();
 
     }
 
