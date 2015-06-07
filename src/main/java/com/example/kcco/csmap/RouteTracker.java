@@ -36,7 +36,7 @@ public class RouteTracker implements
     private static GoogleApiClient mGoogleApiClient; // Google Services API
     private LocationRequest mLocationRequest; // For GPS
     private LocationCallBack mLocationCallBack; // Callback
-    private Context mContext; //
+    private Context mContext;
 
     public static final String TAG = TrackActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;

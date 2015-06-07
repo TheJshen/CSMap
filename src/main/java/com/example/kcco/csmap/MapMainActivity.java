@@ -989,10 +989,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }*/
 
         //LatLng = destinationLocation;
-        Messenger.toast("Call to approach", MapMainActivity.this);
+        //Messenger.toast("Call to approach", MapMainActivity.this);
         if( destinationLocation != null && isLinesDisplayed == true) {
             LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
-            Messenger.toast("Distance to: " + RouteProcessing.getDistance(destinationLocation, current), MapMainActivity.this);
+            //Messenger.toast("Distance to: " + RouteProcessing.getDistance(destinationLocation, current), MapMainActivity.this);
+//            Messenger.toast("Distance to: " + RouteProcessing.getDistance(destinationLocation, current), MapMainActivity.this);
 
 
             if (RouteProcessing.getDistance(destinationLocation, current) <= APPROX_DESTINATION) {
@@ -1014,8 +1015,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
             }
         }
-        else
-            Messenger.toast("Not there yet", MapMainActivity.this);
+        //else
+          //  Messenger.toast("Not there yet", MapMainActivity.this);
     }
 
 }
