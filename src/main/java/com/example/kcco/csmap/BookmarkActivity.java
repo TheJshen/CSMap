@@ -141,7 +141,6 @@ public class BookmarkActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
 
-                    //TODO: fill in the response to the button click
                     goToMapActivity(routeIds.get(v.getId() - 1));
                 }
             });

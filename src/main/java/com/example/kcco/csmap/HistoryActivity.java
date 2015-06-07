@@ -100,7 +100,7 @@ public class HistoryActivity extends ActionBarActivity {
         }
     }
 
-    // Used to format the items in the list TODO: Change to make it look nicer??
+    // Used to format the items in the list
     private String createHistoryLabel( Pair<String, String> startEndLocationStrings ) {
         // Format for each cell on history display
         return new String("From: " + startEndLocationStrings.first + "\n" +
@@ -135,7 +135,6 @@ public class HistoryActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
 
-                    //TODO: fill in the response to the button click
                     goToMapActivity(routeIds.get(v.getId() - 1));
 
                 }
