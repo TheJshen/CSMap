@@ -135,7 +135,7 @@ public class RouteTracker implements
     public void stopGPSTrack() {
         tracking = false;
         if(mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
         /* When finished with tracking add in time and other misc. info. to be stored in route */
 

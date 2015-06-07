@@ -903,12 +903,13 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      *                 destination
      */
     private void approachingDestination(Location location) {
+        /*
         if(destinationLocation != null) {
             Location currLoc = new Location("curr");
             currLoc.setLatitude(destinationLocation.latitude);
             currLoc.setLatitude(destinationLocation.longitude);
             Messenger.toast(location.distanceTo(currLoc) + "", MapMainActivity.this);
-        }
+        }*/
 
         //LatLng = destinationLocation;
         Messenger.toast("Call to approach", MapMainActivity.this);
