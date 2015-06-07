@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
@@ -830,7 +829,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     if (thisSelectedIndex != -1 && takingRoute == false) {
 
                         //TODO: Add further function here for selected a route
-                      Messenger.toast("Clicked", MapMainActivity.this);
+                    //  Messenger.toast("Clicked", MapMainActivity.this);
 
 
                         //change selected route into red, save in history show addBookmark button
@@ -912,24 +911,24 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }*/
 
         //LatLng = destinationLocation;
-        Messenger.toast("Call to approach", MapMainActivity.this);
+        //Messenger.toast("Call to approach", MapMainActivity.this);
         if( destinationLocation != null && isLinesDisplayed == true) {
             LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
-            Messenger.toast("Distance to: " + RouteProcessing.getDistance(destinationLocation, current), MapMainActivity.this);
+            //Messenger.toast("Distance to: " + RouteProcessing.getDistance(destinationLocation, current), MapMainActivity.this);
             if (RouteProcessing.getDistance(destinationLocation, current) <= APPROX_DESTINATION) {
 
                     displayedLines.get(selectedIndex).first.remove();
                     startMarker.remove();
                     finishMarker.remove();
-                    Messenger.toast("You are at your destination!", MapMainActivity.this);
+                    //Messenger.toast("You are at your destination!", MapMainActivity.this);
                     dropPinAndCenterCameraOnFinish(startLocation);
                     isLinesDisplayed = false;
                     takingRoute = false;
 
             }
         }
-        else
-            Messenger.toast("Not there yet", MapMainActivity.this);
+        //else
+          //  Messenger.toast("Not there yet", MapMainActivity.this);
     }
 
 }
