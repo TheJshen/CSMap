@@ -24,23 +24,25 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.Date;
 
-/*
+/**
  * This Class will handle all the route drawing and editing. Points of the route will be stored
  * as an arrayList in this object
  */
 public class Route {
 
+    // Constants
     private static final int LINE_WIDTH = 10;
     private static final int CENTER_ZOOM = 19;
     private static final int CENTER_TILT = 45;
     private static final int CENTER_BEARING =0;
 
-    private GoogleMap map;
-    private ArrayList<LatLng> routePoints;
-    private Marker start, end;
-    private Polyline visibleLine;
-    private Chronometer routeTime;
-    private LatLng startLoc, endLoc;
+    // local parameters
+    private GoogleMap map; // reference to the canvas
+    private ArrayList<LatLng> routePoints; // list of points that makes up the route
+    private Marker start, end; // marker that designates beginning and end of route
+    private Polyline visibleLine; // visible line on the map
+    private Chronometer routeTime; // time of route
+    private LatLng startLoc, endLoc; // location of start and end point
 
     // Database ids
     private int routeID;
@@ -61,8 +63,8 @@ public class Route {
      * @param mMap
      */
     public Route(GoogleMap mMap) {
-        map = mMap;
-        routePoints = new ArrayList<>();
+        map = mMap; // map reference to display on
+        routePoints = new ArrayList<>(); // create empty list of points
     }
 
     /**
@@ -72,8 +74,8 @@ public class Route {
      * @param points
      */
     public Route( GoogleMap mMap, ArrayList<LatLng> points ) {
-        map = mMap;
-        routePoints = points;
+        map = mMap; // map reference to display on
+        routePoints = points; // saving the reference to the points
     }
 
     /**
@@ -85,10 +87,10 @@ public class Route {
      * @param current
      */
     public Route( GoogleMap mMap, ArrayList<LatLng> points, int routeId, LatLng current ) {
-        map = mMap;
-        routePoints = points;
-        routeID = routeId;
-        processStartEndMarker(current);
+        map = mMap; // map reference to display on
+        routePoints = points; // saving the reference to the list of points
+        routeID = routeId; // route id to find/save to database
+        processStartEndMarker(current); // Finds the start end marker
     }
 
     /**
@@ -97,9 +99,12 @@ public class Route {
      * @param current
      */
     private void processStartEndMarker( LatLng current ) {
+        // Calculate distance1
         double distance1 = RouteProcessing.getDistance(current, routePoints.get(0));
+        // Calculate distance2
         double distance2 = RouteProcessing.getDistance(current, routePoints.get(routePoints.size()-1));
 
+        // Determine start and end
         if( distance1 < distance2 ) {
             endLoc = routePoints.get(0);
             startLoc = routePoints.get(routePoints.size()-1);
@@ -110,6 +115,9 @@ public class Route {
         }
     }
 
+    /**
+     *  Method to create both markers on the map
+     */
     public void createMarker(){
         createStartMarker();
         createEndMarker();
@@ -174,8 +182,10 @@ public class Route {
      * Method to draw the line onto the map
      */
     public void draw() {
+        // check if it is already showing
         if(visibleLine != null)
             visibleLine.remove();
+        // Add to map
         visibleLine = map.addPolyline(new PolylineOptions()
                 .addAll(routePoints)
                 .width(LINE_WIDTH)
@@ -187,8 +197,10 @@ public class Route {
      * @param color
      */
     public void draw(int color) {
+        // check if it is already showing
         if(visibleLine != null)
             visibleLine.remove();
+        // Add to map
         visibleLine = map.addPolyline(new PolylineOptions()
                 .addAll(routePoints)
                 .width(LINE_WIDTH)
@@ -284,39 +296,96 @@ public class Route {
 //        return toReturn;
 //    }
 
+    /**
+     * Set the userId
+     * @param userID
+     */
     public void setCreatedBy( int userID ) {
         createdBy = userID;
     }
 
+    /**
+     * set the route time
+     * @param timeElapsed
+     */
     public void setRouteTime( Chronometer timeElapsed ) {
         routeTime = timeElapsed;
     }
 
+    /**
+     * set the date when it is created
+     * @param date
+     */
     public void setCreationDate( Date date ) {
         createWhen = date;
     }
 
+    /**
+     * set the routeId to reference in teh database
+     * @param routeId
+     */
     public void setRouteId( int routeId ) {
         routeID = routeId;
     }
 
+    /**
+     * Get the userId
+     * @return
+     */
     public int getCreatedBy() {
         return createdBy;
     }
 
+    /**
+     * Get the time to take the route
+     * @return
+     */
     public Chronometer getRouteTime() {
         return routeTime;
     }
 
+    /**
+     * Get the date that it was created
+     * @return
+     */
     public Date getCreationDate() {
         return createWhen;
     }
 
+    /**
+     * Get route Id to search in the dataebase
+     * @return
+     */
     public int getRouteID() {
         return routeID;
     }
 
+    /**
+     * pass back the polyline so you it can be altered
+     * @return
+     */
     public Polyline getPolyline() {
         return visibleLine;
+    }
+
+    /**
+     * Sets the line color to red
+     */
+    public void setColorRed() {
+        visibleLine.setColor(Color.RED);
+    }
+
+    /**
+     * Sets the line color to blue
+     */
+    public void setColorBlue() {
+        visibleLine.setColor(Color.BLUE);
+    }
+
+    /**
+     * set the z index to 0
+     */
+    public void setZIndexZero() {
+        visibleLine.setZIndex(0);
     }
 }
