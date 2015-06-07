@@ -351,6 +351,16 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     }
 
+    public void centerCameraOnCurrentLocation() {
+        cameraPosition = new CameraPosition.Builder()
+                .target(currentLocation)      // Sets the center of the map to Mountain View
+                .zoom(19)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to North
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
     /**
      * This method will get rid of the markers that identify a start and end location when
      * displaying a path.
@@ -677,6 +687,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         //TODO: will delete soon
 //        displayedLines.get(selectedIndex).first.setColor(Color.BLUE);
         takingRoute = true;
+        centerCameraOnCurrentLocation();
         //save in history
         addHistory();
 
