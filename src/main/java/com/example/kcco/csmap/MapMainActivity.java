@@ -847,8 +847,6 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                         //reset
                         if(selectedIndex != -1)
                             displayedLines.get(selectedIndex).first.setZIndex(0);
-                        //selectedIndex = -1;
-                        //selectedRouteId = -1;
 
                         Messenger.toast("Need to click closer int the map for selecting a route", MapMainActivity.this);
                     }
@@ -902,6 +900,13 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      *                 destination
      */
     private void approachingDestination(Location location) {
+        if(destinationLocation != null) {
+            Location currLoc = new Location("curr");
+            currLoc.setLatitude(destinationLocation.latitude);
+            currLoc.setLatitude(destinationLocation.longitude);
+            Messenger.toast(location.distanceTo(currLoc) + "", MapMainActivity.this);
+        }
+
         //LatLng = destinationLocation;
         if( destinationLocation != null && isLinesDisplayed == true &&  takingRoute) {
             LatLng current = new LatLng(location.getLatitude(), location.getLongitude());

@@ -55,20 +55,21 @@ public class RouteTracker implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval( 50 ) //  in milliseconds
-                .setFastestInterval( 25  ) // in milliseconds
-                .setMaxWaitTime( 75 );
+                .setInterval(50) //  in milliseconds
+                .setFastestInterval(25) // in milliseconds
+                .setMaxWaitTime(75);
                 //.setSmallestDisplacement(3); // minimum 3 meters per update
         mGoogleApiClient = new GoogleApiClient.Builder( context )
                 .addConnectionCallbacks( this )
                 .addOnConnectionFailedListener( this )
                 .addApi(LocationServices.API)
                 .build();
-
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this );
+
         Log.i(TAG, "Location services connected.");
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
