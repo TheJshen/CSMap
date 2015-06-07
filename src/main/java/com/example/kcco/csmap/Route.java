@@ -110,10 +110,15 @@ public class Route {
         }
     }
 
+    public void createMarker(){
+        createStartMarker();
+        createEndMarker();
+    }
+
     /**
      * This method would be used to create the start marker on the map
      */
-    private void createStartMarker() {
+    public void createStartMarker() {
         start = map.addMarker(new MarkerOptions()
                 .position(startLoc)
                 .title("Start")
@@ -123,7 +128,7 @@ public class Route {
     /**
      * This method will create the end marker on the map
      */
-    private void createEndMarker() {
+    public void createEndMarker() {
         end = map.addMarker(new MarkerOptions()
                 .position(endLoc)
                 .title("Finish")
@@ -261,23 +266,23 @@ public class Route {
         return routePoints;
     }
 
-    // Used to pull out the list of Latitude Points
-    public ArrayList<Double> getLatitudeArray() {
-        ArrayList<Double> toReturn = new ArrayList<>();
-        for(int i = 0; i < routePoints.size(); i++ ) {
-            toReturn.add(routePoints.get(i).latitude);
-        }
-        return toReturn;
-    }
-
-    // Used to pull out the list of Longitude Points
-    public ArrayList<Double> getLongitudeArray() {
-        ArrayList<Double> toReturn = new ArrayList<>();
-        for(int i = 0; i < routePoints.size(); i++ ) {
-            toReturn.add(routePoints.get(i).longitude);
-        }
-        return toReturn;
-    }
+//    // Used to pull out the list of Latitude Points
+//    public ArrayList<Double> getLatitudeArray() {
+//        ArrayList<Double> toReturn = new ArrayList<>();
+//        for(int i = 0; i < routePoints.size(); i++ ) {
+//            toReturn.add(routePoints.get(i).latitude);
+//        }
+//        return toReturn;
+//    }
+//
+//    // Used to pull out the list of Longitude Points
+//    public ArrayList<Double> getLongitudeArray() {
+//        ArrayList<Double> toReturn = new ArrayList<>();
+//        for(int i = 0; i < routePoints.size(); i++ ) {
+//            toReturn.add(routePoints.get(i).longitude);
+//        }
+//        return toReturn;
+//    }
 
     public void setCreatedBy( int userID ) {
         createdBy = userID;
