@@ -205,8 +205,8 @@ public class RoutesDAO {
             public void done(ParseException e) {
                 if (e == null) {
                     //route is saved successfully
-                    String success = "Route is saved!";
-                    Messenger.toast(success, activity);
+                    //String success = "Route is saved!";
+                    //Messenger.toast(success, activity);
                 } else {
                     //route did not saved.
                     String errorMessage = "Parse Error: sendRouteInfo(): " + e.getMessage();
@@ -229,8 +229,8 @@ public class RoutesDAO {
             public void done(ParseException e) {
                 if (e == null) {
                     //subRoute is saved successfully
-                    String success = "SubRoute is saved!";
-                    Messenger.toast(success, activity);
+                    //String success = "SubRoute is saved!";
+                    //Messenger.toast(success, activity);
                 } else {
                     //subRoute did not saved.
                     String errorMessage = "Parse Error: sendSubRouteInfo(): " + e.getMessage();
@@ -253,8 +253,8 @@ public class RoutesDAO {
             public void done(ParseException e) {
                 if (e == null) {
                     //subRoute is saved successfully
-                    String success = "SubRoute is saved!";
-                    Messenger.toast(success, activity);
+                    //String success = "SubRoute is saved!";
+                    //Messenger.toast(success, activity);
                 } else {
                     //subRoute did not saved.
                     String errorMessage = "Parse Error: sendSubRouteInfo(): " + e.getMessage();

@@ -82,7 +82,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     //variable
     LatLng destinationLocation = null;
     LatLng startLocation = null;
-    final int APPROX_DESTINATION = 5; //this is in meters
+    final int APPROX_DESTINATION = 10; //this is in meters
 
 
     @Override
@@ -186,7 +186,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
         currentLocation = latLng;
         routeToDisplay = GPS.returnCompletedRoute();
-        approachingDestination(location);
+        if(takingRoute)
+            approachingDestination(location);
 
     }
 
@@ -908,11 +909,12 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         }
 
         //LatLng = destinationLocation;
-        if( destinationLocation != null && isLinesDisplayed == true &&  takingRoute) {
+        Messenger.toast("Call to approach", MapMainActivity.this);
+        if( destinationLocation != null && isLinesDisplayed == true) {
             LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+            Messenger.toast("Distance to: " + RouteProcessing.getDistance(destinationLocation, current), MapMainActivity.this);
+            if (RouteProcessing.getDistance(destinationLocation, current) <= APPROX_DESTINATION) {
 
-            if (RouteProcessing.getDistance(destinationLocation, current) < APPROX_DESTINATION) {
-                if (selectedIndex != -1) {
                     displayedLines.get(selectedIndex).first.remove();
                     startMarker.remove();
                     finishMarker.remove();
@@ -920,9 +922,11 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
                     dropPinAndCenterCameraOnFinish(startLocation);
                     isLinesDisplayed = false;
                     takingRoute = false;
-                }
+
             }
         }
+        else
+            Messenger.toast("Not there yet", MapMainActivity.this);
     }
 
 }

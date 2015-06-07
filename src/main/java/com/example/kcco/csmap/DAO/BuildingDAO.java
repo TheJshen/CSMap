@@ -230,8 +230,8 @@ public class BuildingDAO {
             public void done(ParseException e) {
                 if (e == null) {
                     //places is saved successfully
-                    String success = "Places is saved!";
-                    Messenger.toast(success, activity);
+                    //String success = "Places is saved!";
+                    //Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: sendBuildingInfo(): " + e.getMessage();
@@ -254,8 +254,8 @@ public class BuildingDAO {
             public void done(ParseException e) {
                 if (e == null) {
                     //places is saved successfully
-                    String success = "Classroom is saved!";
-                    Messenger.toast(success, activity);
+                   // String success = "Classroom is saved!";
+                   // Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: sendClassroomInfo(): " + e.getMessage();
@@ -278,8 +278,8 @@ public class BuildingDAO {
             public void done(ParseException e) {
                 if (e == null) {
                     //places is saved successfully
-                    String success = "Event is saved!";
-                    Messenger.toast(success, activity);
+                    //String success = "Event is saved!";
+                    //Messenger.toast(success, activity);
                 } else {
                     //bookmark did not saved.
                     String errorMessage = "Parse Error: sendEventInfo(): " + e.getMessage();
