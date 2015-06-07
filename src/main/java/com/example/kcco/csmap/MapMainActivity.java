@@ -455,6 +455,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         isLinesDisplayed = false;
         clearRouteTrackingMarker();
         clearCurrentRoute();
+        selectedIndex = -1;
 
     }
 
