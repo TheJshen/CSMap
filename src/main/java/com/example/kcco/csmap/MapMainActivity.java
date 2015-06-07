@@ -541,7 +541,7 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             //((Button) view).setText("Track");
             //findViewById(R.id.trackButton).setBackgroundResource(R.drawable.button_option);
             findViewById(R.id.stopTrackButton).setBackgroundResource(R.drawable.round_button_green);
-            ((Button)findViewById(R.id.stopTrackButton)).setText("track");
+            ((Button)findViewById(R.id.stopTrackButton)).setText("start");
 
             Route thisRoute = GPS.returnCompletedRoute();
             ArrayList<LatLng> latLngRoute = thisRoute.getLatLngArray();
