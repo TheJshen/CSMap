@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.Messenger;
 import com.example.kcco.csmap.DAO.RoutesDAO;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -84,7 +85,7 @@ public class BookmarkActivity extends ActionBarActivity {
         // loop through bookmarks
         // Only shows bookmarks if they are available
         if (bookmarks != null) {
-            int once = 0;
+
             for (int routeId : bookmarks) {
                 String start, end;
 
@@ -93,15 +94,14 @@ public class BookmarkActivity extends ActionBarActivity {
                 // Get the name of the starting location
                 BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), BookmarkActivity.this);
                 start = place.getName();
-                if ( once > 0)
-                    startingLocation = place.getCenterPoint();
+
+
                 // Get the name of the ending location
                 place = BuildingDAO.searchBuilding(route.getEndLoc(), BookmarkActivity.this);
                 end = place.getName();
 
                 startEndLocation.add(new Pair<>(start, end));
                 routeIds.add(routeId);
-                once++;
             }
         }
     }
@@ -154,6 +154,12 @@ public class BookmarkActivity extends ActionBarActivity {
     // Method used to transition from bookmark activity to the main map activity
     // Passing back the selected route to be displayed if needed.
     public void goToMapActivity(int routeId){
+        RoutesDAO start = RoutesDAO.searchARoute(routeId, BookmarkActivity.this);
+        BuildingDAO place = BuildingDAO.searchBuilding(start.getStartLoc(), BookmarkActivity.this);
+        if ( place != null)
+            startingLocation = place.getCenterPoint();
+        else
+            Messenger.toast("Corrupt Bookmark", BookmarkActivity.this);
         Intent intent = new Intent(BookmarkActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         //add more information into intent before start different activity

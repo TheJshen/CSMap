@@ -721,6 +721,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             ArrayList<LatLng> bookmarkRoute = RoutesDAO.searchSubRoutes(routeId, MapMainActivity.this);
             Bundle bundle = getIntent().getParcelableExtra("bundle");
             startLocation = bundle.getParcelable("startingLocation");
+            if( startLocation == null)
+                Log.d("startLocation", "start location is null" );
             plotNewRoute(bookmarkRoute, routeId);
         }
     }

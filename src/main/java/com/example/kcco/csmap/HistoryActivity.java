@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.kcco.csmap.DAO.BuildingDAO;
+import com.example.kcco.csmap.DAO.Messenger;
 import com.example.kcco.csmap.DAO.RoutesDAO;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -76,8 +77,7 @@ public class HistoryActivity extends ActionBarActivity {
         // loop through history
         // Only shows history if they are available
         if( history != null ) {
-            int once = 0;
-            for (int routeId : history) {
+           for (int routeId : history) {
                 String start, end;
 
                 // Retrieve the route
@@ -86,23 +86,14 @@ public class HistoryActivity extends ActionBarActivity {
                 BuildingDAO place = BuildingDAO.searchBuilding(route.getStartLoc(), HistoryActivity.this);
                 start = place.getName();
 
-                if( once < 1)
-                    startingLocation = place.getCenterPoint(); //to get the starting point to return
-
 
 
                 //Get the name of the ending location
                 place = BuildingDAO.searchBuilding(route.getEndLoc(), HistoryActivity.this);
                 end = place.getName();
 
-                if( once < 1 )
-                    endingLocation = place.getCenterPoint();
                 startEndLocation.add(new Pair<>(start, end));
                 routeIds.add(routeId);
-
-
-
-                once++;
             }
 
 
@@ -158,6 +149,12 @@ public class HistoryActivity extends ActionBarActivity {
     // Method used to trasition from history activity to the main map activity
     // Passing back the selected route to be displayed if needed.
     public void goToMapActivity(int routeId){
+        RoutesDAO start = RoutesDAO.searchARoute(routeId, HistoryActivity.this);
+        BuildingDAO place = BuildingDAO.searchBuilding(start.getStartLoc(), HistoryActivity.this);
+        if ( place != null)
+            startingLocation = place.getCenterPoint();
+        else
+            Messenger.toast("Corrupt Bookmark", HistoryActivity.this);
         Intent intent = new Intent(HistoryActivity.this, MapMainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         //add more information into intent before start different activity
