@@ -204,8 +204,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      * @param routeId
      */
     public void plotNewRoute(ArrayList<LatLng> route, int routeId) {
-        clearCurrentRoute();
-        clearRouteTrackingMarker();
+//        clearCurrentRoute();
+//        clearRouteTrackingMarker();
+        removeAllFromScreen();
         Route newRoute = new Route(mMap, route, routeId, startLocation);
         newRoute.draw();
         newRoute.createMarker();
@@ -231,8 +232,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
      */
     public void plottingRecommendations(LatLng currentLoc, int buildingId, int transportId)
     {
-        clearCurrentRoute();
-        clearRouteTrackingMarker();
+//        clearCurrentRoute();
+//        clearRouteTrackingMarker();
+        removeAllFromScreen();
         ArrayList<Pair<Route, Integer>> bestRoutes;
         bestRoutes = RouteProcessing.getBestRoutes(currentLoc, buildingId, transportId, MapMainActivity.this);
         if ( bestRoutes == null)
@@ -361,40 +363,41 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    /**
-     * This method will get rid of the markers that identify a start and end location when
-     * displaying a path.
-     */
-    public void clearRouteTrackingMarker() {
-        if( selectedIndex != -1 )
-            displayedRouted.get(selectedIndex).clearAllMarkers();
-        //TODO: will delete soon
-//        if(startMarker != null)
-//            startMarker.remove();
-//        if(finishMarker != null)
-//            finishMarker.remove();
-    }
+//    /**
+//     * This method will get rid of the markers that identify a start and end location when
+//     * displaying a path.
+//     */
+//    public void clearRouteTrackingMarker() {
+//        if( selectedIndex != -1 )
+//            displayedRouted.get(selectedIndex).clearAllMarkers();
+//        //TODO: will delete soon
+////        if(startMarker != null)
+////            startMarker.remove();
+////        if(finishMarker != null)
+////            finishMarker.remove();
+//    }
 
-    /**
-     * This method will clear the poly line in the map that describes the route that is being
-     * displayed on the map currently
-     */
-    public void clearCurrentRoute() {
-        for( int i = 0; i < displayedRouted.size(); i++){
-            displayedRouted.get(i).clearPolyline();
-        }
-        displayedRouted = new ArrayList<>();
-
-        //TODO: will delete soon
-//        if( currentDisplayed != null) // currentDisplayed is a poly line that is being shown
-//            currentDisplayed.remove();
-//        for(int i = 0; i < displayedLines.size(); ++i) {
-//            if( displayedLines.get(i) != null) {
-//                displayedLines.get(i).first.remove();
-//            }
+//    /**
+//     * This method will clear the poly line in the map that describes the route that is being
+//     * displayed on the map currently
+//     */
+//    public void clearCurrentRoute() {
+//        for( int i = 0; i < displayedRouted.size(); i++){
+//            displayedRouted.get(i).clearPolyline();
+//
 //        }
-//        displayedLines = new ArrayList<>();
-    }
+//        displayedRouted = new ArrayList<>();
+//
+//        //TODO: will delete soon
+////        if( currentDisplayed != null) // currentDisplayed is a poly line that is being shown
+////            currentDisplayed.remove();
+////        for(int i = 0; i < displayedLines.size(); ++i) {
+////            if( displayedLines.get(i) != null) {
+////                displayedLines.get(i).first.remove();
+////            }
+////        }
+////        displayedLines = new ArrayList<>();
+//    }
 
 /////////////////////////////Component functions//////////////////////////////////////////////////
 
@@ -453,8 +456,10 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         findViewById(R.id.btnAddBookmark).setVisibility(View.GONE);
         takingRoute = false;
         isLinesDisplayed = false;
-        clearRouteTrackingMarker();
-        clearCurrentRoute();
+        for( int i = 0; i < displayedRouted.size(); i++){
+            displayedRouted.get(i).removeAll();
+        }
+        displayedRouted = new ArrayList<>();
         selectedIndex = -1;
 
     }
@@ -530,8 +535,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
         removeAllFromScreen();
         if (GPS.tracking == false) {// using the instance variable tracking to keep track of button
             GPS.startGPSTrack();
-            clearRouteTrackingMarker(); // clears marker if on screen
-            clearCurrentRoute();
+//            clearRouteTrackingMarker(); // clears marker if on screen
+//            clearCurrentRoute();
+            removeAllFromScreen();
             dropPinAndCenterCameraOnStart(currentLocation);
             // show timer
             timer.setVisibility(View.VISIBLE);
@@ -550,8 +556,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
             findViewById(R.id.stopTrackButton).setBackgroundResource(R.drawable.round_button_red);
             ((Button)findViewById(R.id.stopTrackButton)).setText("end");
 
-            clearCurrentRoute();
-            clearRouteTrackingMarker();
+//            clearCurrentRoute();
+//            clearRouteTrackingMarker();
             if (currentDisplayed != null) {
                 // Removes the current displayed polyline when starting to track again
                 currentDisplayed.remove();
@@ -669,7 +675,8 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
     public void takeRoute(View view){
         for( int i = 0; i < displayedRouted.size(); i++){
             if( i != selectedIndex ){
-                displayedRouted.get(i).clearPolyline();
+//                displayedRouted.get(i).clearPolyline();
+                displayedRouted.get(i).removeAll();
             }
         }
 
@@ -697,8 +704,9 @@ public class MapMainActivity extends FragmentActivity implements RouteTracker.Lo
 
     private void createLocationMarker(String searchTerm){
         //Clean any previous Marker if it has any,
-        clearCurrentRoute();
-        clearRouteTrackingMarker();
+//        clearCurrentRoute();
+//        clearRouteTrackingMarker();
+        removeAllFromScreen();
         for (Pair<Marker, BuildingDAO> location: locations)
             location.first.remove();
 
